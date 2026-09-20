@@ -1,0 +1,21 @@
+{
+  "name": "Campally",
+  "short_name": "Campally",
+  "description": "Your campus, your marketplace",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FDF6EC",
+  "theme_color": "#E8553D",
+  "icons": [
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

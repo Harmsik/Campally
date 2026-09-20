@@ -23,3 +23,6 @@ feedbackForm.addEventListener("submit", async (e) => {
     feedbackForm.reset();
   }
 });
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
