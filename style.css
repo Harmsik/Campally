@@ -1,11 +1,4 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+ font-family: 'Segoe UI', Arial, sans-serif;
   background-color: #FDF6EC;
   color: #2B2B2B;
   min-height: 100vh;
@@ -197,9 +190,18 @@ body {
 .nav-item {
   color: #999;
   text-decoration: none;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
+
+.nav-item i {
+  font-size: 18px;
+}
+
 
 .nav-item.active {
   color: #E8553D;
@@ -407,7 +409,4 @@ body {
 
 .landing-section p {
   color: #444;
-  line-height: 1.6;
-  max-width: 500px;
-  margin: 0 auto;
-}
+  line-heigh
