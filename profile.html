@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Profile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">My Profile</h1>
+  </header>
+
+  <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
+    <form id="profile-form" class="auth-form">
+  <div style="text-align:center; margin-bottom:10px;">
+    <img id="avatar-preview" src="" alt="" style="width:90px; height:90px; border-radius:50%; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
+    <input type="file" id="avatar-input" accept="image/*">
+  </div>
+  
+  <label>Full Name</label>
+      <input type="text" id="full-name" placeholder="Your name">
+
+      <label>Department</label>
+      <input type="text" id="department" placeholder="e.g. Computer Science">
+
+      <label>Hall/Hostel</label>
+      <input type="text" id="hall" placeholder="e.g. Block A">
+
+      <label>WhatsApp Number</label>
+      <input type="text" id="whatsapp" placeholder="e.g. 08012345678">
+
+      <button type="submit" class="btn-primary">Save Profile</button>
+    </form>
+
+    <p class="switch-text"><a href="#" id="logout-link">Log out</a></p>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">Home</a>
+    <a href="post-listing.html" class="nav-item">Post</a>
+    <a href="my-listings.html" class="nav-item">My Listings</a>
+    <a href=<a href="#" id="profile-nav-link" class="nav-item active">Profile</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

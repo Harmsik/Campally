@@ -1,0 +1,46 @@
+.profile-card {
+  background: #FFFFFF;
+  text-align: center;
+  padding: 30px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #F0EDE6;
+  margin-bottom: 12px;
+}
+
+.profile-card h2 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.whatsapp-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 12px 28px;
+  background-color: #25D366;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.edit-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 12px 28px;
+  background-color: #E8553D;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}

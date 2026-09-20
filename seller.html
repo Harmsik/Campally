@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Seller Profile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">Profile</h1>
+  </header>
+
+  <div class="profile-card">
+    <img id="seller-avatar" class="profile-avatar" src="" alt="">
+<h2 id="seller-name">Loading...</h2>
+<p id="seller-department" class="tagline"></p>
+<p id="seller-hall" class="tagline"></p>
+
+<div id="follow-section"></div>
+<div id="profile-action"></div>
+</div>
+  <div style="padding: 0 20px; margin-top: 10px;">
+    <h3 style="font-size:15px; margin-bottom:10px;">Listings</h3>
+  </div>
+  
+  <div id="seller-listings" class="listings-grid">
+  <p id="loading-text">Loading listings...</p>
+</div>
+
+<div style="padding: 0 20px; margin-top: 20px;">
+  <h3 style="font-size:15px; margin-bottom:10px;">Reviews</h3>
+  <div id="review-form-container"></div>
+  <div id="reviews-list"></div>
+</div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">Home</a>
+    <a href="post-listing.html" class="nav-item">Post</a>
+    <a href="my-listings.html" class="nav-item">My Listings</a>
+    <a href="profile.html" class="nav-item">Profile</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="seller.js"></script>
+</body>
+</html>

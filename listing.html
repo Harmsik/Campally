@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Listing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">Listing Details</h1>
+  </header>
+
+  <div class="listing-detail">
+    <div id="detail-image" class="listing-image" style="height:220px;">No image</div>
+    <div style="padding:20px;">
+      <h2 id="detail-title" style="font-size:20px; margin-bottom:6px;">Loading...</h2>
+      <p id="detail-price" class="listing-price" style="font-size:20px; margin-bottom:14px;"></p>
+      <p id="detail-description" style="color:#555; line-height:1.5; margin-bottom:20px;"></p>
+
+      <div id="seller-info" style="display:flex; align-items:center; gap:10px; padding:14px; background:#FFFFFF; border-radius:14px; margin-bottom:16px;">
+        <img id="seller-mini-avatar" style="width:44px; height:44px; border-radius:50%; object-fit:cover; background:#F0EDE6;" src="" alt="">
+        <div>
+          <div id="seller-mini-name" style="font-weight:600; font-size:14px;"></div>
+          <a id="seller-mini-link" href="#" style="font-size:12px; color:#E8553D;">View profile</a>
+        </div>
+      </div>
+
+      <div id="contact-action"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">Home</a>
+    <a href="post-listing.html" class="nav-item">Post</a>
+    <a href="my-listings.html" class="nav-item">My Listings</a>
+    <a href="#" id="profile-nav-link" class="nav-item">Profile</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="listing.js"></script>
+</body>
+</html>

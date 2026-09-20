@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Post a Listing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">Post a Listing</h1>
+  </header>
+
+  <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
+    <form id="listing-form" class="auth-form">
+      
+      <div style="text-align:center; margin-bottom:10px;">
+  <img id="listing-image-preview" src="" alt="" style="width:100%; max-width:300px; height:160px; border-radius:14px; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
+  <input type="file" id="listing-image-input" accept="image/*">
+</div>
+
+      <label>Title</label>
+      <input type="text" id="title" placeholder="e.g. Calculus Past Questions" required>
+
+      <label>Category</label>
+      <select id="category" required>
+        <option value="">Select a category</option>
+      </select>
+
+      <label>Description</label>
+      <input type="text" id="description" placeholder="Brief details">
+
+      <label>Price (₦)</label>
+      <input type="number" id="price" placeholder="e.g. 1500">
+
+      <button type="submit" class="btn-primary">Post Listing</button>
+    </form>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">Home</a>
+    <a href="post-listing.html" class="nav-item active">Post</a>
+    <a href="my-listings.html" class="nav-item">My Listings</a>
+    <a href="#" id="profile-nav-link" class="nav-item">Profile</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="post-listing.js"></script>
+</body>
+</html>

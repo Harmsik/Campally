@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Your Campus, Your Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="hero">
+    <img src="campus.jpg" alt="Students on campus" class="hero-img">
+    <div class="hero-overlay">
+      <h1 class="hero-title">Campally</h1>
+      <p class="hero-tagline">Your campus, your marketplace</p>
+      <div class="hero-buttons">
+        <a href="signup.html" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:14px 32px;">Sign Up</a>
+        <a href="login.html" class="edit-btn" style="display:inline-block; margin-left:10px;">Log In</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-section">
+    <h2>About Campally</h2>
+    <p>Campally is a marketplace built by students, for students. Buy and sell textbooks, past questions, electronics, fashion, and services — all within your own campus community. No strangers, no long-distance shipping — just students helping students, one listing at a time.</p>
+  </div>
+
+  <div class="landing-section" style="background:#FFFFFF;">
+    <h2>Our Vision</h2>
+    <p>We believe every student has something valuable to offer — a skill, an item, a service — and every student has a need someone nearby can meet. Campally exists to close that gap, making campus life a little easier, a little more connected, and a little more affordable, one trade at a time.</p>
+  </div>
+
+  <div class="landing-section">
+    <h2>Share Your Thoughts</h2>
+    <p style="margin-bottom:16px;">Have feedback, a suggestion, or an issue to report? Let us know.</p>
+
+    <form id="feedback-form" class="auth-form" style="max-width:420px;">
+      <label>Your Name (optional)</label>
+      <input type="text" id="feedback-name" placeholder="e.g. Ada">
+
+      <label>Your Message</label>
+      <textarea id="feedback-message" placeholder="Tell us what you think..." required style="padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:15px; background:#FAF9F6; min-height:100px; font-family:inherit;"></textarea>
+
+      <button type="submit" class="btn-primary">Send Feedback</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="landing.js"></script>
+</body>
+</html>

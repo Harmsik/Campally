@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - My Listings</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">My Listings</h1>
+  </header>
+
+  <div id="my-listings" class="listings-grid">
+    <p id="loading-text">Loading your listings...</p>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">Home</a>
+    <a href="post-listing.html" class="nav-item">Post</a>
+    <a href="my-listings.html" class="nav-item active">My Listings</a>
+    <a href="#" id="profile-nav-link" class="nav-item">Profile</a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="my-listings.js"></script>
+</body>
+</html>

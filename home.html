@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">Campally</h1>
+  </header>
+<div class="search-bar">
+  <input type="text" id="search-input" placeholder="Search listings...">
+</div>
+  <div class="categories">
+    <button class="category-pill active" data-category="all">All</button>
+    <button class="category-pill" data-category="academic">Academic</button>
+    <button class="category-pill" data-category="electronics">Electronics</button>
+    <button class="category-pill" data-category="services">Services</button>
+    <button class="category-pill" data-category="fashion">Fashion</button>
+  </div>
+
+  <div id="listings" class="listings-grid">
+    <p id="loading-text">Loading listings...</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="home.js"></script>
+  <nav class="bottom-nav">
+  <a href="home.html" class="nav-item active">Home</a>
+  <a href="post-listing.html" class="nav-item">Post</a>
+  <a href="my-listings.html" class="nav-item">My Listings</a>
+  <a href="#" id="profile-nav-link" class="nav-item">Profile</a>
+</nav>
+</body>
+</html>
