@@ -1,4 +1,11 @@
- font-family: 'Segoe UI', Arial, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
   background-color: #FDF6EC;
   color: #2B2B2B;
   min-height: 100vh;
@@ -409,4 +416,7 @@
 
 .landing-section p {
   color: #444;
-  line-heigh
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
