@@ -26,3 +26,8 @@ feedbackForm.addEventListener("submit", async (e) => {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
+document.getElementById("signup-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+  alert("Tip: When adding your WhatsApp number in your profile, start it with +234 so buyers can reach you correctly.");
+  window.location.href = "signup.html";
+});
