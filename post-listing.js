@@ -45,6 +45,7 @@ loadCategories();
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
   if (file) {
+    file = await compressImage(file);
     imagePreview.src = URL.createObjectURL(file);
   }
 });
