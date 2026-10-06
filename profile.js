@@ -3,6 +3,26 @@ const SUPABASE_ANON_KEY = "sb_publishable_0_s-ISa-wqGxAVm7tYeXBg_BgErqzS4";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function compressImage(file, maxWidth = 800, quality = 0.7) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const scale = Math.min(1, maxWidth / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => {
+        resolve(new File([blob], file.name, { type: "image/jpeg" }));
+      }, "image/jpeg", quality);
+    };
+  });
+}
+
 const profileForm = document.getElementById("profile-form");
 const logoutLink = document.getElementById("logout-link");
 const avatarInput = document.getElementById("avatar-input");
@@ -61,9 +81,11 @@ profileForm.addEventListener("submit", async (e) => {
   
   let avatarUrl = avatarPreview.src.startsWith("blob:") ? null : avatarPreview.src;
   
-  const file = avatarInput.files[0];
+  let file = avatarInput.files[0];
   
   if (file) {
+    file = await compressImage(file);
+
     const filePath = `${currentUserId}/${Date.now()}_${file.name}`;
     
     const { error: uploadError } = await supabase.storage
