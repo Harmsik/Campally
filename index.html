@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campally - Your Campus, Your Marketplace</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#E8553D">
-
+  <meta name="theme-color" content="#E8553D">
 </head>
 <body>
 
@@ -17,20 +17,52 @@
       <h1 class="hero-title">Campally</h1>
       <p class="hero-tagline">Your campus, your marketplace</p>
       <div class="hero-buttons">
-        <a href="signup.html" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:14px 32px;">Sign Up</a>
+        <a href="signup.html" id="signup-btn" class="btn-primary" style="display:inline-block; text-decoration:none; width:auto; padding:14px 32px;">Sign Up</a>
         <a href="login.html" class="edit-btn" style="display:inline-block; margin-left:10px;">Log In</a>
       </div>
     </div>
   </div>
 
   <div class="landing-section">
+    <h2>How It Works</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <i class="fa-solid fa-user-plus"></i>
+        <h3>Sign Up</h3>
+        <p>Create an account and complete your student profile.</p>
+      </div>
+      <div class="step-card">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <h3>Browse or Post</h3>
+        <p>Find what you need, or list what you're selling.</p>
+      </div>
+      <div class="step-card">
+        <i class="fa-brands fa-whatsapp"></i>
+        <h3>Connect</h3>
+        <p>Chat directly on WhatsApp to arrange payment and pickup.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-section" style="background:#FFFFFF;">
     <h2>About Campally</h2>
     <p>Campally is a marketplace built by students, for students. Buy and sell textbooks, past questions, electronics, fashion, and services — all within your own campus community. No strangers, no long-distance shipping — just students helping students, one listing at a time.</p>
   </div>
 
-  <div class="landing-section" style="background:#FFFFFF;">
+  <div class="landing-section">
     <h2>Our Vision</h2>
     <p>We believe every student has something valuable to offer — a skill, an item, a service — and every student has a need someone nearby can meet. Campally exists to close that gap, making campus life a little easier, a little more connected, and a little more affordable, one trade at a time.</p>
+  </div>
+
+  <div class="landing-section" style="background:#FFFFFF;">
+    <h2>Need Help?</h2>
+    <p style="margin-bottom:16px;">Reach out to our support team directly.</p>
+    <a href="mailto: mbuharmless@gmail.com" class="edit-btn" style="display:inline-block; text-decoration:none; margin:6px;">
+      <i class="fa-solid fa-envelope"></i> Email Support
+    </a>
+    <a href="https://wa.me/+2349119206177" target="_blank" class="whatsapp-btn" style="display:inline-block; text-decoration:none; margin:6px;">
+      <i class="fa-brands fa-whatsapp"></i> WhatsApp Support
+    </a>
   </div>
 
   <div class="landing-section">
@@ -47,6 +79,11 @@
       <button type="submit" class="btn-primary">Send Feedback</button>
     </form>
   </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Campally. All rights reserved.</p>
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
   <script src="landing.js"></script>
