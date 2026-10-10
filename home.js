@@ -5,26 +5,13 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const container = document.getElementById("category-rows");
 const searchInput = document.getElementById("search-input");
+const campusSelect = document.getElementById("campus-select");
 
 let allListings = [];
 let categoryMap = {};
+let currentCampusId = null;
 
-async function init() {
-  const { data: userData } = await supabase.auth.getUser();
-
-  let campusId = null;
-  if (userData.user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("campus_id")
-      .eq("id", userData.user.id)
-      .single();
-    campusId = profile?.campus_id || null;
-  }
-
-  const { data: categories } = await supabase.from("categories").select("*");
-  categories.forEach((cat) => { categoryMap[cat.id] = cat.name; });
-
+async function fetchListingsForCampus(campusId) {
   let query = supabase.from("listings").select("*").eq("status", "active");
   if (campusId) query = query.eq("campus_id", campusId);
 
@@ -37,6 +24,45 @@ async function init() {
 
   allListings = data;
   renderRows(allListings);
+}
+
+async function init() {
+  const { data: categories } = await supabase.from("categories").select("*");
+  categories.forEach((cat) => { categoryMap[cat.id] = cat.name; });
+
+  const { data: campuses } = await supabase.from("campuses").select("*").eq("active", true);
+  campuses.forEach((c) => {
+    const option = document.createElement("option");
+    option.value = c.id;
+    option.textContent = c.name;
+    campusSelect.appendChild(option);
+  });
+
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (userData.user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("campus_id")
+      .eq("id", userData.user.id)
+      .single();
+    if (profile?.campus_id) {
+      currentCampusId = profile.campus_id;
+      campusSelect.value = currentCampusId;
+    }
+  }
+
+  if (!currentCampusId && campuses.length > 0) {
+    currentCampusId = campuses[0].id;
+    campusSelect.value = currentCampusId;
+  }
+
+  campusSelect.addEventListener("change", () => {
+    currentCampusId = campusSelect.value;
+    fetchListingsForCampus(currentCampusId);
+  });
+
+  fetchListingsForCampus(currentCampusId);
 }
 
 function makeCard(item) {
