@@ -97,7 +97,6 @@ profileForm.addEventListener("submit", async (e) => {
   const fullName = document.getElementById("full-name").value;
   const department = document.getElementById("department").value;
   const campusId = document.getElementById("campus").value;
-  if (data.campus_id) campusSelect.value = data.campus_id;
   const hall = document.getElementById("hall").value;
   const whatsapp = document.getElementById("whatsapp").value;
   
