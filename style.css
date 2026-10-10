@@ -508,3 +508,16 @@ body {
   font-weight: 600;
   text-decoration: none;
   }
+.campus-bar {
+  padding: 12px 20px 0 20px;
+}
+
+.campus-bar select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #E5E0D8;
+  border-radius: 12px;
+  font-size: 14px;
+  background: #FFFFFF;
+  color: #444;
+  }
