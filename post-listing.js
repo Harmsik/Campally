@@ -60,6 +60,12 @@ listingForm.addEventListener("submit", async (e) => {
     window.location.href = "login.html";
     return;
   }
+
+  const { data: sellerProfile } = await supabase
+    .from("profiles")
+    .select("campus_id")
+    .eq("id", userData.user.id)
+    .single();
   
   const title = document.getElementById("title").value;
   const categoryId = document.getElementById("category").value;
@@ -94,7 +100,8 @@ listingForm.addEventListener("submit", async (e) => {
     description: description,
     price: price || null,
     seller_id: userData.user.id,
-    image_url: imageUrl
+    image_url: imageUrl,
+    campus_id: sellerProfile?.campus_id || null
   });
   
   if (error) {
