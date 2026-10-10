@@ -489,3 +489,22 @@ body {
   flex: 0 0 140px;
   width: 140px;
 }
+.category-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+
+.category-row-header .category-row-title {
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.see-all-link {
+  color: #E8553D;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  }
