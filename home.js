@@ -78,10 +78,25 @@ function renderRows(listings) {
     const section = document.createElement("div");
     section.className = "category-row-section";
 
+    const titleRow = document.createElement("div");
+    titleRow.className = "category-row-header";
+
     const title = document.createElement("h3");
     title.className = "category-row-title";
     title.textContent = catName;
-    section.appendChild(title);
+
+    const seeAll = document.createElement("a");
+    seeAll.className = "see-all-link";
+    seeAll.textContent = "See all";
+    seeAll.href = "#";
+    seeAll.addEventListener("click", (e) => {
+      e.preventDefault();
+      renderCategoryGrid(catName, grouped[catName]);
+    });
+
+    titleRow.appendChild(title);
+    titleRow.appendChild(seeAll);
+    section.appendChild(titleRow);
 
     const row = document.createElement("div");
     row.className = "category-row";
@@ -90,6 +105,33 @@ function renderRows(listings) {
 
     container.appendChild(section);
   });
+}
+
+function renderCategoryGrid(catName, items) {
+  container.innerHTML = "";
+
+  const backBtn = document.createElement("a");
+  backBtn.href = "#";
+  backBtn.className = "see-all-link";
+  backBtn.style.display = "inline-block";
+  backBtn.style.margin = "10px 20px";
+  backBtn.textContent = "← Back to Home";
+  backBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    renderRows(allListings);
+  });
+  container.appendChild(backBtn);
+
+  const heading = document.createElement("h3");
+  heading.className = "category-row-title";
+  heading.style.padding = "0 20px";
+  heading.textContent = catName;
+  container.appendChild(heading);
+
+  const grid = document.createElement("div");
+  grid.className = "listings-grid";
+  items.forEach((item) => grid.appendChild(makeCard(item)));
+  container.appendChild(grid);
 }
 
 function renderSearchResults(term) {
