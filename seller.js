@@ -125,13 +125,19 @@ async function loadSellerListings() {
   data.forEach((item) => {
     const card = document.createElement("div");
     card.className = "listing-card";
+
+    const imageHtml = item.image_url
+      ? `<img src="${item.image_url}" class="listing-image" style="object-fit:cover;">`
+      : `<div class="listing-image">No image</div>`;
+
     card.innerHTML = `
-      <div class="listing-image">No image</div>
+      ${imageHtml}
       <div class="listing-info">
         <div class="listing-title">${item.title}</div>
         <div class="listing-price">₦${item.price ?? "N/A"}</div>
       </div>
     `;
+    
     card.style.cursor = "pointer";
     card.addEventListener("click", () => {
       window.location.href = "listing.html?id=" + item.id;
