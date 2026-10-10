@@ -31,7 +31,7 @@ const imagePreview = document.getElementById("listing-image-preview");
 async function loadCategories() {
   const { data, error } = await supabase.from("categories").select("*");
   if (error) return;
-  
+
   data.forEach((cat) => {
     const option = document.createElement("option");
     option.value = cat.id;
@@ -42,8 +42,8 @@ async function loadCategories() {
 
 loadCategories();
 
-imageInput.addEventListener("change", () => {
-  const file = imageInput.files[0];
+imageInput.addEventListener("change", async () => {
+  let file = imageInput.files[0];
   if (file) {
     file = await compressImage(file);
     imagePreview.src = URL.createObjectURL(file);
@@ -52,9 +52,9 @@ imageInput.addEventListener("change", () => {
 
 listingForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+
   const { data: userData } = await supabase.auth.getUser();
-  
+
   if (!userData.user) {
     alert("You must be logged in to post a listing.");
     window.location.href = "login.html";
@@ -66,34 +66,34 @@ listingForm.addEventListener("submit", async (e) => {
     .select("campus_id")
     .eq("id", userData.user.id)
     .single();
-  
+
   const title = document.getElementById("title").value;
   const categoryId = document.getElementById("category").value;
   const description = document.getElementById("description").value;
   const price = document.getElementById("price").value;
-  
+
   let imageUrl = null;
   const file = imageInput.files[0];
-  
+
   if (file) {
     const filePath = `${userData.user.id}/${Date.now()}_${file.name}`;
-    
+
     const { error: uploadError } = await supabase.storage
       .from("listing-images")
       .upload(filePath, file);
-    
+
     if (uploadError) {
       alert("Image upload failed: " + uploadError.message);
       return;
     }
-    
+
     const { data: publicUrlData } = supabase.storage
       .from("listing-images")
       .getPublicUrl(filePath);
-    
+
     imageUrl = publicUrlData.publicUrl;
   }
-  
+
   const { error } = await supabase.from("listings").insert({
     title: title,
     category_id: categoryId,
@@ -103,7 +103,7 @@ listingForm.addEventListener("submit", async (e) => {
     image_url: imageUrl,
     campus_id: sellerProfile?.campus_id || null
   });
-  
+
   if (error) {
     alert("Failed to post: " + error.message);
   } else {
