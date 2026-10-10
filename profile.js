@@ -33,6 +33,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const link = document.getElementById("profile-nav-link");
   if (link) link.href = "profile.html";
 });
+const campusSelect = document.getElementById("campus");
+
+async function loadCampuses() {
+  const { data, error } = await supabase
+    .from("campuses")
+    .select("*")
+    .eq("active", true);
+
+  if (error) return;
+
+  data.forEach((campus) => {
+    const option = document.createElement("option");
+    option.value = campus.id;
+    option.textContent = campus.name;
+    campusSelect.appendChild(option);
+  });
+}
+
+loadCampuses();
+
 
 async function loadProfile() {
   const { data: userData } = await supabase.auth.getUser();
@@ -76,6 +96,8 @@ profileForm.addEventListener("submit", async (e) => {
   
   const fullName = document.getElementById("full-name").value;
   const department = document.getElementById("department").value;
+  const campusId = document.getElementById("campus").value;
+  if (data.campus_id) campusSelect.value = data.campus_id;
   const hall = document.getElementById("hall").value;
   const whatsapp = document.getElementById("whatsapp").value;
   
@@ -108,6 +130,7 @@ profileForm.addEventListener("submit", async (e) => {
     .from("profiles")
     .update({
       full_name: fullName,
+      campus_id: campusId,
       department: department,
       hall: hall,
       whatsapp_number: whatsapp,
