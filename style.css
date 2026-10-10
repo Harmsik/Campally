@@ -466,3 +466,26 @@ body {
   margin-top: 6px;
   display: inline-block;
 }
+.category-row-section {
+  margin-bottom: 24px;
+}
+
+.category-row-title {
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #2B2B2B;
+}
+
+.category-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 0 20px 6px 20px;
+}
+
+.category-row .listing-card {
+  flex: 0 0 140px;
+  width: 140px;
+}
