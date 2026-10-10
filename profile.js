@@ -27,13 +27,14 @@ const profileForm = document.getElementById("profile-form");
 const logoutLink = document.getElementById("logout-link");
 const avatarInput = document.getElementById("avatar-input");
 const avatarPreview = document.getElementById("avatar-preview");
+const campusSelect = document.getElementById("campus");
 
 let currentUserId = null;
+
 document.addEventListener("DOMContentLoaded", () => {
   const link = document.getElementById("profile-nav-link");
   if (link) link.href = "profile.html";
 });
-const campusSelect = document.getElementById("campus");
 
 async function loadCampuses() {
   const { data, error } = await supabase
@@ -51,37 +52,40 @@ async function loadCampuses() {
   });
 }
 
-loadCampuses();
-
-
 async function loadProfile() {
   const { data: userData } = await supabase.auth.getUser();
-  
+
   if (!userData.user) {
     window.location.href = "login.html";
     return;
   }
-  
+
   currentUserId = userData.user.id;
-  
+
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", currentUserId)
     .single();
-  
+
   if (data) {
     document.getElementById("full-name").value = data.full_name || "";
     document.getElementById("department").value = data.department || "";
     document.getElementById("hall").value = data.hall || "";
     document.getElementById("whatsapp").value = data.whatsapp_number || "";
+    if (data.campus_id) campusSelect.value = data.campus_id;
     if (data.avatar_url) {
       avatarPreview.src = data.avatar_url;
     }
   }
 }
 
-loadProfile();
+async function init() {
+  await loadCampuses();
+  await loadProfile();
+}
+
+init();
 
 // Show a quick local preview the moment a photo is picked, before uploading
 avatarInput.addEventListener("change", () => {
@@ -93,38 +97,38 @@ avatarInput.addEventListener("change", () => {
 
 profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
+
   const fullName = document.getElementById("full-name").value;
   const department = document.getElementById("department").value;
   const campusId = document.getElementById("campus").value;
   const hall = document.getElementById("hall").value;
   const whatsapp = document.getElementById("whatsapp").value;
-  
+
   let avatarUrl = avatarPreview.src.startsWith("blob:") ? null : avatarPreview.src;
-  
+
   let file = avatarInput.files[0];
-  
+
   if (file) {
     file = await compressImage(file);
 
     const filePath = `${currentUserId}/${Date.now()}_${file.name}`;
-    
+
     const { error: uploadError } = await supabase.storage
       .from("avatars")
       .upload(filePath, file);
-    
+
     if (uploadError) {
       alert("Photo upload failed: " + uploadError.message);
       return;
     }
-    
+
     const { data: publicUrlData } = supabase.storage
       .from("avatars")
       .getPublicUrl(filePath);
-    
+
     avatarUrl = publicUrlData.publicUrl;
   }
-  
+
   const { error } = await supabase
     .from("profiles")
     .update({
@@ -136,12 +140,12 @@ profileForm.addEventListener("submit", async (e) => {
       avatar_url: avatarUrl
     })
     .eq("id", currentUserId);
-  
+
   if (error) {
-  alert("Failed to save: " + error.message);
-} else {
-  window.location.href = "seller.html?id=" + currentUserId;
-}
+    alert("Failed to save: " + error.message);
+  } else {
+    window.location.href = "seller.html?id=" + currentUserId;
+  }
 });
 
 logoutLink.addEventListener("click", async (e) => {
