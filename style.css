@@ -520,6 +520,7 @@ body {
   background: #FFFFFF;
   color: #444;
   }
+
 .settings-list {
   padding: 16px 20px 100px 20px;
 }
@@ -541,4 +542,4 @@ body {
 .settings-item i {
   color: #C7C2B8;
   font-size: 14px;
-  }
+}
