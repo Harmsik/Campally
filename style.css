@@ -454,8 +454,8 @@ body {
 
 .site-footer {
   text-align: center;
-  padding: 24px 20px 100px 20px;
-  background: #FDF6EC;
+  padding: 30px 20px 110px 20px;
+  background: #FFFFFF;
   color: #999;
   font-size: 13px;
 }
@@ -463,11 +463,10 @@ body {
 .site-footer a {
   color: #E8553D;
   text-decoration: none;
-  margin-top: 6px;
+  margin: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
   display: inline-block;
-}
-.category-row-section {
-  margin-bottom: 24px;
 }
 
 .category-row-title {
