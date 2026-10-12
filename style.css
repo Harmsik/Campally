@@ -520,3 +520,25 @@ body {
   background: #FFFFFF;
   color: #444;
   }
+.settings-list {
+  padding: 16px 20px 100px 20px;
+}
+
+.settings-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 16px 18px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: #2B2B2B;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.settings-item i {
+  color: #C7C2B8;
+  font-size: 14px;
+  }
