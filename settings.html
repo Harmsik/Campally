@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Settings</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="#" id="back-link" style="color:#444; margin-right:12px; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1 class="logo-small">Settings</h1>
+  </header>
+
+  <div class="settings-list">
+    <a href="reset-password.html" class="settings-item">
+      <span>Change Password</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a href="privacy-policy.html" class="settings-item">
+      <span>Privacy Policy</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a href="mailto:YOUR_SUPPORT_EMAIL_HERE" class="settings-item">
+      <span>Contact Support</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a href="#" id="logout-item" class="settings-item">
+      <span>Log Out</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+    <a href="#" id="delete-item" class="settings-item" style="color:#C0392B;">
+      <span>Delete My Account</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <nav class="bottom-nav"></nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="settings.js"></script>
+  <script src="nav.js"></script>
+  <script>loadNav("profile");</script>
+</body>
+      </html>
