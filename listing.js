@@ -22,7 +22,7 @@ async function loadListing() {
   
   if (item.image_url) {
   document.getElementById("detail-image").outerHTML =
-    `<img id="detail-image" src="${item.image_url}" style="width:100%; height:220px; object-fit:cover; display:block;">`;
+    `<img id="detail-image" src="${item.image_url}" alt="${item.title}" style="width:100%; height:220px; object-fit:cover; display:block;">`;
 }
   document.getElementById("detail-price").textContent = "₦" + (item.price ?? "N/A");
   document.getElementById("detail-description").textContent = item.description || "No description provided.";
