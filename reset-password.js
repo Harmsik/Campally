@@ -11,7 +11,7 @@ resetForm.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://harmsik.github.io/Campally/update-password.html"
+    redirectTo:"https://campally.publicvm.com/update-password.html"
   });
 
   if (error) {
