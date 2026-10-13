@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /profile.html
+Disallow: /post-listing.html
+Disallow: /my-listings.html
+Disallow: /settings.html
+Disallow: /update-password.html
+
+Sitemap: https://campally.publicvm.com/sitemap.xml
