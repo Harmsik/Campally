@@ -127,7 +127,7 @@ async function loadSellerListings() {
     card.className = "listing-card";
 
     const imageHtml = item.image_url
-      ? `<img src="${item.image_url}" class="listing-image" style="object-fit:cover;">`
+      ? `<img src="${item.image_url}" alt="${item.title}" class="listing-image" style="object-fit:cover;">`
       : `<div class="listing-image">No image</div>`;
 
     card.innerHTML = `
