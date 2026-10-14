@@ -6,6 +6,7 @@
   <title>Campally - Post a Listing</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
@@ -13,35 +14,124 @@
     <h1 class="logo-small">Post a Listing</h1>
   </header>
 
-  <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
+  <!-- Visitor Prompt Container (shown if visitor tries to sell products) -->
+  <div id="visitor-post-prompt" class="auth-container" style="display:none; text-align:center; margin-top:30px; margin-bottom:100px;">
+    <div style="width:56px; height:56px; background:#FEE2E2; color:#DC2626; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:24px;">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+    <h2 style="font-size:19px; margin-bottom:8px; color:#2B2B2B;">Sign in to Sell on Campally</h2>
+    <p style="font-size:14px; color:#666; max-width:320px; margin:0 auto 20px auto; line-height:1.5;">
+      You are browsing as a visitor. Visitors can view all marketplace listings. To list items for sale and chat with buyers, please sign in.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:10px; max-width:280px; margin:0 auto;">
+      <a href="login.html?redirect=post-listing.html" class="btn-primary" style="text-decoration:none; padding:12px;">Log In</a>
+      <a href="signup.html" class="edit-btn" style="text-decoration:none; padding:12px;">Create Student Account</a>
+      <a href="home.html" style="font-size:13px; color:#888; text-decoration:none; margin-top:8px;">&larr; Back to Browse Marketplace</a>
+    </div>
+  </div>
+
+  <!-- Main Listing Post Form (shown to signed-in students) -->
+  <div id="post-form-container" class="auth-container" style="margin-top:20px; margin-bottom:100px;">
     <form id="listing-form" class="auth-form">
       
       <div style="text-align:center; margin-bottom:10px;">
-  <img id="listing-image-preview" src="" alt="" style="width:100%; max-width:300px; height:160px; border-radius:14px; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
-  <input type="file" id="listing-image-input" accept="image/*">
-</div>
+        <img id="listing-image-preview" src="" alt="" style="width:100%; max-width:300px; height:160px; border-radius:14px; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
+        <input type="file" id="listing-image-input" accept="image/*">
+      </div>
 
       <label>Title</label>
       <input type="text" id="title" placeholder="e.g. Calculus Past Questions" required>
+
+      <label>Campus</label>
+      <div style="position:relative; width:100%;">
+        <input type="text" id="listing-campus-search" placeholder="Type campus name or abbreviation (e.g. FUNAI, UNILAG, UNN, Ibadan)..." style="width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6;" autocomplete="off" required>
+        <div id="listing-campus-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; max-height:220px; overflow-y:auto; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.12);"></div>
+      </div>
+      <!-- Hidden select for form submission backwards compatibility -->
+      <select id="listing-campus" style="display:none;" required>
+        <option value="">Select your campus</option>
+      </select>
 
       <label>Category</label>
       <select id="category" required>
         <option value="">Select a category</option>
       </select>
 
+      <div id="course-code-container">
+        <label>Course Code (optional for textbooks / notes)</label>
+        <input type="text" id="course-code" placeholder="e.g. MTH101, GST102, PHY101">
+      </div>
+
+      <label>Your Hostel or Lodge</label>
+      <input type="text" id="listing-hall" list="campus-hostels-list" placeholder="e.g. Silver Hostel, Perm Site Lodge, Moremi Hall, Hilltop Lodge">
+      <datalist id="campus-hostels-list"></datalist>
+
       <label>Description</label>
-      <input type="text" id="description" placeholder="Brief details">
+      <input type="text" id="description" placeholder="Brief details about condition, edition, etc.">
 
       <label>Price (₦)</label>
-      <input type="number" id="price" placeholder="e.g. 1500">
+      <input type="number" id="price" placeholder="e.g. 1500 (Leave blank or 0 if free / swap only)">
 
-      <button type="submit" class="btn-primary">Post Listing</button>
+      <!-- Open to Swap Toggle -->
+      <div style="display:flex; align-items:center; gap:10px; margin-top:14px; background:#FDF1EE; padding:12px; border-radius:12px; border:1px solid #FCD8D0;">
+        <input type="checkbox" id="is-swap" style="width:20px; height:20px; accent-color:#E8553D; margin:0; cursor:pointer;">
+        <label for="is-swap" style="margin:0; font-size:13px; color:#9C2A18; cursor:pointer; font-weight:600;">
+          <i class="fa-solid fa-repeat"></i> Open to Swap / Trade for other items
+        </label>
+      </div>
+
+      <!-- Campus Safe Meetup Spot -->
+      <label style="margin-top:16px;">Preferred Safe Meetup Spot</label>
+      <select id="meetup-spot">
+        <option value="University Main Library Foyer">University Main Library Foyer</option>
+        <option value="Student Union Building (SUB)">Student Union Building (SUB)</option>
+        <option value="Hostel Porter's Lodge">Hostel Porter's Lodge / Reception</option>
+        <option value="Faculty Lecture Corridor">Faculty Lecture Theater Corridor</option>
+        <option value="Campus Main Gate">Campus Main Gate Security Post</option>
+      </select>
+
+      <!-- Optional Fast-Sale Promotion Upgrade -->
+      <div style="margin-top:16px; background:#FAF9F6; border:1px solid #E5E0D8; border-radius:14px; padding:14px;">
+        <label style="margin:0 0 8px 0; font-size:13px; font-weight:700; color:#2B2B2B; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-bolt" style="color:#E8553D;"></i> Fast-Sale Options (Optional)
+        </label>
+        
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <label style="display:flex; align-items:center; justify-content:space-between; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:10px; padding:8px 12px; cursor:pointer;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#333;">
+              <input type="radio" name="listing_promo" value="free" checked style="accent-color:#E8553D; width:16px; height:16px;">
+              <span>Standard Free Listing</span>
+            </div>
+            <span style="font-weight:700; font-size:12px; color:#666;">₦0</span>
+          </label>
+
+          <label style="display:flex; align-items:center; justify-content:space-between; background:#FFF7ED; border:1px solid #FED7AA; border-radius:10px; padding:8px 12px; cursor:pointer;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#9A3412;">
+              <input type="radio" name="listing_promo" value="boost_3d" style="accent-color:#E8553D; width:16px; height:16px;">
+              <span><i class="fa-solid fa-fire" style="color:#EA580C;"></i> 3-Day Campus Boost</span>
+            </div>
+            <span style="font-weight:800; font-size:13px; color:#EA580C;">₦300</span>
+          </label>
+
+          <label style="display:flex; align-items:center; justify-content:space-between; background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:8px 12px; cursor:pointer;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#991B1B;">
+              <input type="radio" name="listing_promo" value="urgent" style="accent-color:#E8553D; width:16px; height:16px;">
+              <span><i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;"></i> Urgent Sale Tag</span>
+            </div>
+            <span style="font-weight:800; font-size:13px; color:#DC2626;">₦200</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" style="margin-top:20px;">Post Listing</button>
     </form>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-  <script src="post-listing.js"></script>
+  <script src="campuses.js"></script>
+  <script src="paystack-integration.js"></script>
   <script src="nav.js"></script>
+  <script src="post-listing.js"></script>
   <script>loadNav("post");</script>
 </body>
 </html>

@@ -5,25 +5,41 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.getElementById("back-link").addEventListener("click", (e) => {
   e.preventDefault();
-  window.history.back();
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = "home.html";
+  }
 });
 
 document.getElementById("logout-item").addEventListener("click", async (e) => {
   e.preventDefault();
   await supabase.auth.signOut();
-  window.location.href = "login.html";
+  if (window.showToast) window.showToast("Signed out successfully", "info");
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 400);
 });
 
 document.getElementById("delete-item").addEventListener("click", async (e) => {
   e.preventDefault();
 
-  const confirmed = confirm(
-    "Are you sure you want to delete your account? This cannot be undone, and your listings will remain but show no seller info."
-  );
+  const handleAccountDeletion = () => {
+    if (window.showToast) {
+      window.showToast("To delete your account, please message support at mbuharmless@gmail.com for verification.", "info", 5000);
+    } else {
+      alert("To delete your account, please contact support directly at mbuharmless@gmail.com.");
+    }
+  };
 
-  if (!confirmed) return;
-
-  alert(
-    "To delete your account, please contact support directly for now — this keeps your data safe while we finish building a fully automatic option."
-  );
+  if (window.showConfirm) {
+    window.showConfirm(
+      "Delete Account?",
+      "Are you sure you want to delete your account? This action cannot be undone.",
+      handleAccountDeletion
+    );
+  } else {
+    const confirmed = confirm("Are you sure you want to delete your account? This cannot be undone.");
+    if (confirmed) handleAccountDeletion();
+  }
 });

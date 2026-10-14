@@ -6,14 +6,21 @@
   <title>Campally - Profile</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
-  <header class="top-bar">
+  <header class="top-bar" style="justify-content:space-between;">
     <h1 class="logo-small">My Profile</h1>
+    <a href="settings.html" style="color:#444; text-decoration:none; font-size:18px;" title="Settings">
+      <i class="fa-solid fa-gear"></i>
+    </a>
   </header>
 
   <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
+    <!-- Custom Suggestion for New Users -->
+    <div id="new-user-suggestion-container"></div>
+
     <form id="profile-form" class="auth-form">
   <div style="text-align:center; margin-bottom:10px;">
     <img id="avatar-preview" src="" alt="" style="width:90px; height:90px; border-radius:50%; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
@@ -24,15 +31,21 @@
       <input type="text" id="full-name" placeholder="Your name">
 
       <label>Campus</label>
-<select id="campus" required>
-  <option value="">Select your campus</option>
-</select>
+      <div style="position:relative; width:100%;">
+        <input type="text" id="campus-search-input" placeholder="Type campus name or abbreviation (e.g. FUNAI, UNILAG, UNN, Ibadan)..." style="width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6;" autocomplete="off" required>
+        <div id="campus-suggestions-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; max-height:220px; overflow-y:auto; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.12);"></div>
+      </div>
+      <!-- Hidden select for form binding and backwards compatibility -->
+      <select id="campus" style="display:none;" required>
+        <option value="">Select your campus</option>
+      </select>
 
       <label>Department</label>
       <input type="text" id="department" placeholder="e.g. Computer Science">
 
-      <label>Hall/Hostel</label>
-      <input type="text" id="hall" placeholder="e.g. Block A">
+      <label>Hostel or Lodge</label>
+      <input type="text" id="hall" list="hostel-suggestions" placeholder="e.g. Silver Hostel, Perm Site Lodge, Moremi Hall, Hilltop Lodge">
+      <datalist id="hostel-suggestions"></datalist>
 
       <label>WhatsApp Number</label>
       <input type="text" id="whatsapp" placeholder="e.g. 08012345678">
@@ -40,10 +53,105 @@
       <button type="submit" class="btn-primary">Save Profile</button>
     </form>
 
-    <p class="switch-text"><a href="#" id="logout-link">Log out</a></p>
+    <!-- Safe Student ID Verification Section -->
+    <div class="verification-card">
+      <div class="verification-header">
+        <div class="verification-icon-wrap" style="background:#FDF1EE; color:#E8553D; border:1px solid #FCD8D0;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <h3 style="font-size:16px; color:#2B2B2B; margin:0;">Student ID Verification</h3>
+          <p style="font-size:12px; color:#6B7280; margin:2px 0 0 0;">Build trust & unlock the Verified Student badge</p>
+        </div>
+      </div>
+
+      <div id="verification-status-banner" style="display:none; margin-bottom:12px;"></div>
+
+      <div class="security-notice">
+        <i class="fa-solid fa-lock" style="margin-right:4px;"></i> <strong>Safe & Confidential:</strong> Your Student ID details and card photos are securely stored in Supabase exclusively for fraud prevention and badge verification. They are never shared publicly with third parties.
+      </div>
+
+      <form id="verification-form">
+        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Matriculation / Student ID Number</label>
+        <input type="text" id="matric-number" placeholder="e.g. FUNAI/2022/12345 or 210805521" style="width:100%; padding:10px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
+
+        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Institutional Email (Optional)</label>
+        <input type="email" id="school-email" placeholder="e.g. student@funai.edu.ng" style="width:100%; padding:10px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
+
+        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Upload Student ID Card Photo</label>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+          <img id="id-card-preview" src="" alt="" style="width:80px; height:52px; border-radius:8px; object-fit:cover; background:#F0EDE6; display:none; border:1px solid #DDD;">
+          <input type="file" id="id-card-file" accept="image/*" style="font-size:12px; flex:1;">
+        </div>
+
+        <button type="submit" id="submit-verification-btn" class="btn-primary" style="background:#E8553D; margin-top:4px;">
+          <i class="fa-solid fa-id-card" style="margin-right:6px;"></i> Submit Student ID Verification
+        </button>
+      </form>
+    </div>
+
+    <!-- Campally Pro Seller Badge Upgrade Section -->
+    <div class="verification-card" style="margin-top:16px; border: 1px solid #FDE68A; background: #FFFDF5;">
+      <div class="verification-header">
+        <div class="verification-icon-wrap" style="background:#FEF3C7; color:#D97706; border:1px solid #FDE68A;">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div>
+          <h3 style="font-size:16px; color:#2B2B2B; margin:0;">Campally Pro Seller Upgrade</h3>
+          <p style="font-size:12px; color:#B45309; margin:2px 0 0 0;">Fast-track verification & instant campus authority</p>
+        </div>
+      </div>
+
+      <div id="pro-seller-status-banner" style="display:none; margin-bottom:12px;"></div>
+
+      <ul style="font-size:12px; color:#92400E; margin:0 0 14px 0; padding-left:18px; line-height:1.6;">
+        <li>⭐ Distinctive <strong>Pro Verified</strong> badge on profile & all your listings</li>
+        <li>Priority search placement across your campus</li>
+        <li>Valid for full academic semester (120 Days)</li>
+      </ul>
+
+      <button type="button" id="upgrade-pro-seller-btn" class="btn-primary" style="background:linear-gradient(135deg, #D97706, #B45309); margin-top:4px; display:flex; align-items:center; justify-content:center; gap:8px;">
+        <i class="fa-solid fa-crown"></i> Get Pro Seller Badge (₦500)
+      </button>
+    </div>
+
+    <!-- Campus Ambassador Referral Program Card -->
+    <div class="verification-card" style="margin-top:16px; border: 1px solid #C7D2FE; background: #EEF2FF;">
+      <div class="verification-header">
+        <div class="verification-icon-wrap" style="background:#E0E7FF; color:#4338CA; border:1px solid #C7D2FE;">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h3 style="font-size:16px; color:#1E1B4B; margin:0;">Campus Ambassador & Referrals</h3>
+          <p style="font-size:12px; color:#4F46E5; margin:2px 0 0 0;">Earn ₦150 per student invited to Campally</p>
+        </div>
+      </div>
+
+      <p style="font-size:12px; color:#3730A3; margin:0 0 12px 0; line-height:1.5;">
+        Get your personalized university referral link, share to your campus WhatsApp groups, track which students registered, and withdraw earnings to your Nigerian bank!
+      </p>
+
+      <a href="ambassador.html" class="btn-primary" style="background:#4338CA; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
+        <i class="fa-solid fa-chart-line"></i> Open Ambassador Portal & Referral Link
+      </a>
+    </div>
+
+    <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+      <a href="reset-password.html" style="font-size:14px; color:#E8553D; text-decoration:none; font-weight:600;">
+        <i class="fa-solid fa-key" style="margin-right:6px;"></i> Change Password
+      </a>
+      <a href="settings.html" style="font-size:14px; color:#666; text-decoration:none;">
+        <i class="fa-solid fa-gear" style="margin-right:6px;"></i> Account Settings
+      </a>
+      <a href="#" id="logout-link" style="font-size:14px; color:#999; text-decoration:none; margin-top:6px;">
+        <i class="fa-solid fa-right-from-bracket" style="margin-right:6px;"></i> Log out
+      </a>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="campuses.js"></script>
+  <script src="paystack-integration.js"></script>
   <script src="profile.js"></script>
   <script src="nav.js"></script>
   <script>loadNav("profile");</script>

@@ -1,0 +1,64 @@
+{
+  "boosts": {},
+  "urgent": {},
+  "proSellers": {
+    "usr_test_123": {
+      "verifiedAt": "2026-10-14T08:42:31.417Z",
+      "expiresAt": 1802335351417,
+      "email": "mbuharmless@gmail.com",
+      "reference": "T797717103629097",
+      "amount": 500
+    },
+    "f2fc749a-668b-40d8-9acc-5531fc442d06": {
+      "verifiedAt": "2026-10-14T08:51:12.080Z",
+      "expiresAt": 1802335872080,
+      "email": "mbuharmless@gmail.com",
+      "reference": "T801196288650720",
+      "amount": 500
+    }
+  },
+  "businesses": [],
+  "processedReferences": {
+    "T797717103629097": "2026-10-14T08:42:31.417Z",
+    "T666020579535652": "2026-10-14T08:50:11.838Z",
+    "T801196288650720": "2026-10-14T08:51:12.079Z"
+  },
+  "transactions": [
+    {
+      "reference": "T797717103629097",
+      "planId": "pro_seller",
+      "planName": "Pro Verified Student Seller Badge",
+      "amountKobo": 50000,
+      "priceNaira": 500,
+      "paidAt": "2026-10-14T08:42:31.417Z",
+      "channel": "test_card",
+      "customerEmail": "mbuharmless@gmail.com",
+      "itemId": null,
+      "userId": "usr_test_123"
+    },
+    {
+      "reference": "T666020579535652",
+      "planId": "pro_seller",
+      "planName": "Pro Verified Student Seller Badge",
+      "amountKobo": 50000,
+      "priceNaira": 500,
+      "paidAt": "2026-10-14T08:50:11.838Z",
+      "channel": "test_card",
+      "customerEmail": "mbuharmless@gmail.com",
+      "itemId": null,
+      "userId": "f2fc749a-668b-40d8-9acc-5531fc442d06"
+    },
+    {
+      "reference": "T801196288650720",
+      "planId": "pro_seller",
+      "planName": "Pro Verified Student Seller Badge",
+      "amountKobo": 50000,
+      "priceNaira": 500,
+      "paidAt": "2026-10-14T08:51:01.000Z",
+      "channel": "card",
+      "customerEmail": "mbuharmless@gmail.com",
+      "itemId": null,
+      "userId": "f2fc749a-668b-40d8-9acc-5531fc442d06"
+    }
+  ]
+}

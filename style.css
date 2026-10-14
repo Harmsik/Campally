@@ -543,3 +543,578 @@ body {
   color: #C7C2B8;
   font-size: 14px;
 }
+
+/* ==========================================================
+   CAMPALLY VALUE-ADD FEATURES STYLES
+   ========================================================== */
+
+/* Badges on listing cards */
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.badge-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.badge-swap {
+  background: #FDF1EE;
+  color: #C2410C;
+  border: 1px solid #FDBA74;
+}
+
+.badge-hall {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+.badge-course {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
+
+.badge-boosted,
+.badge-featured {
+  background: #FFF1EE;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  font-weight: 800;
+}
+
+.badge-urgent {
+  background: #FFF1F2;
+  color: #BE123C;
+  border: 1px solid #FDA4AF;
+  font-weight: 700;
+}
+
+.badge-pro {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+  font-weight: 700;
+}
+
+.is-boosted-card {
+  border: 2px solid #E8553D !important;
+  box-shadow: 0 4px 16px rgba(232, 85, 61, 0.12) !important;
+}
+
+.badge-verified {
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Tab Switcher: Listings vs Requests */
+.view-tabs-container {
+  display: flex;
+  background: #FFFFFF;
+  margin: 10px 20px 0 20px;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid #E5E0D8;
+}
+
+.view-tab-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7A7A7A;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.view-tab-btn.active {
+  background: #E8553D;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(232, 85, 61, 0.25);
+}
+
+/* Hostel / Location Filter Bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 20px 0 20px;
+  overflow-x: auto;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #E5E0D8;
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 13px;
+  color: #444;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.filter-select:focus {
+  border-color: #E8553D;
+}
+
+/* Safe Meetup Spot Box on Listing */
+.safe-meetup-box {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.safe-meetup-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.safe-meetup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #15803D;
+  line-height: 1.6;
+}
+
+.safe-meetup-list li::before {
+  content: "• ";
+  color: #22C55E;
+  font-weight: bold;
+}
+
+.safe-meetup-tip {
+  font-size: 12px;
+  color: #166534;
+  background: #DCFCE7;
+  padding: 8px 10px;
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+/* WhatsApp Status Generator Button */
+.whatsapp-status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 18px;
+  background: #FFFFFF;
+  color: #075E54;
+  border: 2px solid #25D366;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.whatsapp-status-btn:active {
+  background: #E8F8F0;
+}
+
+/* Modal for WhatsApp Status Card */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  color: #2B2B2B;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+}
+
+.canvas-preview-wrapper {
+  background: #F0EDE6;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.status-canvas {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* Requests Board */
+.requests-container {
+  padding: 14px 20px 90px 20px;
+}
+
+.request-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #E8553D;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.request-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2B2B2B;
+}
+
+.request-budget {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E8553D;
+  background: #FDF6EC;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.request-details {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.request-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #888;
+}
+
+.post-request-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #E8553D;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+/* Toast Notifications */
+.campally-toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 360px;
+}
+
+.campally-toast {
+  pointer-events: auto;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideDownFade 0.3s ease;
+}
+
+.campally-toast.success {
+  background: #10B981;
+}
+
+.campally-toast.error {
+  background: #EF4444;
+}
+
+.campally-toast.info {
+  background: #2563EB;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================
+   CATEGORY CHIPS & PRICE FILTER PILLS
+   ========================================================== */
+.category-chips-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 20px 4px 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-chips-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #FFFFFF;
+  border: 1px solid #E5E0D8;
+  color: #4B5563;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.category-chip.active {
+  background: #E8553D;
+  border-color: #E8553D;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(232, 85, 61, 0.25);
+}
+
+.budget-pills-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 20px 8px 20px;
+  scrollbar-width: none;
+}
+
+.budget-pills-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.budget-pill {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  background: #F9F8F6;
+  border: 1px solid #E5E0D8;
+  color: #555555;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.budget-pill.active {
+  background: #2B2B2B;
+  border-color: #2B2B2B;
+  color: #FFFFFF;
+}
+
+/* Save / Favorite Heart Button on Listing Cards */
+.save-item-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #9CA3AF;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.save-item-btn:hover {
+  transform: scale(1.1);
+}
+
+.save-item-btn.saved {
+  color: #E8553D;
+  background: #FFFFFF;
+}
+
+/* Sold Items State */
+.badge-sold {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+
+.listing-card.is-sold .listing-image {
+  opacity: 0.75;
+  position: relative;
+}
+
+.sold-card-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(220, 38, 38, 0.92);
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 4;
+}
+
+/* Student ID Verification Card Styles */
+.verification-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E0D8;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.verification-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.verification-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #FDF1EE;
+  color: #E8553D;
+  border: 1px solid #FCD8D0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.security-notice {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.4;
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+
+/* Campus Ambassador Banner */
+.ambassador-banner {
+  background: linear-gradient(135deg, #2A1713 0%, #3D1C15 100%);
+  color: #FFFFFF;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 16px 20px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(42, 23, 19, 0.2);
+  border: 1px solid rgba(232, 85, 61, 0.25);
+}
+

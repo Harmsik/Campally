@@ -17,17 +17,37 @@ feedbackForm.addEventListener("submit", async (e) => {
   });
   
   if (error) {
-    alert("Failed to send feedback: " + error.message);
+    if (window.showToast) window.showToast("Failed to send feedback: " + error.message, "error");
+    else alert("Failed to send feedback: " + error.message);
   } else {
-    alert("Thank you for your feedback!");
+    if (window.showToast) window.showToast("Thank you for your feedback!", "success");
+    else alert("Thank you for your feedback!");
     feedbackForm.reset();
   }
 });
+
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
+  navigator.serviceWorker.register("sw.js").then((reg) => {
+    reg.update();
+  }).catch(() => {});
 }
-document.getElementById("signup-btn").addEventListener("click", (e) => {
-  e.preventDefault();
-  alert("Tip: When adding your WhatsApp number in your profile, start it with +234 so buyers can reach you correctly.");
-  window.location.href = "signup.html";
-});
+
+const signupBtn = document.getElementById("signup-btn");
+if (signupBtn) {
+  signupBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "signup.html";
+  });
+}
+
+const browseVisitorBtn = document.getElementById("browse-visitor-btn");
+if (browseVisitorBtn) {
+  browseVisitorBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    sessionStorage.setItem("campally_visitor_mode", "true");
+    try {
+      await supabase.auth.signOut();
+    } catch (_) {}
+    window.location.href = "home.html?visitor=true";
+  });
+}

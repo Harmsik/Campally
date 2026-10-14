@@ -5,37 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campally - Listing</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
   <header class="top-bar">
+    <a href="home.html" style="margin-right:14px; color:#2B2B2B; text-decoration:none; font-size:16px;">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
     <h1 class="logo-small">Listing Details</h1>
   </header>
 
-  <div class="listing-detail">
-    <div id="detail-image" class="listing-image" style="height:220px;">No image</div>
-    <div style="padding:20px;">
-      <h2 id="detail-title" style="font-size:20px; margin-bottom:6px;">Loading...</h2>
-      <p id="detail-price" class="listing-price" style="font-size:20px; margin-bottom:14px;"></p>
-      <p id="detail-description" style="color:#555; line-height:1.5; margin-bottom:20px;"></p>
+  <div class="listing-detail" style="margin-bottom:90px;">
+    <div id="image-container" style="position:relative;">
+      <div id="detail-image" class="listing-image" style="height:240px;">No image</div>
+      <div id="image-badge-overlay" style="position:absolute; top:12px; left:12px; display:flex; gap:6px;"></div>
+    </div>
 
-      <div id="seller-info" style="display:flex; align-items:center; gap:10px; padding:14px; background:#FFFFFF; border-radius:14px; margin-bottom:16px;">
-        <img id="seller-mini-avatar" style="width:44px; height:44px; border-radius:50%; object-fit:cover; background:#F0EDE6;" src="" alt="">
-        <div>
-          <div id="seller-mini-name" style="font-weight:600; font-size:14px;"></div>
-          <a id="seller-mini-link" href="#" style="font-size:12px; color:#E8553D;">View profile</a>
+    <div style="padding:20px;">
+      <h2 id="detail-title" style="font-size:22px; margin-bottom:6px; color:#2B2B2B;">Loading...</h2>
+      <p id="detail-price" class="listing-price" style="font-size:22px; margin-bottom:10px;"></p>
+      
+      <div id="detail-badges" class="card-badges" style="margin-bottom:16px;"></div>
+
+      <div style="background:#FAF9F6; border:1px solid #E5E0D8; border-radius:14px; padding:14px; margin-bottom:18px;">
+        <h4 style="font-size:12px; text-transform:uppercase; color:#888; letter-spacing:0.5px; margin-bottom:6px;">Description</h4>
+        <p id="detail-description" style="color:#444; line-height:1.5; font-size:14px; white-space:pre-line;">No description provided.</p>
+      </div>
+
+      <!-- Seller Mini Profile -->
+      <div id="seller-info" style="display:flex; align-items:center; gap:12px; padding:14px; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:14px; margin-bottom:18px;">
+        <img id="seller-mini-avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; background:#F0EDE6;" src="" alt="">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div id="seller-mini-name" style="font-weight:700; font-size:15px; color:#2B2B2B;"></div>
+            <span id="seller-verified-badge" class="badge-pill badge-verified" style="display:none;"><i class="fa-solid fa-shield-check"></i> Verified</span>
+          </div>
+          <div id="seller-mini-location" style="font-size:12px; color:#777; margin-top:2px;"></div>
+          <a id="seller-mini-link" href="#" style="font-size:12px; color:#E8553D; font-weight:600; text-decoration:none; display:inline-block; margin-top:2px;">View seller profile & reviews &rarr;</a>
         </div>
       </div>
 
-      <div id="contact-action"></div>
+      <!-- Preferred & Recommended Safe Meetup Spot -->
+      <div class="safe-meetup-box">
+        <div class="safe-meetup-title">
+          <i class="fa-solid fa-shield-halved"></i> Campus Safe Meetup Spot
+        </div>
+        <p id="seller-preferred-spot" style="font-size:13px; color:#166534; font-weight:600; margin-bottom:6px; display:none;"></p>
+        <ul class="safe-meetup-list">
+          <li>University Main Library Foyer / Entrance</li>
+          <li>Student Union Building (SUB) Front Atrium</li>
+          <li>Hostel Porter's Lodge / Reception Desk</li>
+          <li>Faculty Lecture Theater Corridor</li>
+        </ul>
+        <div class="safe-meetup-tip">
+          💡 <strong>Student Tip:</strong> Always meet during daytime in public campus areas. Test or inspect the item before making any payment.
+        </div>
+      </div>
+
+      <!-- Owner Quick Control Banner -->
+      <div id="owner-listing-controls" style="display:none; margin-bottom:16px;"></div>
+
+      <!-- Primary Contact Action -->
+      <div id="contact-action" style="margin-bottom:12px;"></div>
+
+      <!-- Save / Bookmark Button -->
+      <button id="detail-save-btn" class="whatsapp-status-btn" style="border-color:#E5E0D8; color:#444; margin-bottom:8px;">
+        <i class="fa-regular fa-heart"></i> Save to Favorites
+      </button>
+
+      <!-- Viral Sharing Engine: WhatsApp Status Generator -->
+      <button id="open-status-modal-btn" class="whatsapp-status-btn">
+        <i class="fa-brands fa-whatsapp" style="font-size:18px; color:#25D366;"></i> Share to WhatsApp Status Card
+      </button>
+
+      <button id="copy-link-btn" class="whatsapp-status-btn" style="border-color:#E5E0D8; color:#444; margin-top:8px;">
+        <i class="fa-solid fa-share-nodes"></i> Copy Listing Link
+      </button>
+    </div>
+  </div>
+
+  <!-- WhatsApp Status Card Modal -->
+  <div id="status-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="display:flex; align-items:center; gap:8px;">
+          <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp Status Card
+        </h3>
+        <button id="close-status-modal" class="modal-close-btn">&times;</button>
+      </div>
+      
+      <p style="font-size:13px; color:#666; margin-bottom:14px; text-align:left;">
+        Ready-to-post vertical status card tailored for campus WhatsApp groups and status updates!
+      </p>
+
+      <div class="canvas-preview-wrapper">
+        <canvas id="status-canvas" width="720" height="1280" class="status-canvas"></canvas>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button id="download-card-btn" class="btn-primary" style="margin-top:0;">
+          <i class="fa-solid fa-download"></i> Save Card Image
+        </button>
+        <a id="share-wa-direct-link" href="#" target="_blank" class="whatsapp-btn" style="margin-top:0; text-align:center;">
+          <i class="fa-brands fa-whatsapp"></i> Share Link on WhatsApp
+        </a>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-<script src="nav.js"></script>
-<script>loadNav("home");</script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="campuses.js"></script>
+  <script src="paystack-integration.js"></script>
+  <script src="nav.js"></script>
   <script src="listing.js"></script>
+  <script>loadNav("home");</script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+  "name": "Campally",
+  "description": "Your campus, your marketplace. Buy and sell textbooks, past questions, electronics, fashion, and services within your campus community.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

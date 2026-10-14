@@ -6,36 +6,318 @@
   <title>Campally - Home</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
 
+  <!-- Clean Top Bar with Logo only: No settings or profile icons here since profile & settings are accessed via bottom navigation -->
   <header class="top-bar">
     <h1 class="logo-small">Campally</h1>
   </header>
 
-  <div class="campus-bar">
-  <select id="campus-select"></select>
+  <!-- Visitor indicator banner (shown when user is not logged in) -->
+  <div id="visitor-banner" style="display:none; background:#FFF5F3; border-bottom:1px solid #FED7AA; padding:9px 16px; font-size:12px; color:#7C2D12; justify-content:space-between; align-items:center;">
+    <span><i class="fa-solid fa-eye" style="color:#E8553D; margin-right:6px;"></i> Browsing marketplace as <strong>Visitor</strong></span>
+    <a href="login.html" style="background:#E8553D; color:white; padding:4px 12px; border-radius:14px; font-weight:600; text-decoration:none; font-size:12px;">Sign In to Trade</a>
   </div>
 
-  <div class="search-bar">
-    <input type="text" id="search-input" placeholder="Search listings...">
+  <!-- View Switcher: Items For Sale vs Requests -->
+  <div class="view-tabs-container">
+    <button id="tab-listings" class="view-tab-btn active"><i class="fa-solid fa-store"></i> Items For Sale</button>
+    <button id="tab-requests" class="view-tab-btn"><i class="fa-solid fa-bullhorn"></i> Requests (Wanted)</button>
   </div>
 
-  <div id="category-rows" style="padding-bottom:90px;">
-    <p id="loading-text" style="text-align:center; color:#999; padding:40px 0;">Loading listings...</p>
+  <!-- Listings View Section -->
+  <div id="listings-view">
+    <div class="campus-bar" style="position:relative; margin-bottom:12px;">
+      <div style="position:relative; width:100%;">
+        <div style="display:flex; align-items:center; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; padding:0 12px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+          <i class="fa-solid fa-building-columns" style="color:#E8553D; font-size:15px; margin-right:8px;"></i>
+          <input type="text" id="campus-search-input" placeholder="Type campus name or abbreviation (e.g. FUNAI, UNILAG, UNN, Ibadan)..." style="flex:1; border:none; background:transparent; padding:12px 0; font-size:14px; font-weight:600; color:#2B2B2B; outline:none;" autocomplete="off">
+          <button id="clear-campus-btn" type="button" style="display:none; background:none; border:none; color:#999; cursor:pointer; padding:6px; font-size:16px; line-height:1;" title="Reset to All Campuses">&times;</button>
+        </div>
+        <div id="campus-suggestions-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; max-height:260px; overflow-y:auto; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.12);"></div>
+      </div>
+      <!-- Hidden select kept synced for backward compatibility -->
+      <select id="campus-select" style="display:none;">
+        <option value="">🏫 All Campuses (Nigeria)</option>
+      </select>
+    </div>
+
+    <!-- Horizontal Category Chips (1-Tap Filters) -->
+    <div id="category-chips" class="category-chips-bar">
+      <button class="category-chip active" data-cat="all">🌟 All Items</button>
+      <button class="category-chip" data-cat="academic"><i class="fa-solid fa-book"></i> Textbooks & Notes</button>
+      <button class="category-chip" data-cat="electronics"><i class="fa-solid fa-laptop"></i> Gadgets & Electronics</button>
+      <button class="category-chip" data-cat="hostel"><i class="fa-solid fa-bed"></i> Hostel Essentials</button>
+      <button class="category-chip" data-cat="fashion"><i class="fa-solid fa-shirt"></i> Fashion & Thrift</button>
+      <button class="category-chip" data-cat="services"><i class="fa-solid fa-screwdriver-wrench"></i> Services & Skills</button>
+      <button class="category-chip" data-cat="food"><i class="fa-solid fa-burger"></i> Food & Groceries</button>
+    </div>
+
+    <!-- Budget Filter Pills -->
+    <div id="budget-pills" class="budget-pills-bar">
+      <button class="budget-pill active" data-budget="all">All Prices</button>
+      <button class="budget-pill" data-budget="2000">Under ₦2k</button>
+      <button class="budget-pill" data-budget="5000">Under ₦5k</button>
+      <button class="budget-pill" data-budget="15000">Under ₦15k</button>
+      <button class="budget-pill" data-budget="above15000">₦15k+</button>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search items, course codes (e.g. MTH101)...">
+    </div>
+
+    <div class="filter-bar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <select id="hall-filter" class="filter-select" style="flex:1; min-width:140px;">
+        <option value="all">📍 All Hostels / Lodges</option>
+      </select>
+      <button id="swap-filter-btn" class="filter-select" style="flex:0 0 auto; width:auto; display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer;">
+        <i class="fa-solid fa-repeat"></i> Swaps Only
+      </button>
+      <button id="saved-filter-btn" class="filter-select" style="flex:0 0 auto; width:auto; display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer;">
+        <i class="fa-solid fa-heart" style="color:#E8553D;"></i> Saved (<span id="saved-counter">0</span>)
+      </button>
+    </div>
+
+    <!-- Share Deals to WhatsApp Group Action -->
+    <div style="padding: 10px 20px 4px 20px;">
+      <button id="whatsapp-digest-btn" style="width:100%; background:#F0FDF4; border:1px solid #BBF7D0; color:#15803D; font-size:12px; font-weight:600; padding:8px 12px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#22C55E;"></i> Share Top Deals to Campus WhatsApp Group
+      </button>
+    </div>
+
+    <!-- Custom Suggestion for New Users (How to Use Campally) -->
+    <div id="home-new-user-suggestion" style="display:none; padding: 6px 20px 4px 20px;"></div>
+
+    <!-- Campus Business Spotlight & Services Carousel -->
+    <div id="campus-business-section" style="padding: 12px 20px 6px 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#FEF3C7; color:#B45309; font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase;">
+            <i class="fa-solid fa-star" style="font-size:10px;"></i> SPOTLIGHT
+          </span>
+          <span style="font-size:13px; font-weight:700; color:#2B2B2B;">Student Businesses & Services</span>
+        </div>
+        <button id="open-promote-biz-btn" style="background:#FFF5F3; border:1px solid #FCD8D0; color:#E8553D; font-size:11px; font-weight:700; padding:4px 10px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:4px;">
+          <i class="fa-solid fa-plus-circle"></i> Promote (₦1,500)
+        </button>
+      </div>
+      <div id="business-spotlight-cards" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;">
+        <!-- Injected dynamically via home.js / CampallyPay -->
+      </div>
+    </div>
+
+    <div id="category-rows" style="padding-bottom:10px;">
+      <p id="loading-text" style="text-align:center; color:#999; padding:40px 0;">Loading listings...</p>
+    </div>
+  </div>
+
+  <!-- Student Requests (Wanted) View Section -->
+  <div id="requests-view" style="display:none;" class="requests-container">
+    <button id="open-post-request-btn" class="post-request-btn">
+      <i class="fa-solid fa-plus-circle"></i> Post What You're Looking For
+    </button>
+
+    <div id="requests-list">
+      <p id="requests-loading" style="text-align:center; color:#888; padding:30px 0;">Loading student requests...</p>
+    </div>
+  </div>
+
+  <!-- Campus Ambassador Banner -->
+  <div class="ambassador-banner">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <span style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; background:rgba(255,255,255,0.15); padding:3px 10px; border-radius:20px;">CAMPUS LEADERSHIP</span>
+      <i class="fa-solid fa-bullhorn" style="font-size:18px; color:#FCD34D;"></i>
+    </div>
+    <h4 style="font-size:16px; margin:0; font-weight:700;">Lead Campally at Your Campus</h4>
+    <p style="font-size:12px; color:#E0E7FF; margin:0; line-height:1.4;">
+      Become an official Campally Ambassador at your university. Share your unique referral link, earn ₦150 per student signup & track your referrals!
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;">
+      <a href="ambassador.html" style="background:#FFFFFF; color:#1E1B4B; border:none; padding:8px 16px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-chart-line"></i> Ambassador Portal & Referrals &rarr;
+      </a>
+      <button id="open-ambassador-modal-btn" style="background:rgba(255,255,255,0.15); color:#FFFFFF; border:1px solid rgba(255,255,255,0.3); padding:8px 14px; border-radius:10px; font-weight:600; font-size:12px; cursor:pointer;">
+        Apply to Represent
+      </button>
+    </div>
+  </div>
+
+  <!-- Post Request Modal -->
+  <div id="post-request-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content" style="text-align:left;">
+      <div class="modal-header">
+        <h3 style="display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-bullhorn" style="color:#E8553D;"></i> Post a Request
+        </h3>
+        <button id="close-request-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <p style="font-size:13px; color:#666; margin-bottom:14px;">Looking for a textbook, calculator, mini fridge, or room item? Let students nearby know.</p>
+      
+      <form id="new-request-form" class="auth-form">
+        <label>Item Name / What you need</label>
+        <input type="text" id="req-title" placeholder="e.g. Scientific Calculator fx-991EX or PHY101 Notes" required>
+
+        <label>Course Code (optional)</label>
+        <input type="text" id="req-course" placeholder="e.g. MTH101, GST102">
+
+        <label>Your Hostel or Lodge</label>
+        <input type="text" id="req-hall" placeholder="e.g. Perm Site Lodge, Silver Hostel, Moremi Hall, Hilltop Lodge">
+
+        <label>Your Target Budget (₦)</label>
+        <input type="number" id="req-budget" placeholder="e.g. 3500">
+
+        <label>Details & Urgency</label>
+        <textarea id="req-details" placeholder="Brief details about condition needed or when you need it..." style="padding:10px; border:1px solid #E5E0D8; border-radius:10px; font-family:inherit; min-height:60px; font-size:14px; background:#FAF9F6;"></textarea>
+
+        <label>Your WhatsApp Number</label>
+        <input type="text" id="req-whatsapp" placeholder="e.g. +2348012345678" required>
+
+        <button type="submit" class="btn-primary" style="margin-top:16px;">Publish Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Campus Ambassador Application Modal -->
+  <div id="ambassador-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content" style="text-align:left; max-height:90vh; overflow-y:auto; padding:24px 20px;">
+      <div class="modal-header">
+        <h3 style="display:flex; align-items:center; gap:8px; margin:0;">
+          <i class="fa-solid fa-graduation-cap" style="color:#E8553D;"></i> Campus Ambassador Application
+        </h3>
+        <button id="close-ambassador-modal" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Eligibility Criteria Notice -->
+      <div style="background:#FFFBEB; border:1px solid #FCD34D; border-radius:12px; padding:12px 14px; margin:12px 0 16px 0; font-size:12px; color:#92400E; line-height:1.5;">
+        <div style="font-weight:700; display:flex; align-items:center; gap:6px; margin-bottom:4px; color:#78350F;">
+          <i class="fa-solid fa-shield-halved" style="color:#D97706;"></i> Ambassador Approval Conditions
+        </div>
+        Campally ambassadors lead their campus communities and earn <strong>₦150 per student signup</strong>. To qualify for approval, applicants must meet at least <strong>one</strong> of these conditions with proof:
+        <ul style="margin:4px 0 0 0; padding-left:18px;">
+          <li>Course Rep or relevant leadership position in school</li>
+          <li>Social media account with 3,000+ followers</li>
+          <li>Active commitment on campus WhatsApp groups</li>
+        </ul>
+      </div>
+      
+      <form id="ambassador-form" class="auth-form">
+        <label>Your Full Name</label>
+        <input type="text" id="amb-name" placeholder="e.g. Ebube Okafor" required>
+
+        <label>Your Email Address</label>
+        <input type="email" id="amb-email" placeholder="e.g. student@gmail.com" required>
+
+        <label>Your Campus (Attached to Application)</label>
+        <select id="amb-campus" required></select>
+
+        <label>Department & Level</label>
+        <input type="text" id="amb-dept" placeholder="e.g. Economics • 300 Level" required>
+
+        <label>Your Active WhatsApp Number</label>
+        <input type="tel" id="amb-phone" placeholder="e.g. 08012345678" required>
+
+        <!-- Condition 1: Course Rep or School Position -->
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; margin-top:10px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; margin-bottom:6px;">
+            <input type="checkbox" id="amb-cond-course-rep" style="margin-top:2px; width:16px; height:16px; accent-color:#E8553D;">
+            <span>Condition 1: I am a Course Rep or hold an official position in school</span>
+          </label>
+          <div id="course-rep-details-box" style="display:none; padding-top:6px;">
+            <label style="font-size:11px; color:#475569; font-weight:600;">Position Title & Faculty / Department</label>
+            <input type="text" id="amb-school-pos" placeholder="e.g. Course Representative 300L Political Science or SUG Rep" style="font-size:13px; margin-top:4px;">
+          </div>
+        </div>
+
+        <!-- Condition 2: Social Media 3k+ Followers -->
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; margin-top:10px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; margin-bottom:6px;">
+            <input type="checkbox" id="amb-cond-social" style="margin-top:2px; width:16px; height:16px; accent-color:#E8553D;">
+            <span>Condition 2: I have a social media account with 3k+ followers</span>
+          </label>
+          <div id="social-details-box" style="display:none; padding-top:6px; display:flex; flex-direction:column; gap:8px;">
+            <div>
+              <label style="font-size:11px; color:#475569; font-weight:600;">Choose Social Media Platform</label>
+              <select id="amb-social-platform" style="width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px; background:#FFFFFF;">
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="X (Twitter)">X (Twitter)</option>
+                <option value="Facebook">Facebook</option>
+                <option value="YouTube">YouTube</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="WhatsApp Channel">WhatsApp Channel / Group Admin</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px; color:#475569; font-weight:600;">Handle Name or Profile Link for inspection</label>
+              <input type="text" id="amb-social-handle" placeholder="e.g. @campally_lead or https://instagram.com/yourhandle" style="font-size:13px;">
+            </div>
+            <div>
+              <label style="font-size:11px; color:#475569; font-weight:600;">Current Followers Count</label>
+              <input type="text" id="amb-social-followers" placeholder="e.g. 4,500 followers" style="font-size:13px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Condition 3: Must Always Be Active -->
+        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:12px; margin-top:10px;">
+          <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#166534; font-size:12px;">
+            <input type="checkbox" id="amb-cond-active" checked required style="margin-top:2px; width:16px; height:16px; accent-color:#16A34A;">
+            <span>Condition 3: Must always be active &mdash; I pledge to remain active in campus & department WhatsApp groups to help students trade safely.</span>
+          </label>
+        </div>
+
+        <!-- Proof Upload -->
+        <div style="background:#FAF9F6; border:1.5px dashed #CBD5E1; border-radius:12px; padding:12px; margin-top:12px;">
+          <label style="font-weight:700; font-size:12px; color:#1E293B; display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+            <i class="fa-solid fa-file-arrow-up" style="color:#E8553D;"></i> Upload Proof of Eligibility (Required for Inspection)
+          </label>
+          <p style="font-size:11px; color:#64748B; margin:0 0 8px 0;">
+            Upload screenshot of 3k+ followers, student ID card, appointment letter, course rep badge, or department group admin screen.
+          </p>
+          <input type="file" id="amb-proof-file" accept="image/*,application/pdf" required style="font-size:12px; width:100%;">
+          
+          <!-- Image preview container -->
+          <div id="amb-proof-preview-box" style="display:none; margin-top:8px; text-align:center;">
+            <img id="amb-proof-preview-img" src="" alt="Proof Preview" style="max-height:120px; border-radius:8px; border:1px solid #CBD5E1; object-fit:cover;">
+            <div style="font-size:11px; color:#059669; font-weight:600; margin-top:3px;"><i class="fa-solid fa-circle-check"></i> Proof document loaded</div>
+          </div>
+
+          <input type="text" id="amb-proof-note" placeholder="Optional brief note about this proof (e.g. Screenshot of my Instagram profile)" style="font-size:12px; margin-top:8px;">
+        </div>
+
+        <label style="margin-top:12px;">Why would you like to represent Campally?</label>
+        <textarea id="amb-reason" placeholder="Briefly tell us about your active departmental groups, hostels, lodges, or campus connections..." style="padding:10px; border:1px solid #E5E0D8; border-radius:10px; font-family:inherit; min-height:60px; font-size:13px; background:#FAF9F6;" required></textarea>
+
+        <div style="background:#FDF1EE; border:1px solid #FCD8D0; border-radius:10px; padding:10px 12px; margin-top:8px; font-size:11px; color:#9C2A18; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-envelope" style="font-size:14px; color:#E8553D;"></i>
+          <span>Submissions are inspected by the Founder (<strong>mbuharmless@gmail.com</strong>) before ambassador referral link activation.</span>
+        </div>
+
+        <button type="submit" id="amb-submit-btn" class="btn-primary" style="margin-top:14px; background:#E8553D; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
+          <i class="fa-solid fa-paper-plane"></i> Submit Application for Founder Approval
+        </button>
+      </form>
+    </div>
   </div>
 
   <footer class="site-footer">
-  <h3 style="color:#E8553D; font-size:18px; margin-bottom:10px;">Campally</h3>
-  <a href="index.html">About</a>
-  <a href="privacy-policy.html">Privacy Policy</a>
-  <a href="mailto: mbuharmless@gmail.com">Contact Support</a>
-  <p style="margin-top:14px; font-size:12px;">&copy; 2026 Campally. All rights reserved.</p>
+    <h3 style="color:#E8553D; font-size:18px; margin-bottom:8px;">Campally</h3>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-bottom:10px; font-size:13px;">
+      <a href="index.html">About</a>
+      <a href="how-to-use.html" style="color:#E8553D; font-weight:700;"><i class="fa-solid fa-book-open"></i> How to Use Campally</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="mailto:mbuharmless@gmail.com">Contact Support</a>
+    </div>
+    <p style="margin-top:10px; font-size:12px; color:#888;">&copy; 2026 Campally. All rights reserved.</p>
   </footer>
-  
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-  <script src="home.js"></script>
+  <script src="campuses.js"></script>
+  <script src="paystack-integration.js"></script>
   <script src="nav.js"></script>
+  <script src="home.js"></script>
   <script>loadNav("home");</script>
 </body>
 </html>

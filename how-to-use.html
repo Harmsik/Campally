@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Use Campally - Student Guide & Best Practices</title>
+  <meta name="description" content="Comprehensive step-by-step guide on how students can buy, sell, swap, and promote items safely on Campally campus marketplace.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .guide-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 20px 80px 20px;
+    }
+    .guide-hero {
+      background: linear-gradient(135deg, #E8553D 0%, #C23924 100%);
+      color: #FFFFFF;
+      padding: 32px 24px;
+      border-radius: 20px;
+      text-align: center;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(232, 85, 61, 0.2);
+    }
+    .guide-hero h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .guide-hero p {
+      font-size: 14px;
+      color: #FEE2E2;
+      max-width: 540px;
+      margin: 0 auto 18px auto;
+      line-height: 1.5;
+    }
+    .guide-hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      color: #E8553D;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      transition: transform 0.15s ease;
+    }
+    .guide-hero-cta:hover {
+      transform: translateY(-2px);
+    }
+    .guide-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .guide-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .guide-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .icon-orange { background: #FDF1EE; color: #E8553D; border: 1px solid #FCD8D0; }
+    .icon-green { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+    .icon-blue { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+    .icon-amber { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+    .icon-purple { background: #FAF5FF; color: #7E22CE; border: 1px solid #E9D5FF; }
+
+    .guide-header h2 {
+      font-size: 18px;
+      color: #2B2B2B;
+      margin: 0;
+      font-weight: 700;
+    }
+    .guide-text {
+      font-size: 14px;
+      color: #4B5563;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .step-badge {
+      background: #FAF9F6;
+      border: 1px solid #E5E0D8;
+      color: #E8553D;
+      font-weight: 700;
+      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rule-box {
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .rule-box-danger {
+      background: #FEF2F2;
+      border: 1px solid #FEE2E2;
+      color: #991B1B;
+    }
+    .rule-box-tip {
+      background: #FFFBEB;
+      border: 1px solid #FEF3C7;
+      color: #92400E;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .pricing-card {
+      background: #FAF9F6;
+      border: 1px solid #E5E0D8;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: left;
+    }
+    .pricing-card.featured {
+      background: #FFF5F3;
+      border: 2px solid #E8553D;
+    }
+    .pricing-card h4 {
+      font-size: 14px;
+      color: #2B2B2B;
+      margin: 0 0 4px 0;
+      font-weight: 700;
+    }
+    .pricing-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: #E8553D;
+      margin-bottom: 6px;
+    }
+    .pricing-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <a href="home.html" style="color:#2B2B2B; text-decoration:none; font-size:16px; margin-right:12px;" title="Back to Marketplace">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="logo-small">How to Use Campally</h1>
+  </header>
+
+  <div class="guide-container">
+    
+    <!-- Hero Banner -->
+    <div class="guide-hero">
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; letter-spacing:0.5px; margin-bottom:12px;">
+        <i class="fa-solid fa-graduation-cap"></i> OFFICIAL STUDENT HANDBOOK
+      </div>
+      <h1>Master Campally & Get the Best Out of Your Campus</h1>
+      <p>
+        The definitive guide to buying textbooks, selling dorm items, swapping gear, connecting with students, and staying 100% safe.
+      </p>
+      <a href="home.html" class="guide-hero-cta">
+        <i class="fa-solid fa-store"></i> Explore Live Marketplace
+      </a>
+    </div>
+
+    <!-- Section 1: Getting Started -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-orange">
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <div>
+          <h2>1. Getting Started & Selecting Your Campus</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Campally connects students within their university communities across Nigeria. Whether you are a registered student or browsing as a visitor:
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span><strong>Type Your Campus:</strong> Use the live campus search at the top of the homepage (e.g. FUNAI, UNILAG, UNN, Ibadan, OAU). Campally filters all listings specifically to your school.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span><strong>Filter by Hostel or Lodge:</strong> Use the Hostel dropdown to see items available right in your lodge or perm site hall, making meetups effortless.</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span><strong>Visitor Mode:</strong> Anyone can browse deals as a visitor. When you're ready to sell, post requests, or verify your student status, simply sign in or create an account.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 2: How to Buy Safely -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-green">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <div>
+          <h2>2. How to Buy Textbooks, Notes & Essentials</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Finding deals and contacting other students is 100% free with zero agent commissions:
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span><strong>Search Course Codes:</strong> Need past questions or textbooks for a specific course? Type course codes like <code>MTH101</code>, <code>GST102</code>, or <code>PHY111</code> directly into search.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span><strong>Category Chips & Budget Pills:</strong> One-tap filter by Academic, Electronics, Hostel Essentials, Fashion, or Budget (e.g. Under ₦2,000, Under ₦5,000).</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span><strong>Direct WhatsApp Chat:</strong> Tap "Chat with Seller on WhatsApp" on any listing to negotiate directly with the student seller.</span>
+        </li>
+        <li>
+          <span class="step-badge">4</span>
+          <span><strong>Save Favorites:</strong> Tap the heart icon on any product to save it to your "Saved Items" list for quick review later.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 3: Safe Campus Meetups -->
+    <div class="guide-card" style="border-left: 4px solid #DC2626;">
+      <div class="guide-header">
+        <div class="guide-icon icon-orange" style="background:#FEF2F2; color:#DC2626; border-color:#FEE2E2;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <h2>3. Campus Safety & Zero-Scam Rules</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Campally is built on student trust. Follow these 5 Golden Rules for every transaction:
+      </p>
+      
+      <div class="rule-box rule-box-danger">
+        <strong style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> CRITICAL RULE: NEVER SEND MONEY IN ADVANCE!
+        </strong>
+        Never transfer money via bank or mobile money before physically seeing, inspecting, and testing the item in person. Any seller demanding "delivery fee" or advance deposit before meetup is likely a scammer.
+      </div>
+
+      <ul class="step-list" style="margin-top:14px;">
+        <li>
+          <span class="step-badge" style="color:#DC2626;">1</span>
+          <span><strong>Meet in Public Campus Spots:</strong> Always choose safe daytime meetup spots:
+            <ul style="margin:4px 0 0 0; padding-left:18px; color:#666;">
+              <li>University Main Library Foyer</li>
+              <li>Student Union Building (SUB) Entrance</li>
+              <li>Hostel Porter's Lodge or Reception Desk</li>
+              <li>Faculty Lecture Theater Corridors</li>
+            </ul>
+          </span>
+        </li>
+        <li>
+          <span class="step-badge" style="color:#DC2626;">2</span>
+          <span><strong>Inspect Thoroughly:</strong> Test calculators, laptops, chargers, and appliances on the spot before handing over cash or completing transfer.</span>
+        </li>
+        <li>
+          <span class="step-badge" style="color:#DC2626;">3</span>
+          <span><strong>Bring a Friend:</strong> Especially for electronics or higher-value transactions, walk with a roommate or classmate.</span>
+        </li>
+        <li>
+          <span class="step-badge" style="color:#DC2626;">4</span>
+          <span><strong>Report Suspicious Activity:</strong> If anyone behaves fraudulently, email us immediately at <strong>mbuharmless@gmail.com</strong> so we can ban the account.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 4: How to Sell & Swap -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-blue">
+          <i class="fa-solid fa-tag"></i>
+        </div>
+        <div>
+          <h2>4. How to Sell or Swap Items Fast</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Turn your old textbooks, room accessories, or gadgets into quick cash:
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span><strong>Post with Real Photos:</strong> Good daylight lighting makes items sell 3x faster.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span><strong>Specify Your Hostel & Course:</strong> Helps students in your hall or department find you immediately.</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span><strong>Open to Swap / Trade:</strong> Check the "Open to Swap" checkbox if you're open to trading your item for something else.</span>
+        </li>
+        <li>
+          <span class="step-badge">4</span>
+          <span><strong>Manage Your Inventory:</strong> In "My Listings", you can mark items as Sold or relist them with a single click.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 5: Monetization & Paystack Boosts -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-amber">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <h2>5. Supercharge Sales: Paystack Boosts & Pro Badges</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Want your items to sell within hours instead of days? Campally integrates secure <strong>Paystack</strong> payments for student-friendly promotion plans:
+      </p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card featured">
+          <h4>⚡ 3-Day Campus Boost</h4>
+          <div class="pricing-price">₦300</div>
+          <div class="pricing-desc">
+            Pins your listing to the very top of homepage and category feeds with a distinctive <strong>🔥 Featured</strong> badge.
+          </div>
+        </div>
+
+        <div class="pricing-card">
+          <h4>🔥 7-Day Mega Boost</h4>
+          <div class="pricing-price">₦500</div>
+          <div class="pricing-desc">
+            A full week of top placement. Maximum visibility for higher-value electronics or mattresses.
+          </div>
+        </div>
+
+        <div class="pricing-card">
+          <h4>🚨 Urgent Sale Tag</h4>
+          <div class="pricing-price">₦200</div>
+          <div class="pricing-desc">
+            Pulsating red Urgent badge for moving out or emergency cash. Tells buyers you are ready to deal.
+          </div>
+        </div>
+
+        <div class="pricing-card">
+          <h4>⭐ Pro Verified Seller</h4>
+          <div class="pricing-price">₦500 / sem</div>
+          <div class="pricing-desc">
+            Official Pro badge next to your name across all listings for 120 days. Unlocks buyer trust.
+          </div>
+        </div>
+
+        <div class="pricing-card" style="grid-column: 1 / -1;">
+          <h4>🏪 Campus Business Spotlight Banner</h4>
+          <div class="pricing-price">₦1,500 / 30 Days</div>
+          <div class="pricing-desc">
+            For campus student entrepreneurs: hair salons, bakers, phone repairers, laundry, and print shops. Features your business on the homepage carousel with 1-tap WhatsApp chat.
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-box rule-box-tip" style="margin-top:14px;">
+        <i class="fa-solid fa-lock"></i> <strong>Bank-Grade Paystack Security:</strong> Payments are processed via Paystack's PCI-DSS Level 1 certified gateway. We support Debit Cards, Bank Transfer, USSD, and OPay/PalmPay. Your card details are never stored on Campally servers.
+      </div>
+    </div>
+
+    <!-- Section 6: Student Requests Board -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-purple">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div>
+          <h2>6. Student Requests (Wanted) Board</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Can't find what you need on the marketplace?
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span>Switch to the <strong>Requests (Wanted)</strong> tab on the homepage.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span>Tap <strong>"Post What You're Looking For"</strong> to submit your request (e.g. "Looking for Casio fx-991EX calculator, budget ₦3,500").</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span>Students who have that item in their rooms can message you directly on WhatsApp to sell or lend it to you!</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 7: Student ID Verification -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-orange">
+          <i class="fa-solid fa-id-card"></i>
+        </div>
+        <div>
+          <h2>7. Student ID Verification & Trust</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        To foster a safe campus economy, students can verify their student identity on their <strong>Profile</strong> page by uploading their Student ID card or Matric number:
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span>Unlocks the green <strong><i class="fa-solid fa-shield-check"></i> Verified Student</strong> badge on your profile and listings.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span>Buyers buy 4x faster from verified students because they know you attend their institution.</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span><strong>Privacy Guarantee:</strong> Your ID card photo is stored in secure encrypted cloud storage and is strictly used for verification. It is never displayed publicly.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section 8: Campus Ambassador & Referral Program -->
+    <div class="guide-card">
+      <div class="guide-header">
+        <div class="guide-icon icon-green">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div>
+          <h2>8. Campus Ambassador & Referral Program</h2>
+        </div>
+      </div>
+      <p class="guide-text">
+        Passionate about campus leadership and community building? Become an official Campally Ambassador at your university:
+      </p>
+      <ul class="step-list">
+        <li>
+          <span class="step-badge">1</span>
+          <span>Access the <a href="ambassador.html" style="color:#059669; font-weight:700; text-decoration:none;">Campus Ambassador Portal</a> to get your unique university referral link.</span>
+        </li>
+        <li>
+          <span class="step-badge">2</span>
+          <span>Share your link to your departmental and hostel WhatsApp chats. You earn <strong>₦150 for every student</strong> who joins through your link.</span>
+        </li>
+        <li>
+          <span class="step-badge">3</span>
+          <span>Ambassadors can see every student who signed up with their link in real-time, track earnings, and withdraw payouts directly to their Nigerian bank account!</span>
+        </li>
+      </ul>
+      <div style="margin-top:14px;">
+        <a href="ambassador.html" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; padding:10px 20px; font-size:13px; font-weight:700; border-radius:10px;">
+          <i class="fa-solid fa-graduation-cap"></i> Open Ambassador Portal &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Section 9: Need Help? -->
+    <div class="guide-card" style="text-align:center;">
+      <h3 style="font-size:18px; margin-bottom:8px; color:#2B2B2B;">Have Questions or Need Help?</h3>
+      <p style="font-size:13px; color:#666; max-width:440px; margin:0 auto 16px auto; line-height:1.5;">
+        Our campus support team is always ready to assist with account recovery, listings, or safety reports.
+      </p>
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px;">
+        <a href="mailto:mbuharmless@gmail.com" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; width:auto; padding:10px 22px;">
+          <i class="fa-solid fa-envelope"></i> Email Support (mbuharmless@gmail.com)
+        </a>
+        <a href="home.html" class="edit-btn" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; padding:10px 22px;">
+          <i class="fa-solid fa-store"></i> Back to Marketplace
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <h3 style="color:#E8553D; font-size:18px; margin-bottom:8px;">Campally</h3>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:10px; font-size:13px;">
+      <a href="home.html">Home</a>
+      <a href="how-to-use.html" style="color:#E8553D; font-weight:700;">How to Use</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="mailto:mbuharmless@gmail.com">Contact Support</a>
+    </div>
+    <p style="margin-top:10px; font-size:12px; color:#888;">&copy; 2026 Campally. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

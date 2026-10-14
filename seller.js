@@ -4,7 +4,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_0_s-ISa-wqGxAVm7tYeXBg_BgErqzS4";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const params = new URLSearchParams(window.location.search);
-const sellerId = params.get("id");
+let sellerId = params.get("id");
 
 const avatarEl = document.getElementById("seller-avatar");
 const nameEl = document.getElementById("seller-name");
@@ -20,13 +20,31 @@ let currentUserId = null;
 let selectedRating = 0;
 
 async function loadSellerProfile() {
+  const { data: userData } = await supabase.auth.getUser();
+  currentUserId = userData?.user ? userData.user.id : null;
+
   if (!sellerId) {
-    nameEl.textContent = "No seller specified";
+    if (currentUserId) {
+      sellerId = currentUserId;
+    } else {
+      const { data: sampleListing } = await supabase
+        .from("listings")
+        .select("seller_id")
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+      if (sampleListing && sampleListing.seller_id) {
+        sellerId = sampleListing.seller_id;
+      }
+    }
+  }
+
+  if (!sellerId) {
+    nameEl.textContent = "Seller Profile";
+    listingsEl.innerHTML = "<p id='loading-text'>Please select any listing from the marketplace to view that seller's profile.</p>";
     return;
   }
   
-  const { data: userData } = await supabase.auth.getUser();
-  currentUserId = userData.user ? userData.user.id : null;
   const isOwnProfile = currentUserId === sellerId;
   
   const { data: profile, error } = await supabase
@@ -40,16 +58,45 @@ async function loadSellerProfile() {
     return;
   }
   
-  avatarEl.src = profile.avatar_url || "";
+  avatarEl.src = profile.avatar_url || "https://api.dicebear.com/7.x/identicon/svg?seed=" + (profile.full_name || "student");
   nameEl.textContent = profile.full_name || "Unnamed Student";
-  departmentEl.textContent = profile.department || "";
-  hallEl.textContent = profile.hall || "";
+  departmentEl.textContent = profile.department ? `📚 ${profile.department}` : "";
+  hallEl.textContent = profile.hall ? `📍 ${profile.hall}` : "";
   
+  const badgeContainer = document.getElementById("seller-badge-container");
+  if (badgeContainer) {
+    badgeContainer.innerHTML = "";
+    const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "FUNAI";
+    badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
+    
+    // Check Student ID Verification
+    const hasStudentId = Boolean(
+      profile.matric_number ||
+      localStorage.getItem("campally_student_verification_" + sellerId)
+    );
+    if (hasStudentId) {
+      badgeContainer.innerHTML += ` <span class="badge-pill badge-verified" style="background:#FDF1EE; color:#E8553D; border-color:#FCD8D0;"><i class="fa-solid fa-id-card"></i> Student ID Verified</span>`;
+    }
+  }
+
+  const settingsIcon = document.getElementById("header-settings-link");
+  if (settingsIcon) {
+    settingsIcon.style.display = isOwnProfile ? "inline-block" : "none";
+  }
+
   if (isOwnProfile) {
     actionEl.innerHTML = `<a href="profile.html" class="edit-btn">Edit Profile</a>`;
+  } else if (!currentUserId) {
+    actionEl.innerHTML = `
+      <div style="margin-top:10px;">
+        <a href="login.html?redirect=seller.html%3Fid%3D${sellerId}" class="btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; padding:10px 20px; font-size:13px; width:auto;">
+          <i class="fa-solid fa-lock"></i> Sign In to Contact Seller
+        </a>
+      </div>
+    `;
   } else if (profile.whatsapp_number) {
     const phone = profile.whatsapp_number.replace(/\D/g, "");
-    actionEl.innerHTML = `<a href="https://wa.me/${phone}" target="_blank" class="whatsapp-btn">Contact via WhatsApp</a>`;
+    actionEl.innerHTML = `<a href="https://wa.me/${phone}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> Contact via WhatsApp</a>`;
   }
   
   if (!isOwnProfile && currentUserId) {
@@ -60,8 +107,18 @@ async function loadSellerProfile() {
   loadSellerListings();
   loadReviews();
   
-  if (!isOwnProfile && currentUserId) {
-    renderReviewForm();
+  if (!isOwnProfile) {
+    if (currentUserId) {
+      renderReviewForm();
+    } else {
+      reviewFormEl.innerHTML = `
+        <div style="background:#FFF8F6; border:1px solid #FED7AA; border-radius:12px; padding:14px; text-align:center; margin-bottom:16px;">
+          <p style="font-size:13px; color:#7C2D12; font-weight:600; margin-bottom:4px;"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> Want to rate or review this seller?</p>
+          <p style="font-size:12px; color:#666; margin-bottom:10px;">Sign in to rate sellers and leave reviews.</p>
+          <a href="login.html?redirect=seller.html%3Fid%3D${sellerId}" class="btn-primary" style="display:inline-block; font-size:12px; padding:8px 18px; text-decoration:none; width:auto;">Sign In to Rate</a>
+        </div>
+      `;
+    }
   }
 }
 
@@ -113,10 +170,10 @@ async function loadSellerListings() {
     .from("listings")
     .select("*")
     .eq("seller_id", sellerId)
-    .eq("status", "active");
+    .order("id", { ascending: false });
   
-  if (error || data.length === 0) {
-    listingsEl.innerHTML = "<p id='loading-text'>No active listings.</p>";
+  if (error || !data || data.length === 0) {
+    listingsEl.innerHTML = "<p id='loading-text'>No listings posted yet.</p>";
     return;
   }
   
@@ -126,25 +183,61 @@ async function loadSellerListings() {
     const card = document.createElement("div");
     card.className = "listing-card";
 
-    const imageHtml = item.image_url
-      ? `<img src="${item.image_url}" alt="${item.title}" class="listing-image" style="object-fit:cover;">`
-      : `<div class="listing-image">No image</div>`;
+    const isSold = Boolean(
+      item.status === "sold" ||
+      (item.title && item.title.toUpperCase().includes("[SOLD]")) ||
+      (window.isItemSold && window.isItemSold(item.id))
+    );
+
+    if (isSold) {
+      card.classList.add("is-sold");
+    }
+
+    const isSwap = Boolean(
+      item.is_swap === true ||
+      (item.title && item.title.toUpperCase().includes("[SWAP]")) ||
+      (item.description && item.description.toUpperCase().includes("[SWAP]"))
+    );
+
+    const cleanTitle = (item.title || "Untitled Item").replace(/^\[(SWAP|SOLD)\]\s*/gi, "");
+    const formattedPrice = window.formatPrice ? window.formatPrice(item.price, isSwap) : `₦${item.price ?? "N/A"}`;
+    
+    let imageInner = item.image_url ?
+      `<img src="${item.image_url}" class="listing-image" style="object-fit:cover;" alt="${cleanTitle}">` :
+      `<div class="listing-image"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:4px;"></i> No image</div>`;
+
+    if (isSold) {
+      imageInner += `<div class="sold-card-overlay">SOLD</div>`;
+    }
+
+    let badgeHtml = "";
+    if (isSold) {
+      badgeHtml += `<span class="badge-pill badge-sold" style="margin-top:4px;"><i class="fa-solid fa-tag"></i> SOLD</span> `;
+    }
+    if (isSwap) {
+      badgeHtml += `<span class="badge-pill badge-swap" style="margin-top:4px;"><i class="fa-solid fa-repeat"></i> Swap</span>`;
+    }
 
     card.innerHTML = `
-      ${imageHtml}
+      <div style="position:relative;">
+        ${imageInner}
+      </div>
       <div class="listing-info">
-        <div class="listing-title">${item.title}</div>
-        <div class="listing-price">₦${item.price ?? "N/A"}</div>
+        <div class="listing-title">${cleanTitle}</div>
+        <div class="listing-price">${formattedPrice}</div>
+        ${badgeHtml ? `<div class="card-badges">${badgeHtml}</div>` : ""}
       </div>
     `;
-    
+
     card.style.cursor = "pointer";
     card.addEventListener("click", () => {
       window.location.href = "listing.html?id=" + item.id;
     });
+
     listingsEl.appendChild(card);
   });
 }
+
 
 function renderReviewForm() {
   reviewFormEl.innerHTML = `
@@ -156,7 +249,7 @@ function renderReviewForm() {
         <span class="star" data-value="4">★</span>
         <span class="star" data-value="5">★</span>
       </div>
-      <textarea id="review-comment" placeholder="Share your experience..."></textarea>
+      <textarea id="review-comment" placeholder="Share your experience dealing with this student..."></textarea>
       <button id="submit-review-btn" class="btn-primary" style="margin-top:10px;">Submit Review</button>
     </div>
   `;
@@ -173,11 +266,12 @@ function renderReviewForm() {
   
   document.getElementById("submit-review-btn").addEventListener("click", async () => {
     if (selectedRating === 0) {
-      alert("Please select a star rating.");
+      if (window.showToast) window.showToast("Please select a star rating (1 to 5).", "error");
+      else alert("Please select a star rating.");
       return;
     }
     
-    const comment = document.getElementById("review-comment").value;
+    const comment = document.getElementById("review-comment").value.trim();
     
     const { error } = await supabase.from("reviews").upsert({
       reviewer_id: currentUserId,
@@ -187,9 +281,11 @@ function renderReviewForm() {
     }, { onConflict: "reviewer_id,seller_id" });
     
     if (error) {
-      alert("Failed to submit review: " + error.message);
+      if (window.showToast) window.showToast("Failed to submit review: " + error.message, "error");
+      else alert("Failed to submit review: " + error.message);
     } else {
-      alert("Review submitted!");
+      if (window.showToast) window.showToast("Review submitted successfully!", "success");
+      else alert("Review submitted!");
       loadReviews();
     }
   });

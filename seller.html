@@ -10,19 +10,27 @@
 <body>
 
   <header class="top-bar" style="justify-content:space-between;">
-    <h1 class="logo-small">Profile</h1>
-    <a href="settings.html" style="color:#444; text-decoration:none; font-size:18px;"><i class="fa-solid fa-gear"></i></a>
+    <div style="display:flex; align-items:center;">
+      <a href="javascript:history.back()" style="margin-right:14px; color:#2B2B2B; text-decoration:none; font-size:16px;">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <h1 class="logo-small">Profile</h1>
+    </div>
+    <a id="header-settings-link" href="settings.html" style="color:#444; text-decoration:none; font-size:18px; display:none;" title="Settings">
+      <i class="fa-solid fa-gear"></i>
+    </a>
   </header>
 
   <div class="profile-card">
     <img id="seller-avatar" class="profile-avatar" src="" alt="">
-<h2 id="seller-name">Loading...</h2>
-<p id="seller-department" class="tagline"></p>
-<p id="seller-hall" class="tagline"></p>
+    <h2 id="seller-name">Loading...</h2>
+    <div id="seller-badge-container" style="display:flex; justify-content:center; gap:6px; margin:4px 0 8px 0;"></div>
+    <p id="seller-department" class="tagline" style="margin-bottom:2px;"></p>
+    <p id="seller-hall" class="tagline" style="margin-bottom:8px;"></p>
 
-<div id="follow-section"></div>
-<div id="profile-action"></div>
-</div>
+    <div id="follow-section"></div>
+    <div id="profile-action"></div>
+  </div>
   <div style="padding: 0 20px; margin-top: 10px;">
     <h3 style="font-size:15px; margin-bottom:10px;">Listings</h3>
   </div>
@@ -38,6 +46,7 @@
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="campuses.js"></script>
   <script src="seller.js"></script>
   <script src="nav.js"></script>
   <script>loadNav("profile");</script>

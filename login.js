@@ -8,29 +8,74 @@ const loginForm = document.getElementById("login-form");
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
-  if (error) {
-  alert("Login failed: " + error.message);
-  return;
-}
+  const submitBtn = document.getElementById("login-submit-btn");
 
-const { data: profile } = await supabase
-  .from("profiles")
-  .select("full_name, whatsapp_number")
-  .eq("id", data.user.id)
-  .single();
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Logging in...";
+  }
 
-const isComplete = profile && profile.full_name && profile.whatsapp_number;
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+    if (error) {
+      if (window.showToast) window.showToast("Login failed: " + error.message, "error");
+      else alert("Login failed: " + error.message);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Log In";
+      }
+      return;
+    }
 
-if (isComplete) {
-  window.location.href = "home.html";
-} else {
-  window.location.href = "profile.html";
-}
+    if (email.toLowerCase() === "mbuharmless@gmail.com") {
+      sessionStorage.setItem("campally_founder_verified", "true");
+      if (window.showToast) window.showToast("Welcome back, Founder! 👑", "success");
+    } else {
+      if (window.showToast) window.showToast("Logged in successfully!", "success");
+    }
+    sessionStorage.removeItem("campally_visitor_mode");
+
+    const params = new URLSearchParams(window.location.search);
+    const redirectUrl = params.get("redirect");
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, whatsapp_number")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    const isComplete = profile && profile.full_name && profile.whatsapp_number;
+
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+    } else if (isComplete) {
+      window.location.href = "home.html";
+    } else {
+      window.location.href = "profile.html";
+    }
+  } catch (err) {
+    if (window.showToast) window.showToast("Error: " + err.message, "error");
+    else alert("Error: " + err.message);
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Log In";
+    }
+  }
 });
+
+const browseVisitorLink = document.getElementById("browse-visitor-link");
+if (browseVisitorLink) {
+  browseVisitorLink.addEventListener("click", async (e) => {
+    e.preventDefault();
+    sessionStorage.setItem("campally_visitor_mode", "true");
+    try {
+      await supabase.auth.signOut();
+    } catch (_) {}
+    window.location.href = "home.html?visitor=true";
+  });
+}
