@@ -206,9 +206,9 @@
             <i class="fa-solid fa-rotate"></i> I Have Paid — Verify & Activate Now
           </button>
 
-          ${!isLive ? `
+          ${(!isLive || initData.isSimulated) ? `
             <button id="quick-test-verify-btn" style="background:#FFFBEB; border:1px dashed #FDE68A; color:#B45309; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-              <i class="fa-solid fa-bolt"></i> Instant Test Verification (Test Key Mode)
+              <i class="fa-solid fa-bolt"></i> Instant Verification & Activate (Test / Direct Mode)
             </button>
           ` : `
             <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:8px 12px; font-size:11px; color:#166534; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:600;">

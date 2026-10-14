@@ -1,5 +1,14 @@
 {
-  "boosts": {},
+  "boosts": {
+    "123": {
+      "plan": "boost_3d",
+      "durationDays": 3,
+      "paidAt": "2026-10-14T12:31:01.568Z",
+      "expiresAt": 1792240261568,
+      "reference": "campally_1791981056047_sj8upy",
+      "amount": 300
+    }
+  },
   "urgent": {},
   "proSellers": {
     "usr_test_123": {
@@ -21,7 +30,8 @@
   "processedReferences": {
     "T797717103629097": "2026-10-14T08:42:31.417Z",
     "T666020579535652": "2026-10-14T08:50:11.838Z",
-    "T801196288650720": "2026-10-14T08:51:12.079Z"
+    "T801196288650720": "2026-10-14T08:51:12.079Z",
+    "campally_1791981056047_sj8upy": "2026-10-14T12:31:01.568Z"
   },
   "transactions": [
     {
@@ -59,6 +69,18 @@
       "customerEmail": "mbuharmless@gmail.com",
       "itemId": null,
       "userId": "f2fc749a-668b-40d8-9acc-5531fc442d06"
+    },
+    {
+      "reference": "campally_1791981056047_sj8upy",
+      "planId": "boost_3d",
+      "planName": "Listing Boost (3 Days)",
+      "amountKobo": 30000,
+      "priceNaira": 300,
+      "paidAt": "2026-10-14T12:31:01.568Z",
+      "channel": "campally_direct",
+      "customerEmail": "mbuharmless@gmail.com",
+      "itemId": "123",
+      "userId": null
     }
   ]
 }

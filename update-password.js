@@ -9,36 +9,13 @@ updateForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const newPassword = document.getElementById("new-password").value;
-  const submitBtn = document.getElementById("update-submit-btn");
 
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Updating...</span>`;
-  }
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
 
-  try {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-
-    if (error) {
-      if (window.showToast) window.showToast("Failed: " + error.message, "error");
-      else alert("Failed: " + error.message);
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Update Password</span>`;
-      }
-    } else {
-      if (window.showToast) window.showToast("Password updated successfully! Redirecting to login...", "success");
-      else alert("Password updated! Please log in.");
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 1000);
-    }
-  } catch (err) {
-    if (window.showToast) window.showToast("Error: " + err.message, "error");
-    else alert("Error: " + err.message);
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Update Password</span>`;
-    }
+  if (error) {
+    alert("Failed: " + error.message);
+  } else {
+    alert("Password updated! Please log in.");
+    window.location.href = "login.html";
   }
 });

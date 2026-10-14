@@ -7,7 +7,7 @@
     "dev": "node server.js",
     "start": "node server.js",
     "build": "node -e \"console.log('Build complete')\"",
-    "lint": "node -c server.js paystack-integration.js home.js my-listings.js post-listing.js listing.js profile.js campuses.js nav.js sw.js ambassador.js app.js login.js"
+    "lint": "node -c server.js paystack-integration.js home.js my-listings.js post-listing.js listing.js profile.js campuses.js nav.js sw.js ambassador.js app.js login.js flyers.js supabase-init.js"
   },
   "dependencies": {
     "express": "^4.21.2"

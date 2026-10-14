@@ -1255,7 +1255,12 @@ async function init() {
 
     if (forceVisitor) {
       try {
-        await supabase.auth.signOut();
+        if (typeof window.purgeCorruptSession === "function") {
+          window.purgeCorruptSession();
+        }
+        if (supabase && supabase.auth && typeof supabase.auth.signOut === "function") {
+          supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        }
       } catch (_) {}
       currentUserId = null;
       if (visitorBanner) visitorBanner.style.display = "flex";

@@ -469,6 +469,16 @@ Sign up in 30 seconds here:
     waBtn.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
   }
 
+  // Configure Marketing Flyer Studio links with Ambassador Code & Campus
+  const flyersBtn = document.getElementById("amb-open-flyers-btn");
+  if (flyersBtn) {
+    flyersBtn.href = `flyers.html?ref=${encodeURIComponent(amb.code)}&campus=${encodeURIComponent(amb.campus || "")}`;
+  }
+  const statusFlyersBtn = document.getElementById("amb-open-status-flyers-btn");
+  if (statusFlyersBtn) {
+    statusFlyersBtn.href = `flyers.html?ref=${encodeURIComponent(amb.code)}&campus=${encodeURIComponent(amb.campus || "")}&format=story`;
+  }
+
   // Render Referrals List
   renderReferralsList(amb.referrals || []);
 

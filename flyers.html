@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally Marketing Campaign Flyers & Campus Media Kit</title>
+  <meta name="description" content="Professional marketing campaign flyers, social media assets, and promotional kits for Campally. Customize for your campus, download print-ready posters, and copy high-converting copy.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --campally-coral: #E8553D;
+      --campally-coral-dark: #D1442D;
+      --campally-navy: #1E1B4B;
+      --campally-navy-light: #312E81;
+      --campally-cream: #FDF6EC;
+      --campally-gold: #F59E0B;
+      --campally-green: #25D366;
+    }
+
+    body {
+      background-color: #F8F6F0;
+      color: #2B2B2B;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .flyer-studio-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 20px 100px 20px;
+    }
+
+    /* Top Navigation Bar */
+    .studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #EAE6DF;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .studio-header .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .studio-header .logo-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--campally-coral);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .studio-header .kit-badge {
+      background: #FEF3C7;
+      color: #92400E;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .studio-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .studio-nav-btn {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .studio-nav-btn.primary {
+      background: var(--campally-coral);
+      color: white;
+    }
+
+    .studio-nav-btn.secondary {
+      background: #F4F1EA;
+      color: #4A4A4A;
+    }
+
+    .studio-nav-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .studio-hero {
+      background: linear-gradient(135deg, #1E1B4B 0%, #2D2769 50%, #4338CA 100%);
+      color: #FFFFFF;
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin: 24px 0 32px 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(30, 27, 75, 0.18);
+    }
+
+    .studio-hero::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(232, 85, 61, 0.25) 0%, rgba(232, 85, 61, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .studio-hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .studio-hero p {
+      font-size: 15px;
+      color: #E0E7FF;
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .brand-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand-pill {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1.5px solid #FFFFFF;
+      display: inline-block;
+    }
+
+    /* Studio Main Layout */
+    .studio-workspace {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .studio-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      position: sticky;
+      top: 80px;
+    }
+
+    .panel-section-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1E1B4B;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .campaign-selector-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .campaign-btn {
+      background: #FAF9F6;
+      border: 2px solid #EFECE6;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .campaign-btn:hover {
+      border-color: #E8553D;
+      background: #FFF5F3;
+    }
+
+    .campaign-btn.active {
+      border-color: #E8553D;
+      background: #FFF5F3;
+      box-shadow: 0 4px 12px rgba(232, 85, 61, 0.12);
+    }
+
+    .campaign-btn .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #E8553D;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+
+    .campaign-btn.active .icon-box {
+      background: #E8553D;
+      color: white;
+    }
+
+    .campaign-btn .info-col {
+      flex: 1;
+    }
+
+    .campaign-btn .title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2B2B2B;
+      line-height: 1.2;
+    }
+
+    .campaign-btn .subtitle {
+      font-size: 11px;
+      color: #6B7280;
+      margin-top: 2px;
+    }
+
+    /* Format Switcher */
+    .format-chips {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .format-chip {
+      flex: 1;
+      padding: 10px 8px;
+      background: #FAF9F6;
+      border: 1px solid #E5E0D8;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      color: #4A4A4A;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .format-chip.active {
+      background: #1E1B4B;
+      border-color: #1E1B4B;
+      color: white;
+    }
+
+    .format-chip i {
+      font-size: 15px;
+    }
+
+    /* Form Fields */
+    .control-group {
+      margin-bottom: 16px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4A4A4A;
+      margin-bottom: 6px;
+    }
+
+    .control-input, .control-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #E5E0D8;
+      border-radius: 10px;
+      font-size: 13px;
+      background: #FAF9F6;
+      color: #2B2B2B;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .control-input:focus, .control-select:focus {
+      border-color: #E8553D;
+      background: #FFFFFF;
+    }
+
+    /* Action Buttons */
+    .action-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-download-highres {
+      background: #E8553D;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(232, 85, 61, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-download-highres:hover {
+      background: #D1442D;
+      transform: translateY(-1px);
+    }
+
+    .btn-print {
+      background: #1E1B4B;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-print:hover {
+      background: #2D2769;
+    }
+
+    .btn-copy-link {
+      background: #FAF9F6;
+      border: 1px solid #E5E0D8;
+      color: #4A4A4A;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Preview Canvas Area */
+    .preview-panel {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .preview-header-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #F0EDE6;
+    }
+
+    .preview-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1E1B4B;
+    }
+
+    .preview-specs {
+      font-size: 12px;
+      color: #6B7280;
+      background: #F3F4F6;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      background: #EAE6DF;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    #flyer-canvas {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+      background: #FFFFFF;
+    }
+
+    /* Print Preview Guidelines */
+    .print-guidelines-box {
+      margin-top: 24px;
+      width: 100%;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 13px;
+      color: #92400E;
+    }
+
+    .print-guidelines-box ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .print-guidelines-box li {
+      margin-bottom: 4px;
+    }
+
+    /* Strategy & Viral Copy Suite */
+    .marketing-playbook-section {
+      margin-top: 48px;
+    }
+
+    .section-headline {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1E1B4B;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-subheadline {
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 24px;
+      max-width: 650px;
+    }
+
+    .copy-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .copy-tab-btn {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #4A4A4A;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .copy-tab-btn.active {
+      background: #E8553D;
+      border-color: #E8553D;
+      color: white;
+    }
+
+    .copy-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      position: relative;
+    }
+
+    .copy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .copy-target-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+
+    .copy-content-box {
+      background: #FAF9F6;
+      border: 1px solid #EAE6DF;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #1E293B;
+      white-space: pre-wrap;
+      word-break: break-word;
+      user-select: all;
+    }
+
+    .copy-action-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-copy-text {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-copy-text:hover {
+      transform: translateY(-1px);
+    }
+
+    /* 30-Day Growth Strategy Grid */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .strategy-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E0D8;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+
+    .strategy-week-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #E8553D;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .strategy-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1E1B4B;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .strategy-card p {
+      font-size: 13px;
+      color: #4B5563;
+      line-height: 1.5;
+    }
+
+    /* Hidden QR element for rendering */
+    #hidden-qr-render {
+      display: none;
+    }
+
+    /* Print styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .preview-panel, #flyer-canvas {
+        visibility: visible;
+      }
+      .preview-panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+      }
+      #flyer-canvas {
+        width: 100% !important;
+        height: auto !important;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .studio-header, .controls-panel, .studio-hero, .marketing-playbook-section, .print-guidelines-box, .preview-header-bar {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Studio Header -->
+  <header class="studio-header">
+    <div class="logo-group">
+      <a href="home.html" class="logo-title">Campally</a>
+      <span class="kit-badge"><i class="fa-solid fa-bullhorn"></i> Marketing Campaign Suite</span>
+    </div>
+    <div class="studio-nav-links">
+      <a href="home.html" class="studio-nav-btn secondary"><i class="fa-solid fa-arrow-left"></i> Marketplace</a>
+      <a href="ambassador.html" class="studio-nav-btn primary"><i class="fa-solid fa-award"></i> Ambassador Hub</a>
+    </div>
+  </header>
+
+  <div class="flyer-studio-container">
+
+    <!-- Hero Introduction -->
+    <div class="studio-hero">
+      <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; color:#FCD34D; margin-bottom:14px;">
+        <i class="fa-solid fa-palette"></i> PROFESSIONAL CAMPUS DESIGNER & GROWTH SYSTEM
+      </div>
+      <h1>Campally Marketing Campaign Flyers & Viral Kit</h1>
+      <p>
+        Crafted using Campally's official high-conversion visual design system. Generate print-ready posters for faculty noticeboards, high-resolution stories for WhatsApp status, and viral campus broadcast scripts tailored to your Nigerian university.
+      </p>
+
+      <div class="brand-pills-row">
+        <div class="brand-pill">
+          <span class="color-dot" style="background:#E8553D;"></span> Primary: Sunset Coral (#E8553D)
+        </div>
+        <div class="brand-pill">
+          <span class="color-dot" style="background:#1E1B4B;"></span> Secondary: Midnight Navy (#1E1B4B)
+        </div>
+        <div class="brand-pill">
+          <span class="color-dot" style="background:#F59E0B;"></span> Highlight: Campus Gold (#F59E0B)
+        </div>
+        <div class="brand-pill">
+          <span class="color-dot" style="background:#25D366;"></span> Trust: WhatsApp Safe (#25D366)
+        </div>
+        <div class="brand-pill">
+          <span class="color-dot" style="background:#FDF6EC;"></span> Foundation: Warm Cream (#FDF6EC)
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="studio-workspace">
+
+      <!-- Left Column: Customization Controls -->
+      <div class="controls-panel">
+        <div class="panel-section-title">
+          <i class="fa-solid fa-layer-group" style="color:#E8553D;"></i> 1. Select Campaign Concept
+        </div>
+        
+        <div class="campaign-selector-list">
+          <button class="campaign-btn active" data-campaign="launch">
+            <div class="icon-box"><i class="fa-solid fa-rocket"></i></div>
+            <div class="info-col">
+              <div class="title">Campus Launch & Marketplace</div>
+              <div class="subtitle">General awareness: Buy, sell & swap on campus</div>
+            </div>
+          </button>
+
+          <button class="campaign-btn" data-campaign="seller">
+            <div class="icon-box"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <div class="info-col">
+              <div class="title">Turn Your Clutter Into Cash</div>
+              <div class="subtitle">For student sellers, hustlers & room clearers</div>
+            </div>
+          </button>
+
+          <button class="campaign-btn" data-campaign="books">
+            <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
+            <div class="info-col">
+              <div class="title">Never Pay Full Price: 70% Off</div>
+              <div class="subtitle">Textbooks, past questions & dorm deals</div>
+            </div>
+          </button>
+
+          <button class="campaign-btn" data-campaign="ambassador">
+            <div class="icon-box"><i class="fa-solid fa-award"></i></div>
+            <div class="info-col">
+              <div class="title">Campus Ambassador Recruitment</div>
+              <div class="subtitle">Get paid weekly & lead your university</div>
+            </div>
+          </button>
+
+          <button class="campaign-btn" data-campaign="services">
+            <div class="icon-box"><i class="fa-solid fa-scissors"></i></div>
+            <div class="info-col">
+              <div class="title">Spotlight Your Campus Hustle</div>
+              <div class="subtitle">Hair braiders, techies, bakers & tutors</div>
+            </div>
+          </button>
+        </div>
+
+        <div class="panel-section-title">
+          <i class="fa-solid fa-crop" style="color:#E8553D;"></i> 2. Select Dimensions & Format
+        </div>
+
+        <div class="format-chips">
+          <button class="format-chip active" data-format="noticeboard">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Noticeboard</span>
+            <small style="opacity:0.75; font-size:10px;">3:4 Portrait</small>
+          </button>
+          <button class="format-chip" data-format="story">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Status / Story</span>
+            <small style="opacity:0.75; font-size:10px;">9:16 Vertical</small>
+          </button>
+          <button class="format-chip" data-format="square">
+            <i class="fa-solid fa-square"></i>
+            <span>Social Post</span>
+            <small style="opacity:0.75; font-size:10px;">1:1 Square</small>
+          </button>
+        </div>
+
+        <div class="panel-section-title">
+          <i class="fa-solid fa-sliders" style="color:#E8553D;"></i> 3. Personalize for Your Campus
+        </div>
+
+        <div class="control-group">
+          <label><i class="fa-solid fa-building-columns" style="color:#E8553D;"></i> University / Polytechnic</label>
+          <select id="input-campus-select" class="control-select">
+            <option value="All Campuses">Nigeria Nationwide (All Campuses)</option>
+            <option value="FUNAI" selected>Alex Ekwueme Federal University, Ndufu-Alike (FUNAI)</option>
+            <option value="UNILAG">University of Lagos, Akoka (UNILAG)</option>
+            <option value="UNN">University of Nigeria, Nsukka (UNN)</option>
+            <option value="OAU">Obafemi Awolowo University, Ile-Ife (OAU)</option>
+            <option value="UI">University of Ibadan (UI)</option>
+            <option value="ABU">Ahmadu Bello University, Zaria (ABU)</option>
+            <option value="UNIBEN">University of Benin (UNIBEN)</option>
+            <option value="UNIPORT">University of Port Harcourt (UNIPORT)</option>
+            <option value="FUTO">Federal University of Technology, Owerri (FUTO)</option>
+            <option value="FUTA">Federal University of Technology, Akure (FUTA)</option>
+            <option value="UNILORIN">University of Ilorin (UNILORIN)</option>
+            <option value="UNIZIK">Nnamdi Azikiwe University, Awka (UNIZIK)</option>
+            <option value="LASU">Lagos State University, Ojo (LASU)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label><i class="fa-solid fa-ticket" style="color:#E8553D;"></i> Ambassador Referral Code (Optional)</label>
+          <input type="text" id="input-ref-code" class="control-input" placeholder="e.g. HARMSIK or CAMPUS_REP_01">
+        </div>
+
+        <div class="control-group">
+          <label><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp Support / Contact Phone</label>
+          <input type="text" id="input-contact-phone" class="control-input" value="+234 911 920 6177">
+        </div>
+
+        <div class="action-row">
+          <button id="btn-download-png" class="btn-download-highres">
+            <i class="fa-solid fa-download"></i> Download High-Res Flyer (PNG)
+          </button>
+          <button id="btn-print-flyer" class="btn-print">
+            <i class="fa-solid fa-print"></i> Print Flyer / Save PDF (A4/A5)
+          </button>
+          <button id="btn-copy-flyer-link" class="btn-copy-link">
+            <i class="fa-solid fa-link"></i> Copy Flyer Web Link
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive High-DPI Flyer Preview -->
+      <div class="preview-panel">
+        <div class="preview-header-bar">
+          <div>
+            <span class="preview-title" id="preview-campaign-label">Campus Launch & Marketplace</span>
+            <div style="font-size:12px; color:#4B5563; margin-top:2px;" id="preview-campus-label">Target: Alex Ekwueme Federal University (FUNAI)</div>
+          </div>
+          <span class="preview-specs" id="preview-dimensions-label">1200 &times; 1600 px &bull; Noticeboard Ready</span>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="flyer-canvas" width="1200" height="1600"></canvas>
+        </div>
+
+        <!-- Print Guidance Tip -->
+        <div class="print-guidelines-box">
+          <strong><i class="fa-solid fa-lightbulb"></i> Professional Campus Marketing Tips:</strong>
+          <ul>
+            <li><strong>Noticeboard Placement:</strong> Print on 135gsm - 170gsm glossy paper. Place at Faculty entrances, Departmental noticeboards, Library foyers, and Hostel porter lodges.</li>
+            <li><strong>Class Announcements:</strong> Course reps who introduce Campally before lectures see up to 45% immediate student signup rate!</li>
+            <li><strong>Instant QR Code:</strong> Students can simply point their phone camera at the flyer to load Campally directly with your referral code attached.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Multi-Channel Viral Marketing Copy & Playbook -->
+    <div class="marketing-playbook-section">
+      <h2 class="section-headline">1-Click High-Converting Marketing Copy & Captions</h2>
+      <p class="section-subheadline">
+        Tested copy frameworks designed specifically for Nigerian university students. Tailored for WhatsApp groups, WhatsApp status, Instagram, and student unions.
+      </p>
+
+      <div class="copy-tabs">
+        <button class="copy-tab-btn active" data-copy="whatsapp-group">
+          <i class="fa-brands fa-whatsapp"></i> Campus WhatsApp Groups
+        </button>
+        <button class="copy-tab-btn" data-copy="whatsapp-status">
+          <i class="fa-solid fa-mobile-screen-button"></i> WhatsApp Status Blitz
+        </button>
+        <button class="copy-tab-btn" data-copy="instagram">
+          <i class="fa-brands fa-instagram"></i> Instagram / TikTok Post
+        </button>
+        <button class="copy-tab-btn" data-copy="twitter">
+          <i class="fa-brands fa-x-twitter"></i> X (Twitter) Thread
+        </button>
+        <button class="copy-tab-btn" data-copy="lecture-pitch">
+          <i class="fa-solid fa-bullhorn"></i> 60-Second Lecture Hall Pitch
+        </button>
+      </div>
+
+      <div class="copy-card">
+        <div class="copy-header">
+          <span class="copy-target-badge" id="copy-target-badge">Departmental & Hostel WhatsApp Groups</span>
+          <span style="font-size:12px; color:#6B7280;"><i class="fa-solid fa-check-circle" style="color:#059669;"></i> Ready to Paste</span>
+        </div>
+        <div class="copy-content-box" id="copy-text-display">
+Loading copy template...
+        </div>
+        <div class="copy-action-bar">
+          <button id="btn-copy-active-text" class="btn-copy-text">
+            <i class="fa-regular fa-copy"></i> Copy Message to Clipboard
+          </button>
+        </div>
+      </div>
+
+      <!-- 30-Day Campus Guerrilla Growth Playbook -->
+      <div style="margin-top:54px;">
+        <h2 class="section-headline">Founder's 30-Day Campus Guerrilla Marketing Strategy</h2>
+        <p class="section-subheadline">
+          The battle-tested playbook for scaling Campally from 0 to 5,000+ active student users across faculties and hostels.
+        </p>
+
+        <div class="strategy-grid">
+          <div class="strategy-card">
+            <div class="strategy-week-tag"><i class="fa-solid fa-calendar-day"></i> Week 1: Ground Zero Blitz</div>
+            <h3>Faculty Noticeboards & Hostel Porters</h3>
+            <p>
+              Print 50 A4/A5 flyers. Partner with hostel porters and student hall executives. Pin flyers directly beside the porter's desk and main library entrance where student footfall is highest.
+            </p>
+          </div>
+
+          <div class="strategy-card">
+            <div class="strategy-week-tag"><i class="fa-solid fa-handshake"></i> Week 2: Course Rep Alliance</div>
+            <h3>The Departmental Drop</h3>
+            <p>
+              Meet with 10 key course reps (100L to 400L). Provide them with customized flyers featuring their unique Ambassador code. When course reps drop the past questions alert in class WhatsApp groups, conversions skyrocket.
+            </p>
+          </div>
+
+          <div class="strategy-card">
+            <div class="strategy-week-tag"><i class="fa-solid fa-trophy"></i> Week 3: Ambassador Bounty Contest</div>
+            <h3>Campus Referral Sprint</h3>
+            <p>
+              Host a 7-day "Top Campus Ambassador" challenge. The ambassador with the most verified listings and signups wins ₦25,000 cash bonus paid straight to their bank account via Paystack transfer.
+            </p>
+          </div>
+
+          <div class="strategy-card">
+            <div class="strategy-week-tag"><i class="fa-solid fa-fire"></i> Week 4: Peak Momentum Timing</div>
+            <h3>Exam Rush & Hostel Clear-Out</h3>
+            <p>
+              Target exam weeks and semester endings. Run the "Clear Your Hostel" and "70% Off Handouts" flyers. Students urgently wanting to buy past questions or sell heavy textbooks will flood the platform.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Hidden div used to generate QR code images before painting on canvas -->
+  <div id="hidden-qr-render"></div>
+
+  <!-- Scripts -->
+  <script src="campuses.js"></script>
+  <script src="nav.js"></script>
+  <script src="flyers.js"></script>
+</body>
+</html>
