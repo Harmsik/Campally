@@ -206,15 +206,9 @@
             <i class="fa-solid fa-rotate"></i> I Have Paid — Verify & Activate Now
           </button>
 
-          ${(!isLive || initData.isSimulated) ? `
-            <button id="quick-test-verify-btn" style="background:#FFFBEB; border:1px dashed #FDE68A; color:#B45309; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-              <i class="fa-solid fa-bolt"></i> Instant Verification & Activate (Test / Direct Mode)
-            </button>
-          ` : `
             <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:8px 12px; font-size:11px; color:#166534; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:600;">
-              <i class="fa-solid fa-circle-check"></i> Real / Live Payment Mode Active
+              <i class="fa-solid fa-circle-check"></i> Secured by Paystack Official Gateway
             </div>
-          `}
         </div>
 
         <div style="font-size:11px; color:#888; text-align:center; margin-top:14px; line-height:1.4;">
@@ -222,7 +216,7 @@
         </div>
       `;
 
-      // 1. Verify on button click
+      // Verify on button click
       const verifyBtn = checkoutModal.querySelector("#verify-payment-btn");
       verifyBtn.addEventListener("click", async () => {
         verifyBtn.disabled = true;
@@ -234,8 +228,7 @@
           itemId: itemId,
           userId: userId,
           userEmail: email,
-          metadata: metadata,
-          testSimulate: false
+          metadata: metadata
         });
 
         if (verified) {
@@ -246,33 +239,6 @@
           verifyBtn.innerHTML = `<i class="fa-solid fa-rotate"></i> I Have Paid — Verify & Activate Now`;
         }
       });
-
-      // 2. Instant Test Verification in Test Mode
-      const testVerifyBtn = checkoutModal.querySelector("#quick-test-verify-btn");
-      if (testVerifyBtn) {
-        testVerifyBtn.addEventListener("click", async () => {
-          testVerifyBtn.disabled = true;
-          testVerifyBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Activating Test Payment...`;
-
-          const verified = await doServerVerify({
-            reference: reference,
-            planId: plan.id,
-            itemId: itemId,
-            userId: userId,
-            userEmail: email,
-            metadata: metadata,
-            testSimulate: true
-          });
-
-          if (verified) {
-            checkoutModal.remove();
-            if (typeof onSuccess === "function") onSuccess(verified);
-          } else {
-            testVerifyBtn.disabled = false;
-            testVerifyBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> Instant Test Verification (Test Key Mode)`;
-          }
-        });
-      }
 
       // Also try inline popup if supported in the current frame
       if (window.PaystackPop) {

@@ -29,7 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-signupForm.addEventListener("submit", async (e) => {
+const signupForm = document.getElementById("signup-form");
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   
   const fullName = document.getElementById("full-name").value.trim();
@@ -133,16 +135,14 @@ signupForm.addEventListener("submit", async (e) => {
       submitBtn.textContent = "Sign Up";
     }
   }
-});
+  });
+}
 
 const browseVisitorLink = document.getElementById("browse-visitor-link");
 if (browseVisitorLink) {
-  browseVisitorLink.addEventListener("click", async (e) => {
+  browseVisitorLink.addEventListener("click", (e) => {
     e.preventDefault();
     sessionStorage.setItem("campally_visitor_mode", "true");
-    try {
-      await supabase.auth.signOut();
-    } catch (_) {}
     window.location.href = "home.html?visitor=true";
   });
 }

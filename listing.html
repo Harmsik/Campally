@@ -4,9 +4,194 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campally - Listing</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261015_05">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    /* Safe Meetup Spot Box */
+    .safe-meetup-box {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      box-sizing: border-box;
+    }
+    .safe-meetup-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .safe-meetup-title i {
+      color: #16A34A;
+      font-size: 15px;
+    }
+    .safe-meetup-list {
+      margin: 0 0 10px 0;
+      padding-left: 20px;
+      color: #374151;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .safe-meetup-list li {
+      margin-bottom: 3px;
+    }
+    .safe-meetup-tip {
+      font-size: 12px;
+      color: #15803D;
+      background: #DCFCE7;
+      padding: 8px 12px;
+      border-radius: 10px;
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+
+    /* Action Buttons */
+    .whatsapp-status-btn {
+      width: 100%;
+      padding: 13px 18px;
+      background: #FFFFFF;
+      border: 1.5px solid #25D366;
+      color: #128C7E;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-sizing: border-box;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      outline: none;
+    }
+    .whatsapp-status-btn:hover {
+      background: #F0FDF4;
+      transform: translateY(-1px);
+    }
+    .whatsapp-status-btn:active {
+      transform: translateY(0);
+    }
+
+    /* WhatsApp Status Modal & Centered Card Preview */
+    #status-modal.modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    #status-modal .modal-content {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 400px;
+      max-height: 92vh;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow-y: auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      margin: auto;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    #status-modal .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    #status-modal .modal-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #2B2B2B;
+      margin: 0;
+    }
+    .canvas-preview-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #F4F1EA;
+      border-radius: 16px;
+      padding: 14px 10px;
+      margin: 12px 0 16px 0;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .status-canvas {
+      width: 100%;
+      max-width: 210px;
+      height: auto;
+      max-height: 46vh;
+      aspect-ratio: 9 / 16;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      display: block;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+    #download-card-btn {
+      width: 100%;
+      padding: 12px 18px;
+      background: #E8553D;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+    #download-card-btn:hover {
+      background: #D84A33;
+    }
+    #share-wa-direct-link {
+      width: 100%;
+      padding: 12px 18px;
+      background: #25D366;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+    #share-wa-direct-link:hover {
+      background: #20BA5A;
+    }
+  </style>
 </head>
 <body>
 

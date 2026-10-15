@@ -1254,34 +1254,42 @@ async function init() {
     const forceVisitor = urlParams.get("visitor") === "true" || sessionStorage.getItem("campally_visitor_mode") === "true";
 
     if (forceVisitor) {
-      try {
-        if (typeof window.purgeCorruptSession === "function") {
-          window.purgeCorruptSession();
-        }
-        if (supabase && supabase.auth && typeof supabase.auth.signOut === "function") {
-          supabase.auth.signOut({ scope: "local" }).catch(() => {});
-        }
-      } catch (_) {}
       currentUserId = null;
       if (visitorBanner) visitorBanner.style.display = "flex";
       const link = document.getElementById("profile-nav-link");
       if (link) link.href = "login.html";
     } else {
-      // Check user auth state
-      const { data: userData } = await supabase.auth.getUser();
-      if (userData && userData.user) {
-        currentUserId = userData.user.id;
+      // Check user auth state: read local session instantly
+      let authenticatedUser = null;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData?.session?.user) {
+          authenticatedUser = sessionData.session.user;
+        }
+      } catch (_) {}
+
+      if (!authenticatedUser) {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData?.user) authenticatedUser = userData.user;
+        } catch (_) {}
+      }
+
+      if (authenticatedUser) {
+        currentUserId = authenticatedUser.id;
         if (visitorBanner) visitorBanner.style.display = "none";
 
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("campus_id")
-          .eq("id", userData.user.id)
-          .maybeSingle();
-        if (profile?.campus_id) {
-          currentCampusId = Number(profile.campus_id);
-          if (campusSelect) campusSelect.value = currentCampusId;
-        }
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("campus_id")
+            .eq("id", authenticatedUser.id)
+            .maybeSingle();
+          if (profile?.campus_id) {
+            currentCampusId = Number(profile.campus_id);
+            if (campusSelect) campusSelect.value = currentCampusId;
+          }
+        } catch (_) {}
       } else {
         currentUserId = null;
         if (visitorBanner) visitorBanner.style.display = "flex";
@@ -1365,10 +1373,11 @@ init();
 // Sync user profile bottom nav link if not in visitor mode
 const isVisitorSession = new URLSearchParams(window.location.search).get("visitor") === "true" || sessionStorage.getItem("campally_visitor_mode") === "true";
 if (!isVisitorSession) {
-  supabase.auth.getUser().then(({ data }) => {
+  supabase.auth.getSession().then(({ data }) => {
     const link = document.getElementById("profile-nav-link");
-    if (link && data && data.user) {
-      link.href = "seller.html?id=" + data.user.id;
+    const user = data?.session?.user;
+    if (link && user) {
+      link.href = "seller.html?id=" + user.id;
     }
   }).catch(() => {});
 }

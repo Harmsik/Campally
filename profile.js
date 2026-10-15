@@ -137,14 +137,29 @@ async function loadCampuses() {
 }
 
 async function loadProfile() {
-  const { data: userData } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session?.user) {
+      user = sessionData.session.user;
+    }
+  } catch (_) {}
 
-  if (!userData || !userData.user) {
+  if (!user) {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) {
+        user = userData.user;
+      }
+    } catch (_) {}
+  }
+
+  if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  currentUser = userData.user;
+  currentUser = user;
   currentUserId = currentUser.id;
 
   // Founder Account Recognition

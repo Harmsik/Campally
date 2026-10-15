@@ -6,9 +6,22 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const container = document.getElementById("my-listings");
 
 async function loadMyListings() {
-  const { data: userData } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session?.user) {
+      user = sessionData.session.user;
+    }
+  } catch (_) {}
+
+  if (!user) {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) user = userData.user;
+    } catch (_) {}
+  }
   
-  if (!userData || !userData.user) {
+  if (!user) {
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align:center; padding:50px 20px;">
         <div style="width:54px; height:54px; background:#FEE2E2; color:#DC2626; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:24px;">
@@ -27,7 +40,7 @@ async function loadMyListings() {
   const { data, error } = await supabase
     .from("listings")
     .select("*")
-    .eq("seller_id", userData.user.id);
+    .eq("seller_id", user.id);
   
   if (error) {
     container.innerHTML = "<p>Error loading your listings.</p>";

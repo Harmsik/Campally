@@ -36,16 +36,29 @@ let currentUser = null;
 let currentProfile = null;
 
 async function checkAuthAndInit() {
-  const { data: userData } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session?.user) {
+      user = sessionData.session.user;
+    }
+  } catch (_) {}
 
-  if (!userData || !userData.user) {
+  if (!user) {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) user = userData.user;
+    } catch (_) {}
+  }
+
+  if (!user) {
     // Visitor: restrict selling, show visitor explanation card
     if (postFormContainer) postFormContainer.style.display = "none";
     if (visitorPrompt) visitorPrompt.style.display = "block";
     return;
   }
 
-  currentUser = userData.user;
+  currentUser = user;
   if (postFormContainer) postFormContainer.style.display = "block";
   if (visitorPrompt) visitorPrompt.style.display = "none";
 

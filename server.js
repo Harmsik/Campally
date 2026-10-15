@@ -36,8 +36,8 @@ try {
 // PAYSTACK SECURITY & ENVIRONMENT CONFIGURATION
 // Secret key resides EXCLUSIVELY on the server. Never exposed to browser.
 // ============================================================================
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || '';
-const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY || 'pk_live_2c184fbcb27a4bb80487dfe2dc43c37bc17072d2';
+const PAYSTACK_SECRET_KEY = (process.env.PAYSTACK_SECRET_KEY || '').trim();
+const PAYSTACK_PUBLIC_KEY = (process.env.PAYSTACK_PUBLIC_KEY || 'pk_live_2c184fbcb27a4bb80487dfe2dc43c37bc17072d2').trim();
 
 // Authoritative pricing structure in KOBO (100 kobo = 1 NGN).
 // Enforced strictly on server to guarantee no client-side price tampering.
@@ -232,8 +232,40 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
-// Serve static files from root directory with html extension support
-app.use(express.static(__dirname, { extensions: ['html'] }));
+// Protect sensitive backend files and server source code from direct download
+app.use((req, res, next) => {
+  const p = req.path.toLowerCase();
+  if (
+    p.startsWith('/.') ||
+    p === '/server.js' ||
+    p === '/package.json' ||
+    p === '/package-lock.json' ||
+    p === '/bun.lock' ||
+    p.startsWith('/_backup') ||
+    p.startsWith('/data/')
+  ) {
+    return res.status(404).send('Not Found');
+  }
+  next();
+});
+
+// Serve public static frontend files with no-cache headers to guarantee immediate updates in browser
+app.use(express.static(__dirname, {
+  extensions: ['html'],
+  dotfiles: 'deny',
+  setHeaders: (res, filePath) => {
+    if (
+      filePath.endsWith('.html') ||
+      filePath.endsWith('.css') ||
+      filePath.endsWith('.js') ||
+      filePath.endsWith('.json')
+    ) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // ============================================================================
 // API ROUTES FOR MONETIZATION & PAYSTACK
@@ -825,10 +857,19 @@ app.get('/api/ambassadors/all', (req, res) => {
 // validates the amount in kobo, prevents duplicate reference replays, and activates the feature.
 app.post('/api/paystack/verify', async (req, res) => {
   try {
-    const { reference, planId, itemId, userId, userEmail, metadata, testSimulate } = req.body;
+    const { reference, planId, itemId, userId, userEmail, metadata } = req.body;
 
-    if (!reference || typeof reference !== 'string') {
+    if (!reference || typeof reference !== 'string' || !reference.trim()) {
       return res.status(400).json({ error: 'Missing or invalid transaction reference.' });
+    }
+
+    const cleanRef = reference.trim();
+
+    // 1. Mandatory security: client-provided simulated references must NEVER establish payment
+    if (cleanRef.startsWith('campally_') || cleanRef.startsWith('test_sim_')) {
+      return res.status(400).json({
+        error: 'Invalid payment reference: Simulated references cannot verify payment in production.'
+      });
     }
 
     const plan = PRICING_PLANS[planId];
@@ -836,75 +877,76 @@ app.post('/api/paystack/verify', async (req, res) => {
       return res.status(400).json({ error: 'Unknown promotion plan.' });
     }
 
-    const data = readPromotionsData();
-
-    // Anti-Replay Attack Protection: Check if reference was already processed
-    if (data.processedReferences && data.processedReferences[reference]) {
-      return res.status(400).json({
-        error: 'This payment reference has already been claimed.',
-        processedAt: data.processedReferences[reference]
+    // 2. Fail closed if Paystack Secret Key is not configured on the server
+    const secretKey = (PAYSTACK_SECRET_KEY || '').trim();
+    if (!secretKey || !secretKey.startsWith('sk_')) {
+      console.error('[Paystack] Payment verification blocked: PAYSTACK_SECRET_KEY is not configured on server.');
+      return res.status(503).json({
+        error: 'Payment verification service is currently unconfigured. Please contact support.'
       });
     }
 
-    const isTestKey = PAYSTACK_SECRET_KEY.startsWith('sk_test_');
-    const hasSecretKey = Boolean(PAYSTACK_SECRET_KEY && PAYSTACK_SECRET_KEY.trim().startsWith('sk_'));
-    const isSimulatedRef = reference && reference.startsWith('campally_');
+    const data = readPromotionsData();
 
-    let txData;
-    if ((testSimulate && (isTestKey || !hasSecretKey)) || isSimulatedRef || !hasSecretKey) {
-      console.log(`[Paystack] Sandbox / resilient verification accepted for reference: ${reference}, plan: ${plan.id}`);
-      txData = {
-        status: 'success',
-        currency: 'NGN',
-        amount: plan.amountKobo,
-        paid_at: new Date().toISOString(),
-        channel: isSimulatedRef ? 'campally_direct' : 'test_card',
-        customer: { email: userEmail || 'student@campally.ng' }
-      };
-    } else {
-      // Call Paystack Official Verification API using Secret Key
-      console.log(`[Paystack] Verifying transaction reference: ${reference} for plan: ${plan.id}`);
-      const paystackRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        }
+    // 3. Anti-Replay Attack Protection: Check if reference was already processed
+    if (data.processedReferences && data.processedReferences[cleanRef]) {
+      return res.status(400).json({
+        error: 'This payment reference has already been claimed.',
+        processedAt: data.processedReferences[cleanRef]
       });
+    }
 
-      const paystackJson = await paystackRes.json();
-
-      if (!paystackJson.status || !paystackJson.data) {
-        console.error('[Paystack] Verification failed response:', paystackJson);
-        return res.status(400).json({
-          error: paystackJson.message || 'Payment verification failed on Paystack.'
-        });
+    // 4. Contact Official Paystack API using server-held secret key
+    console.log(`[Paystack] Verifying transaction reference: ${cleanRef} for plan: ${plan.id}`);
+    const paystackRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(cleanRef)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${secretKey}`,
+        'Content-Type': 'application/json'
       }
+    });
 
-      txData = paystackJson.data;
+    if (!paystackRes.ok) {
+      const errText = await paystackRes.text();
+      console.error(`[Paystack] Verification HTTP error (${paystackRes.status}):`, errText);
+      return res.status(400).json({
+        error: 'Payment verification could not be validated with Paystack.'
+      });
+    }
 
-      // Strict validation: status must be "success"
-      if (txData.status !== 'success') {
-        const msg = txData.status === 'abandoned'
-          ? 'Payment has not been completed on Paystack yet. Please complete payment on the checkout page.'
-          : `Transaction status is '${txData.status}'. Payment not settled.`;
-        return res.status(400).json({ error: msg });
-      }
+    const paystackJson = await paystackRes.json();
 
-      // Strict currency validation: must be NGN
-      if (txData.currency !== 'NGN') {
-        return res.status(400).json({
-          error: `Invalid currency '${txData.currency}'. Expected NGN.`
-        });
-      }
+    if (!paystackJson.status || !paystackJson.data) {
+      console.error('[Paystack] Verification failed response:', paystackJson);
+      return res.status(400).json({
+        error: paystackJson.message || 'Payment verification failed on Paystack.'
+      });
+    }
 
-      // Strict amount validation: amount paid must be >= authoritative plan price in kobo
-      if (txData.amount < plan.amountKobo) {
-        console.error(`[Paystack] Price tampering detected: paid ${txData.amount} kobo, expected ${plan.amountKobo}`);
-        return res.status(400).json({
-          error: 'Amount paid does not match required plan price.'
-        });
-      }
+    const txData = paystackJson.data;
+
+    // 5. Strict verification criteria:
+    // A. Status must be "success"
+    if (txData.status !== 'success') {
+      const msg = txData.status === 'abandoned'
+        ? 'Payment has not been completed on Paystack yet. Please complete payment on the checkout page.'
+        : `Transaction status is '${txData.status}'. Payment not settled.`;
+      return res.status(400).json({ error: msg });
+    }
+
+    // B. Currency must be NGN
+    if (txData.currency !== 'NGN') {
+      return res.status(400).json({
+        error: `Invalid currency '${txData.currency}'. Expected NGN.`
+      });
+    }
+
+    // C. Amount must match or exceed plan price in kobo
+    if (Number(txData.amount) < plan.amountKobo) {
+      console.error(`[Paystack] Price tampering detected: paid ${txData.amount} kobo, expected ${plan.amountKobo}`);
+      return res.status(400).json({
+        error: 'Amount paid does not match required plan price.'
+      });
     }
 
     // Record reference to prevent reuse
@@ -1043,49 +1085,51 @@ app.post('/api/paystack/initialize', async (req, res) => {
       }
     };
 
-    const hasSecretKey = Boolean(PAYSTACK_SECRET_KEY && PAYSTACK_SECRET_KEY.trim().startsWith('sk_'));
-
-    if (hasSecretKey) {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 7000);
-        const response = await fetch('https://api.paystack.co/transaction/initialize', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${PAYSTACK_SECRET_KEY.trim()}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-
-        const initJson = await response.json();
-        if (initJson.status && initJson.data) {
-          return res.json({
-            success: true,
-            authorizationUrl: initJson.data.authorization_url,
-            accessCode: initJson.data.access_code,
-            reference: initJson.data.reference,
-            plan: plan
-          });
-        }
-        console.warn('[Paystack] Remote API init note:', initJson.message);
-      } catch (paystackFetchErr) {
-        console.warn('[Paystack] Direct API call timed out or failed:', paystackFetchErr.message);
-      }
+    const secretKey = (PAYSTACK_SECRET_KEY || '').trim();
+    if (!secretKey || !secretKey.startsWith('sk_')) {
+      return res.status(503).json({
+        success: false,
+        error: 'Paystack secret key is not configured on the server. Payments cannot be initiated.'
+      });
     }
 
-    // Resilient Fallback: Authoritative Reference for Instant/Direct checkout
-    const simRef = 'campally_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-    res.json({
-      success: true,
-      authorizationUrl: `https://checkout.paystack.com/checkout?reference=${simRef}`,
-      reference: simRef,
-      accessCode: simRef,
-      plan: plan,
-      isSimulated: !hasSecretKey
-    });
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch('https://api.paystack.co/transaction/initialize', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${secretKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+
+      const initJson = await response.json();
+      if (initJson.status && initJson.data) {
+        return res.json({
+          success: true,
+          authorizationUrl: initJson.data.authorization_url,
+          accessCode: initJson.data.access_code,
+          reference: initJson.data.reference,
+          plan: plan
+        });
+      }
+
+      console.warn('[Paystack] Remote API init error:', initJson.message);
+      return res.status(400).json({
+        success: false,
+        error: initJson.message || 'Paystack rejected transaction initialization.'
+      });
+    } catch (paystackFetchErr) {
+      console.error('[Paystack] Direct API call timed out or failed:', paystackFetchErr.message);
+      return res.status(502).json({
+        success: false,
+        error: 'Unable to reach Paystack payment gateway. Please check your internet connection and try again.'
+      });
+    }
   } catch (err) {
     console.error('[Paystack] Initialization error:', err);
     res.status(500).json({ error: 'Could not initialize Paystack transaction' });

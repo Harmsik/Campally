@@ -27,8 +27,8 @@ feedbackForm.addEventListener("submit", async (e) => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").then((reg) => {
-    reg.update();
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach(r => r.unregister());
   }).catch(() => {});
 }
 

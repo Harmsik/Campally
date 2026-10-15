@@ -1,4 +1,26 @@
 // Campally Global Utilities & Navigation
+// Proactively clear stale ServiceWorker caches to prevent stale UI across browser updates
+(function clearStaleAppCache() {
+  try {
+    if (typeof window !== "undefined") {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const reg of registrations) {
+            reg.unregister();
+          }
+        }).catch(() => {});
+      }
+      if ("caches" in window) {
+        caches.keys().then((names) => {
+          for (const name of names) {
+            caches.delete(name);
+          }
+        }).catch(() => {});
+      }
+    }
+  } catch (_) {}
+})();
+
 // Universal Campus Ambassador Referral Tracker
 (function initAmbassadorReferralTracking() {
   try {
@@ -205,10 +227,11 @@ function loadNav(activePage) {
       return;
     }
 
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
+      const user = data?.session?.user;
       if (link) {
-        if (data && data.user) {
-          link.href = "seller.html?id=" + data.user.id;
+        if (user) {
+          link.href = "seller.html?id=" + user.id;
         } else {
           link.href = "login.html";
         }
