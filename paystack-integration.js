@@ -165,14 +165,15 @@
         email: email,
         amount: plan.amountKobo,
         currency: "NGN",
-        callback: async function (response) {
+        callback: function (response) {
           if (window.showToast) window.showToast("Verifying your payment...", "info");
-          const verified = await doServerVerify({
+          doServerVerify({
             reference: response.reference,
             planId: plan.id,
             itemId: itemId || null
+          }).then(function (verified) {
+            if (verified && typeof onSuccess === "function") onSuccess(verified);
           });
-          if (verified && typeof onSuccess === "function") onSuccess(verified);
         },
         onClose: function () {
           if (typeof onClose === "function") onClose();
