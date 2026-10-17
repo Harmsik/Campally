@@ -270,15 +270,12 @@ function makeCard(item) {
 
   const isBoosted = Boolean(
     (window.CampallyPay && window.CampallyPay.isListingBoosted(item.id)) ||
-    item.is_boosted === true ||
-    item.is_featured === true ||
-    (item.title && (item.title.toUpperCase().includes("[FEATURED]") || item.title.toUpperCase().includes("[BOOSTED]")))
+    item.is_boosted === true
   );
 
   const isUrgent = Boolean(
     (window.CampallyPay && window.CampallyPay.isListingUrgent(item.id)) ||
-    item.is_urgent === true ||
-    (item.title && item.title.toUpperCase().includes("[URGENT]"))
+    item.is_urgent === true
   );
 
   const isProSeller = Boolean(
