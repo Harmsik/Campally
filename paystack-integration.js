@@ -1,9 +1,8 @@
 /**
  * Campally - Paystack Client Integration & Monetization Engine
  *
- * Fixed version: no dependency on a separate server. Verification runs
- * on a Supabase Edge Function (paystack-verify), which holds the secret
- * key safely and checks the payment with Paystack directly.
+ * Payments are verified on a Supabase Edge Function (paystack-verify),
+ * which holds the secret key safely and checks each payment with Paystack.
  */
 
 (function () {
@@ -19,12 +18,12 @@
       proSellers: [],
       businesses: []
     },
-    initialized: false
+    initialized: false,
+    ready: null
   };
 
-  // Plans and public key are safe to keep directly in the browser --
-  // the public key is MEANT to be public, and the real price enforcement
-  // happens server-side in the Edge Function, not here.
+  // Plans and public key are safe in the browser -- the public key is MEANT
+  // to be public, and real price enforcement happens in the Edge Function.
   function fetchConfig() {
     if (CAMPALLY_PAY.config) return CAMPALLY_PAY.config;
     CAMPALLY_PAY.config = {
@@ -34,29 +33,54 @@
         boost_3d: { id: "boost_3d", priceNaira: 300, amountKobo: 30000, name: "3-Day Boost" },
         boost_7d: { id: "boost_7d", priceNaira: 500, amountKobo: 50000, name: "7-Day Boost" },
         urgent: { id: "urgent", priceNaira: 200, amountKobo: 20000, name: "Urgent Sale Tag" },
-        pro_seller: { id: "pro_seller", priceNaira: 500, amountKobo: 50000, name: "Pro Seller Badge" }
+        pro_seller: { id: "pro_seller", priceNaira: 500, amountKobo: 50000, name: "Pro Seller Badge" },
+        business_spotlight: { id: "business_spotlight", priceNaira: 1500, amountKobo: 150000, name: "Business Spotlight" }
       }
     };
     return CAMPALLY_PAY.config;
   }
 
-  // Active promotions now come straight from the database --
-  // no more dependency on a server that can't run on GitHub Pages.
+  // Turns < > & and quotes into harmless plain text, so nothing a
+  // student types can run as code on the page.
+  function escapeHtml(text) {
+    return String(text == null ? "" : text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // Active promotions come straight from the database.
   async function fetchActivePromotions() {
     try {
       const nowIso = new Date().toISOString();
 
-      const [{ data: boosted }, { data: urgent }, { data: pros }] = await Promise.all([
+      const [{ data: boosted }, { data: urgent }, { data: pros }, { data: biz }] = await Promise.all([
         supabase.from("listings").select("id").gt("boosted_until", nowIso),
         supabase.from("listings").select("id").gt("urgent_until", nowIso),
-        supabase.from("profiles").select("id").gt("pro_seller_until", nowIso)
+        supabase.from("profiles").select("id").gt("pro_seller_until", nowIso),
+        supabase
+          .from("campus_businesses")
+          .select("id, name, category, description, lodge, whatsapp, campus_id")
+          .eq("active", true)
+          .gt("expires_at", nowIso)
+          .order("expires_at", { ascending: false })
       ]);
 
       CAMPALLY_PAY.activePromotions = {
         boosts: (boosted || []).map(r => String(r.id)),
         urgent: (urgent || []).map(r => String(r.id)),
         proSellers: (pros || []).map(r => String(r.id)),
-        businesses: [] // Business spotlight not migrated yet
+        businesses: (biz || []).map(b => ({
+          id: b.id,
+          name: escapeHtml(b.name),
+          category: escapeHtml(b.category),
+          description: escapeHtml(b.description),
+          lodge: escapeHtml(b.lodge),
+          whatsapp: String(b.whatsapp || "").replace(/[^0-9]/g, ""),
+          campus_id: b.campus_id
+        }))
       };
     } catch (e) {
       console.warn("Could not fetch active promotions:", e);
@@ -79,8 +103,10 @@
     return (CAMPALLY_PAY.activePromotions.proSellers || []).includes(String(sellerId));
   };
 
-  CAMPALLY_PAY.getBusinesses = function () {
-    return CAMPALLY_PAY.activePromotions.businesses || [];
+  CAMPALLY_PAY.getBusinesses = function (campusId) {
+    const all = CAMPALLY_PAY.activePromotions.businesses || [];
+    if (!campusId) return all;
+    return all.filter(b => !b.campus_id || String(b.campus_id) === String(campusId));
   };
 
   function getCachedStudentEmail() {
@@ -131,11 +157,9 @@
     }
   }
 
-  // Checkout: opens Paystack's own inline popup directly -- no separate
-  // "initialize" server call needed, since the popup can start a payment
-  // on its own using only the public key.
+ // Checkout: opens Paystack's own popup directly using only the public key.
   CAMPALLY_PAY.startCheckout = async function (options) {
-    const { planId, itemId, itemTitle, userEmail, onSuccess, onClose } = options;
+    const { planId, itemId, itemTitle, userEmail, business, onSuccess, onClose } = options;
 
     const config = fetchConfig();
     const plan = config?.plans?.[planId];
@@ -165,12 +189,15 @@
         email: email,
         amount: plan.amountKobo,
         currency: "NGN",
+        // NOTE: must be a plain function (NOT async) -- Paystack's older
+        // script rejects async functions with "callback must be a valid function".
         callback: function (response) {
           if (window.showToast) window.showToast("Verifying your payment...", "info");
           doServerVerify({
             reference: response.reference,
             planId: plan.id,
-            itemId: itemId || null
+            itemId: itemId || null,
+            business: business || null
           }).then(function (verified) {
             if (verified && typeof onSuccess === "function") onSuccess(verified);
           });
@@ -272,7 +299,7 @@
     });
   };
 
-  // UI Modal: Boost Listing
+ // UI Modal: Boost Listing
   CAMPALLY_PAY.openBoostModal = function (itemId, itemTitle, onComplete) {
     const existing = document.getElementById("boost-payment-modal");
     if (existing) existing.remove();
@@ -294,7 +321,7 @@
         </div>
 
         <p style="font-size:13px; color:#555; margin-bottom:14px;">
-          Pin <strong>"${itemTitle || 'Your item'}"</strong> to the top of your campus feed and sell up to <strong>3x faster</strong>!
+          Pin <strong>"${escapeHtml(itemTitle || 'Your item')}"</strong> to the top of your campus feed and sell up to <strong>3x faster</strong>!
         </p>
 
         <form id="boost-checkout-form" style="display:flex; flex-direction:column; gap:10px;">
@@ -384,7 +411,7 @@
         </div>
 
         <p style="font-size:13px; color:#555; margin-bottom:14px;">
-          Moving out or need quick cash? Add a bright <strong>🚨 Urgent Sale</strong> tag to <strong>"${itemTitle || 'Your item'}"</strong> for 14 days.
+          Moving out or need quick cash? Add a bright <strong>🚨 Urgent Sale</strong> tag to <strong>"${escapeHtml(itemTitle || 'Your item')}"</strong> for 14 days.
         </p>
 
         <form id="urgent-checkout-form" style="display:flex; flex-direction:column; gap:10px;">
@@ -431,9 +458,134 @@
     });
   };
 
+  // UI Modal: Promote a Student Business (₦1,500 for 15 days)
+  CAMPALLY_PAY.openBusinessModal = async function () {
+    const { data: s } = await supabase.auth.getSession();
+    if (!s?.session) {
+      if (window.showToast) window.showToast("Please sign in first to promote your business.", "warning");
+      setTimeout(() => { window.location.href = "login.html"; }, 1200);
+      return;
+    }
+
+    const existing = document.getElementById("business-payment-modal");
+    if (existing) existing.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "business-payment-modal";
+    modal.className = "modal-backdrop";
+    modal.style.display = "flex";
+
+    const defaultEmail = escapeHtml(s.session.user?.email || getCachedStudentEmail());
+    const inputStyle = "width:100%; padding:10px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:13px; background:#FAF9F6;";
+    const labelStyle = "font-size:12px; font-weight:700; color:#374151; display:block; margin-bottom:4px;";
+
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width:440px; text-align:left; border-radius:18px; max-height:90vh; overflow-y:auto;">
+        <div class="modal-header" style="border-bottom:1px solid #F0EDE6; padding-bottom:12px; margin-bottom:14px;">
+          <h3 style="display:flex; align-items:center; gap:8px; font-size:18px; margin:0; color:#E8553D;">
+            <i class="fa-solid fa-star"></i> Promote Your Business
+          </h3>
+          <button id="close-biz-modal-btn" class="modal-close-btn">&times;</button>
+        </div>
+
+        <p style="font-size:13px; color:#555; margin-bottom:12px;">
+          Show your student business or service to your whole campus for <strong>15 days</strong>.
+        </p>
+
+        <form id="biz-checkout-form" style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <label style="${labelStyle}">Business Name</label>
+            <input type="text" id="biz-name" maxlength="60" required style="${inputStyle}" placeholder="e.g. Ada's Braids">
+          </div>
+
+          <div>
+            <label style="${labelStyle}">Category</label>
+            <select id="biz-category" style="${inputStyle}">
+              <option>Food & Snacks</option>
+              <option>Hair & Beauty</option>
+              <option>Tutoring</option>
+              <option>Graphics & Design</option>
+              <option>Fashion</option>
+              <option>Repairs</option>
+              <option>Printing & Typing</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="${labelStyle}">WhatsApp Number</label>
+            <input type="tel" id="biz-whatsapp" maxlength="15" required style="${inputStyle}" placeholder="e.g. 08012345678">
+          </div>
+
+          <div>
+            <label style="${labelStyle}">Where to find you (hostel / lodge)</label>
+            <input type="text" id="biz-lodge" maxlength="80" style="${inputStyle}" placeholder="e.g. Silver Hostel, or Campus Delivery">
+          </div>
+
+          <div>
+            <label style="${labelStyle}">What do you offer?</label>
+            <textarea id="biz-desc" maxlength="300" style="${inputStyle} min-height:60px; font-family:inherit;" placeholder="Short description of your service or products"></textarea>
+          </div>
+
+          <div>
+            <label style="${labelStyle}">Your Email (for Paystack receipt)</label>
+            <input type="email" id="biz-email" value="${defaultEmail}" required style="${inputStyle}">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#FAF9F6; border:1px solid #E5E0D8; border-radius:12px;">
+            <span style="font-size:13px; font-weight:600; color:#444;">15 Days Spotlight:</span>
+            <span style="font-size:18px; font-weight:800; color:#E8553D;">₦1,500</span>
+          </div>
+
+          <button type="submit" class="btn-primary" style="display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700; padding:13px;">
+            <i class="fa-solid fa-lock"></i> Pay ₦1,500 with Paystack
+          </button>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector("#close-biz-modal-btn").addEventListener("click", () => modal.remove());
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.remove(); });
+
+    modal.querySelector("#biz-checkout-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = modal.querySelector("#biz-email").value.trim();
+      const business = {
+        name: modal.querySelector("#biz-name").value.trim(),
+        category: modal.querySelector("#biz-category").value,
+        whatsapp: modal.querySelector("#biz-whatsapp").value.trim(),
+        lodge: modal.querySelector("#biz-lodge").value.trim(),
+        description: modal.querySelector("#biz-desc").value.trim()
+      };
+
+      if (!business.name || business.whatsapp.replace(/[^0-9]/g, "").length < 10) {
+        if (window.showToast) window.showToast("Please enter a business name and a valid WhatsApp number.", "warning");
+        return;
+      }
+
+      modal.remove();
+      CAMPALLY_PAY.startCheckout({
+        planId: "business_spotlight",
+        userEmail: email,
+        business: business,
+        onSuccess: () => { setTimeout(() => window.location.reload(), 1500); }
+      });
+    });
+  };
+
+  // Wire up the "Promote" button on the home page
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("#open-promote-biz-btn")) {
+      CAMPALLY_PAY.openBusinessModal();
+    }
+  });
+
   // Auto-init
   fetchConfig();
-  fetchActivePromotions();
+  CAMPALLY_PAY.ready = fetchActivePromotions();
 
   window.CampallyPay = CAMPALLY_PAY;
 })();
+                                          
