@@ -159,25 +159,30 @@
     }
     localStorage.setItem("campally_user_email", email);
 
-    const handler = window.PaystackPop.setup({
-      key: config.publicKey,
-      email: email,
-      amount: plan.amountKobo,
-      currency: "NGN",
-      callback: async function (response) {
-        if (window.showToast) window.showToast("Verifying your payment...", "info");
-        const verified = await doServerVerify({
-          reference: response.reference,
-          planId: plan.id,
-          itemId: itemId || null
-        });
-        if (verified && typeof onSuccess === "function") onSuccess(verified);
-      },
-      onClose: function () {
-        if (typeof onClose === "function") onClose();
-      }
-    });
-    handler.openIframe();
+    try {
+      const handler = window.PaystackPop.setup({
+        key: config.publicKey,
+        email: email,
+        amount: plan.amountKobo,
+        currency: "NGN",
+        callback: async function (response) {
+          if (window.showToast) window.showToast("Verifying your payment...", "info");
+          const verified = await doServerVerify({
+            reference: response.reference,
+            planId: plan.id,
+            itemId: itemId || null
+          });
+          if (verified && typeof onSuccess === "function") onSuccess(verified);
+        },
+        onClose: function () {
+          if (typeof onClose === "function") onClose();
+        }
+      });
+      handler.openIframe();
+    } catch (err) {
+      console.error("Paystack popup failed to open:", err);
+      alert("Could not open the payment window: " + (err?.message || "unknown error") + "\n\nIf this keeps happening, your Paystack account may still need approval for live payments.");
+    }
   };
 
   // UI Modal: Pro Verified Student Seller Badge (₦500)
