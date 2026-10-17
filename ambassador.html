@@ -7,740 +7,239 @@
   <link rel="stylesheet" href="style.css?v=20261015_02">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    .amb-container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 16px 16px 100px 16px;
-    }
-    .amb-hero {
-      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
-      color: #FFFFFF;
-      border-radius: 20px;
-      padding: 24px 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 25px rgba(30, 27, 75, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-    .amb-hero::after {
-      content: "";
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 120px;
-      height: 120px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 50%;
-    }
-    .amb-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-      color: #FCD34D;
-    }
-    .amb-card {
-      background: #FFFFFF;
-      border: 1px solid #E5E0D8;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-    }
-    .amb-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .amb-stat-box {
-      background: #FAF9F6;
-      border: 1px solid #EFECE6;
-      border-radius: 16px;
-      padding: 16px;
-      text-align: left;
-    }
-    .amb-stat-box .num {
-      font-size: 22px;
-      font-weight: 800;
-      color: #1E1B4B;
-      margin: 4px 0 2px 0;
-    }
-    .amb-stat-box .label {
-      font-size: 12px;
-      color: #6B7280;
-      font-weight: 600;
-    }
-    .referral-link-box {
-      background: #F8FAFC;
-      border: 2px dashed #CBD5E1;
-      border-radius: 14px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 14px 0;
-      word-break: break-all;
-    }
-    .referral-link-text {
-      font-family: monospace;
-      font-size: 13px;
-      color: #0F172A;
-      font-weight: 700;
-      flex: 1;
-    }
-    .share-btn-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .share-btn {
-      flex: 1;
-      min-width: 140px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      border: none;
-      transition: all 0.2s;
-    }
-    .share-btn-wa {
-      background: #25D366;
-      color: #FFFFFF;
-    }
-    .share-btn-wa:hover {
-      background: #20BA5A;
-    }
-    .share-btn-copy {
-      background: #E8553D;
-      color: #FFFFFF;
-    }
-    .share-btn-copy:hover {
-      background: #D4442C;
-    }
-    .referral-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #F0EDE6;
-    }
-    .referral-item:last-child {
-      border-bottom: none;
-    }
-    .tag-verified {
-      background: #DCFCE7;
-      color: #15803D;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .tab-nav {
-      display: flex;
-      background: #EFECE6;
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 18px;
-      gap: 4px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 9px;
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: #FFFFFF;
-      color: #1E1B4B;
-      font-weight: 700;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
+    .amb-container { max-width: 680px; margin: 0 auto; padding: 16px 16px 100px 16px; }
+    .amb-hero { background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color: #FFFFFF; border-radius: 20px; padding: 24px 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(30,27,75,0.25); }
+    .amb-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; color: #FCD34D; }
+    .amb-card { background: #FFFFFF; border: 1px solid #E5E0D8; border-radius: 18px; padding: 20px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.04); }
+    .amb-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .amb-stat-box { background: #FAF9F6; border: 1px solid #EFECE6; border-radius: 16px; padding: 16px; }
+    .amb-stat-box .num { font-size: 22px; font-weight: 800; color: #1E1B4B; margin: 4px 0 2px 0; }
+    .amb-stat-box .label { font-size: 12px; color: #6B7280; font-weight: 600; }
+    .referral-link-box { background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 14px; padding: 14px; margin: 14px 0; word-break: break-all; }
+    .referral-link-text { font-family: monospace; font-size: 13px; color: #0F172A; font-weight: 700; }
+    .share-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .share-btn { flex: 1; min-width: 140px; padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; text-decoration: none; border: none; }
+    .share-btn-wa { background: #25D366; color: #FFFFFF; }
+    .share-btn-copy { background: #E8553D; color: #FFFFFF; }
+    .referral-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F0EDE6; font-size: 13px; }
+    .referral-item:last-child { border-bottom: none; }
+    .tab-nav { display: flex; background: #EFECE6; border-radius: 12px; padding: 4px; margin-bottom: 18px; gap: 4px; }
+    .tab-btn { flex: 1; padding: 8px 12px; border-radius: 9px; border: none; background: transparent; font-size: 12px; font-weight: 600; color: #555; cursor: pointer; }
+    .tab-btn.active { background: #FFFFFF; color: #1E1B4B; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+    .fld { width: 100%; padding: 10px 12px; border: 1px solid #CBD5E1; border-radius: 10px; font-size: 13px; background: #FFFFFF; }
+    .lbl { font-size: 12px; font-weight: 600; color: #374151; display: block; margin-bottom: 4px; }
+    .small-btn { border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- Top App Header -->
   <header class="app-header" style="position:sticky; top:0; z-index:100; background:#FAF9F6; border-bottom:1px solid #E5E0D8;">
     <div style="display:flex; align-items:center; gap:12px;">
       <a href="home.html" style="color:#2B2B2B; font-size:16px; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i></a>
       <h1 class="logo" style="margin:0; font-size:18px;">Campus Ambassador Portal</h1>
     </div>
-    <div style="display:flex; align-items:center; gap:8px;">
-      <button id="admin-toggle-btn" style="background:#FAF0EE; border:1px solid #FCD8D0; color:#E8553D; font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; cursor:pointer;">
-        <i class="fa-solid fa-user-shield"></i> Founder View
-      </button>
-    </div>
   </header>
 
   <div class="amb-container">
 
-    <!-- View Mode Tabs (Ambassador Dashboard vs Founder Admin Overview) -->
-    <div class="tab-nav">
-      <button id="tab-ambassador-btn" class="tab-btn active">
-        <i class="fa-solid fa-graduation-cap"></i> My Ambassador Dashboard
-      </button>
-      <button id="tab-founder-btn" class="tab-btn">
-        <i class="fa-solid fa-crown" style="color:#D97706;"></i> Founder Admin Hub
-      </button>
+    <!-- Founder tabs (only shown to the founder account) -->
+    <div id="founder-tabs" class="tab-nav" style="display:none;">
+      <button id="tab-ambassador-btn" class="tab-btn active"><i class="fa-solid fa-graduation-cap"></i> My Dashboard</button>
+      <button id="tab-founder-btn" class="tab-btn"><i class="fa-solid fa-crown" style="color:#D97706;"></i> Founder Hub</button>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- SECTION A: AMBASSADOR DASHBOARD & REFERRAL TRACKING             -->
-    <!-- ============================================================== -->
-    <div id="ambassador-view-section">
-      
-      <!-- Lookup / Login if no ambassador loaded -->
+    <div id="loading-card" class="amb-card" style="text-align:center; color:#64748B; font-size:13px;">
+      <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+    </div>
+
+    <!-- ================= AMBASSADOR VIEW ================= -->
+    <div id="ambassador-view-section" style="display:none;">
+
+      <!-- Not signed in -->
       <div id="amb-login-card" class="amb-card" style="display:none; text-align:center; padding:28px 20px;">
         <div style="width:60px; height:60px; background:#EEF2FF; color:#4F46E5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 14px auto;">
           <i class="fa-solid fa-bullhorn"></i>
         </div>
         <h2 style="font-size:18px; color:#1E1B4B; margin-bottom:6px;">Campus Ambassador Access</h2>
         <p style="font-size:13px; color:#6B7280; margin-bottom:18px; line-height:1.5;">
-          Access your unique referral link, real-time student signups, and commission payouts.
+          Sign in to apply, open your referral link, and see your student signups.
         </p>
-
-        <form id="amb-lookup-form" style="display:flex; flex-direction:column; gap:10px; max-width:380px; margin:0 auto 16px auto;">
-          <input type="text" id="amb-lookup-input" placeholder="Enter your Ambassador Code or Email" required style="padding:12px 14px; border:1px solid #CBD5E1; border-radius:12px; font-size:14px;">
-          <button type="submit" class="btn-primary" style="padding:12px; border-radius:12px; font-weight:700;">
-            Open My Ambassador Dashboard
-          </button>
-        </form>
-
-        <div style="border-top:1px solid #E2E8F0; padding-top:16px; margin-top:16px;">
-          <p style="font-size:12px; color:#64748B; margin-bottom:8px;">Not yet a Campus Ambassador?</p>
-          <button id="open-register-amb-btn" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#1E293B; padding:8px 18px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">
-            Apply with Proof of Qualification &rarr;
-          </button>
-        </div>
+        <a href="login.html" class="btn-primary" style="display:inline-block; padding:12px 24px; border-radius:12px; font-weight:700; text-decoration:none;">Sign In to Continue</a>
       </div>
 
-      <!-- Application Under Review (Pending Approval Card) -->
-      <div id="amb-pending-card" class="amb-card" style="display:none; text-align:left; border:1.5px solid #FCD34D; background:#FFFDF7;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-          <div style="width:42px; height:42px; border-radius:50%; background:#FEF3C7; color:#D97706; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
-            <i class="fa-solid fa-hourglass-half"></i>
-          </div>
-          <div>
-            <span style="font-size:10px; background:#FEF3C7; color:#B45309; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px;">Pending Approval</span>
-            <h3 style="margin:2px 0 0 0; font-size:16px; color:#92400E; font-weight:800;">Application Under Review</h3>
-          </div>
-        </div>
-
-        <p style="font-size:12px; color:#78350F; line-height:1.5; margin:0 0 14px 0;">
-          Hello <strong id="pending-amb-name">Student</strong>! Your application to represent <strong id="pending-amb-campus">Campus</strong> has been submitted. To safeguard student trading and protect trust, the Founder verifies all credentials before activating referral links.
-        </p>
-
-        <!-- Summary box of what was submitted -->
-        <div style="background:#FFFFFF; border:1px solid #FDE68A; border-radius:12px; padding:12px; margin-bottom:14px; font-size:12px; color:#475569; line-height:1.6;">
-          <div style="font-weight:700; color:#1E1B4B; margin-bottom:6px;">Your Submitted Qualifications:</div>
-          <div id="pending-course-rep-row" style="display:none; margin-bottom:4px;">
-            🎓 <strong>School Position:</strong> <span id="pending-amb-position"></span>
-          </div>
-          <div id="pending-social-row" style="display:none; margin-bottom:4px;">
-            📱 <strong>Social Media:</strong> <span id="pending-amb-social"></span>
-          </div>
-          <div style="margin-bottom:4px;">
-            ⚡ <strong>Campus Activity:</strong> <span style="color:#059669; font-weight:700;">Active pledge confirmed</span>
-          </div>
-          <div id="pending-proof-row" style="margin-top:8px;">
-            <span style="font-weight:700; display:block; margin-bottom:4px;">Uploaded Proof Document:</span>
-            <div style="display:inline-block; border:1px solid #CBD5E1; border-radius:8px; overflow:hidden; background:#F8FAFC; cursor:pointer;" id="pending-proof-click-box" title="Click to enlarge">
-              <img id="pending-proof-thumb" src="" alt="Proof Preview" style="height:70px; object-fit:cover; display:block;">
-            </div>
-            <div style="font-size:11px; color:#64748B; margin-top:2px;">(Click image to view full size)</div>
-          </div>
-        </div>
-
-        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:10px 12px; font-size:11px; color:#15803D; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>Once approved by the Founder, your unique referral code (<span id="pending-amb-code" style="font-family:monospace; font-weight:700;">AMB-CODE</span>) will unlock immediately!</span>
-        </div>
-
-        <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button id="pending-recheck-btn" style="flex:1; min-width:140px; background:#F8FAFC; border:1px solid #CBD5E1; padding:10px 14px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer; color:#1E293B;">
-            <i class="fa-solid fa-rotate-right"></i> Check Approval Status
-          </button>
-          <a id="pending-contact-founder-btn" href="mailto:mbuharmless@gmail.com?subject=Campally%20Ambassador%20Approval%20Inquiry" style="flex:1; min-width:140px; background:#25D366; color:white; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-            <i class="fa-brands fa-whatsapp"></i> Contact Founder
-          </a>
-        </div>
-      </div>
-
-      <!-- Application Rejected / Needs Revision Card -->
-      <div id="amb-rejected-card" class="amb-card" style="display:none; text-align:left; border:1.5px solid #FCA5A5; background:#FEF2F2;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-          <div style="width:38px; height:38px; border-radius:50%; background:#FEE2E2; color:#DC2626; display:flex; align-items:center; justify-content:center; font-size:16px;">
-            <i class="fa-solid fa-circle-exclamation"></i>
-          </div>
-          <div>
-            <span style="font-size:10px; background:#FEE2E2; color:#991B1B; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase;">Needs Revision</span>
-            <h3 style="margin:2px 0 0 0; font-size:16px; color:#991B1B; font-weight:800;">Application Not Approved</h3>
-          </div>
-        </div>
-        <p style="font-size:12px; color:#7F1D1D; margin:0 0 10px 0; line-height:1.5;">
-          Founder feedback: <span id="rejected-reason-text" style="font-weight:700;">Please upload clearer proof of course rep position or 3k+ followers.</span>
-        </p>
-        <button id="reapply-amb-btn" class="btn-primary" style="background:#E8553D; padding:10px 16px; border-radius:10px; font-size:12px; font-weight:700;">
-          <i class="fa-solid fa-arrow-rotate-right" style="margin-right:6px;"></i> Update & Re-Submit Application
-        </button>
-      </div>
-
-      <!-- Registration Form (with Conditions & Proof Upload) -->
+      <!-- Application form -->
       <div id="amb-register-card" class="amb-card" style="display:none;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-          <h3 style="font-size:16px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-id-badge" style="color:#E8553D; margin-right:6px;"></i> Apply as Campus Ambassador</h3>
-          <button type="button" id="cancel-register-amb-btn" style="background:none; border:none; color:#888; font-size:18px; cursor:pointer;">&times;</button>
-        </div>
+        <h3 style="font-size:16px; color:#1E1B4B; margin:0 0 8px 0;"><i class="fa-solid fa-id-badge" style="color:#E8553D; margin-right:6px;"></i> Apply as Campus Ambassador</h3>
 
-        <!-- Approval Conditions Notice -->
         <div style="background:#FFFBEB; border:1px solid #FCD34D; border-radius:12px; padding:12px; margin-bottom:14px; font-size:12px; color:#92400E; line-height:1.5;">
-          <div style="font-weight:700; color:#78350F; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-shield-halved" style="color:#D97706;"></i> Ambassador Approval Criteria
-          </div>
-          Ambassadors earn <strong>₦150 per student signup</strong>. Not everyone can become an ambassador &mdash; the Founder approves applicants who meet at least <strong>one</strong> of these conditions with proof:
+          <div style="font-weight:700; color:#78350F; margin-bottom:4px;"><i class="fa-solid fa-shield-halved" style="color:#D97706;"></i> Approval Criteria</div>
+          Ambassadors earn <strong>₦150 per student signup</strong>. The Founder approves applicants who meet at least <strong>one</strong> condition with proof:
           <ul style="margin:4px 0 0 0; padding-left:18px;">
-            <li>Course Rep or relevant leadership position in school</li>
+            <li>Course Rep or leadership position in school</li>
             <li>Social media account with 3,000+ followers</li>
             <li>Active commitment on campus WhatsApp groups</li>
           </ul>
         </div>
 
         <form id="amb-register-form" style="display:flex; flex-direction:column; gap:12px;">
-          <div>
-            <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Full Name</label>
-            <input type="text" id="reg-amb-name" placeholder="e.g. Chukwuemeka Okoye" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-          </div>
-          <div>
-            <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Email</label>
-            <input type="email" id="reg-amb-email" placeholder="e.g. chukwu@university.edu.ng" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-          </div>
-          <div>
-            <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">WhatsApp Number</label>
-            <input type="tel" id="reg-amb-phone" placeholder="e.g. 08012345678" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-          </div>
-          <div>
-            <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Your University / Campus</label>
-            <select id="reg-amb-campus" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px; background:#FFFFFF;">
-              <option value="">Select your campus</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:12px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Department & Level</label>
-            <input type="text" id="reg-amb-dept" placeholder="e.g. Economics • 300 Level" style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-          </div>
+          <div><label class="lbl">Full Name</label><input type="text" id="reg-amb-name" class="fld" maxlength="80" required></div>
+          <div><label class="lbl">Email</label><input type="email" id="reg-amb-email" class="fld" maxlength="120" required></div>
+          <div><label class="lbl">WhatsApp Number</label><input type="tel" id="reg-amb-phone" class="fld" maxlength="20" placeholder="e.g. 08012345678" required></div>
+          <div><label class="lbl">Your University / Campus</label>
+            <select id="reg-amb-campus" class="fld" required><option value="">Select your campus</option></select></div>
+          <div><label class="lbl">Department & Level</label><input type="text" id="reg-amb-dept" class="fld" maxlength="120" placeholder="e.g. Economics • 300 Level"></div>
 
-          <!-- Condition 1: Course Rep or School Position -->
           <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px;">
-            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; font-size:12px; margin-bottom:4px;">
+            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; font-size:12px;">
               <input type="checkbox" id="reg-cond-course-rep" style="margin-top:2px; width:16px; height:16px; accent-color:#E8553D;">
               <span>Condition 1: I am a Course Rep or hold an official position in school</span>
             </label>
-            <div id="reg-course-rep-box" style="display:none; padding-top:6px;">
-              <label style="font-size:11px; color:#475569; font-weight:600; display:block; margin-bottom:4px;">Position Title & Department</label>
-              <input type="text" id="reg-school-pos" placeholder="e.g. Course Rep 300L Accounting or Hall Exco" style="width:100%; padding:9px 11px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px;">
+            <div id="reg-course-rep-box" style="display:none; padding-top:8px;">
+              <label class="lbl">Position Title & Department</label>
+              <input type="text" id="reg-school-pos" class="fld" maxlength="160" placeholder="e.g. Course Rep 300L Accounting">
             </div>
           </div>
 
-          <!-- Condition 2: Social Media 3k+ Followers -->
           <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px;">
-            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; font-size:12px; margin-bottom:4px;">
+            <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#1E293B; font-size:12px;">
               <input type="checkbox" id="reg-cond-social" style="margin-top:2px; width:16px; height:16px; accent-color:#E8553D;">
               <span>Condition 2: I have a social media account with 3k+ followers</span>
             </label>
-            <div id="reg-social-box" style="display:none; padding-top:6px; display:flex; flex-direction:column; gap:8px;">
-              <div>
-                <label style="font-size:11px; color:#475569; font-weight:600; display:block; margin-bottom:3px;">Select Platform</label>
-                <select id="reg-social-platform" style="width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px; background:#FFFFFF;">
-                  <option value="Instagram">Instagram</option>
-                  <option value="TikTok">TikTok</option>
-                  <option value="X (Twitter)">X (Twitter)</option>
-                  <option value="Facebook">Facebook</option>
-                  <option value="YouTube">YouTube</option>
-                  <option value="LinkedIn">LinkedIn</option>
-                  <option value="WhatsApp Channel">WhatsApp Channel / Group Admin</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-size:11px; color:#475569; font-weight:600; display:block; margin-bottom:3px;">Handle Name or Profile Link for inspection</label>
-                <input type="text" id="reg-social-handle" placeholder="e.g. @campally_lead or instagram.com/yourhandle" style="width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px;">
-              </div>
-              <div>
-                <label style="font-size:11px; color:#475569; font-weight:600; display:block; margin-bottom:3px;">Followers Count</label>
-                <input type="text" id="reg-social-followers" placeholder="e.g. 4,200 followers" style="width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px;">
-              </div>
+            <div id="reg-social-box" style="display:none; padding-top:8px; flex-direction:column; gap:8px;">
+              <div><label class="lbl">Platform</label>
+                <select id="reg-social-platform" class="fld">
+                  <option>Instagram</option><option>TikTok</option><option>X (Twitter)</option>
+                  <option>Facebook</option><option>YouTube</option><option>LinkedIn</option>
+                  <option>WhatsApp Channel</option>
+                </select></div>
+              <div><label class="lbl">Handle or Profile Link</label><input type="text" id="reg-social-handle" class="fld" maxlength="160" placeholder="e.g. @yourhandle"></div>
+              <div><label class="lbl">Followers Count</label><input type="text" id="reg-social-followers" class="fld" maxlength="40" placeholder="e.g. 4,200"></div>
             </div>
           </div>
 
-          <!-- Condition 3: Active Pledge -->
           <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:12px;">
             <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-weight:700; color:#166534; font-size:12px;">
               <input type="checkbox" id="reg-cond-active" checked required style="margin-top:2px; width:16px; height:16px; accent-color:#16A34A;">
-              <span>Condition 3: Must always be active &mdash; I pledge to remain active on campus and share Campally in my departmental/hostel chats.</span>
+              <span>I pledge to stay active in campus and department WhatsApp groups to help students trade safely.</span>
             </label>
           </div>
 
-          <!-- Proof Upload -->
           <div style="background:#FAF9F6; border:1.5px dashed #CBD5E1; border-radius:12px; padding:12px;">
-            <label style="font-weight:700; font-size:12px; color:#1E293B; display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-              <i class="fa-solid fa-file-arrow-up" style="color:#E8553D;"></i> Upload Proof of Qualification (Required)
+            <label style="font-weight:700; font-size:12px; color:#1E293B; display:block; margin-bottom:4px;">
+              <i class="fa-solid fa-file-arrow-up" style="color:#E8553D;"></i> Upload Proof (screenshot, ID, letter or PDF, max 5MB)
             </label>
-            <p style="font-size:11px; color:#64748B; margin:0 0 8px 0;">
-              Upload screenshot of 3k+ followers, student ID card, appointment letter, or department course rep screen.
-            </p>
-            <input type="file" id="reg-proof-file" accept="image/*,application/pdf" required style="font-size:12px; width:100%;">
-            
+            <input type="file" id="reg-proof-file" accept="image/*,application/pdf" style="font-size:12px; width:100%;">
             <div id="reg-proof-preview-box" style="display:none; margin-top:8px; text-align:center;">
-              <img id="reg-proof-preview-img" src="" alt="Proof Preview" style="max-height:120px; border-radius:8px; border:1px solid #CBD5E1; object-fit:cover;">
-              <div style="font-size:11px; color:#059669; font-weight:600; margin-top:3px;"><i class="fa-solid fa-circle-check"></i> Proof document loaded</div>
+              <img id="reg-proof-preview-img" src="" alt="Proof preview" style="max-height:120px; border-radius:8px; border:1px solid #CBD5E1;">
+              <div id="reg-proof-name" style="font-size:11px; color:#059669; font-weight:600; margin-top:3px;"></div>
             </div>
-
-            <input type="text" id="reg-proof-note" placeholder="Brief note about proof (e.g. Screenshot of 3.8k followers on TikTok)" style="font-size:12px; margin-top:8px; width:100%; padding:8px 10px; border:1px solid #CBD5E1; border-radius:8px;">
+            <input type="text" id="reg-proof-note" class="fld" maxlength="200" placeholder="Optional note about this proof" style="margin-top:8px;">
           </div>
 
-          <button type="submit" id="submit-amb-register-btn" class="btn-primary" style="padding:12px; font-size:13px; font-weight:700; border-radius:12px; margin-top:6px;">
-            <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Submit Application for Founder Approval
+          <button type="submit" id="submit-amb-register-btn" class="btn-primary" style="background:#E8553D; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
+            <i class="fa-solid fa-paper-plane"></i> Submit Application for Founder Approval
           </button>
         </form>
       </div>
 
-      <!-- Active Ambassador Main Dashboard -->
-      <div id="amb-active-dashboard" style="display:none;">
-
-        <!-- Hero Card -->
-        <div class="amb-hero">
-          <div class="amb-badge">
-            <i class="fa-solid fa-shield-halved"></i> Official Campus Ambassador
-          </div>
-          <h2 id="dash-amb-name" style="font-size:22px; margin:0 0 4px 0; font-weight:800;">Ambassador Name</h2>
-          <p id="dash-amb-campus" style="font-size:13px; color:#C7D2FE; margin:0 0 14px 0;">🏫 University Campus</p>
-
-          <div style="background:rgba(255,255,255,0.1); border-radius:12px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
-            <span style="font-size:12px; color:#E0E7FF;">Your Ambassador Code:</span>
-            <span id="dash-amb-code" style="font-family:monospace; font-weight:800; font-size:14px; color:#FCD34D; background:rgba(0,0,0,0.25); padding:3px 10px; border-radius:6px;">AMB-CODE</span>
-          </div>
-        </div>
-
-        <!-- Real-Time Metrics Grid -->
-        <div class="amb-stats-grid">
-          <div class="amb-stat-box">
-            <div style="color:#059669; font-size:18px;"><i class="fa-solid fa-user-group"></i></div>
-            <div id="stat-referrals-count" class="num">0</div>
-            <div class="label">Total Student Referrals</div>
-          </div>
-          <div class="amb-stat-box">
-            <div style="color:#3B82F6; font-size:18px;"><i class="fa-solid fa-arrow-pointer"></i></div>
-            <div id="stat-clicks-count" class="num">0</div>
-            <div class="label">Link Clicks / Visits</div>
-          </div>
-          <div class="amb-stat-box">
-            <div style="color:#D97706; font-size:18px;"><i class="fa-solid fa-coins"></i></div>
-            <div id="stat-total-earned" class="num">₦0</div>
-            <div class="label">Total Earnings (₦150/user)</div>
-          </div>
-          <div class="amb-stat-box">
-            <div style="color:#E8553D; font-size:18px;"><i class="fa-solid fa-wallet"></i></div>
-            <div id="stat-pending-payout" class="num">₦0</div>
-            <div class="label">Available for Payout</div>
-          </div>
-        </div>
-
-        <!-- Share Your Referral Link Box -->
-        <div class="amb-card">
-          <div style="display:flex; align-items:center; justify-content:space-between;">
-            <h3 style="font-size:15px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-share-nodes" style="color:#E8553D; margin-right:6px;"></i> Your Ambassador Referral Link</h3>
-            <span style="font-size:11px; background:#FEF3C7; color:#B45309; padding:2px 8px; border-radius:12px; font-weight:700;">Earn ₦150 / Signup</span>
-          </div>
-          <p style="font-size:12px; color:#6B7280; margin:6px 0 0 0; line-height:1.4;">
-            Share this link in your department, hall/hostel, and university WhatsApp groups. Every time a student signs up with this link, it is automatically logged under your dashboard!
-          </p>
-
-          <div class="referral-link-box">
-            <i class="fa-solid fa-link" style="color:#64748B;"></i>
-            <span id="display-referral-link" class="referral-link-text">https://campally.ng/signup.html?ref=CODE</span>
-          </div>
-
-          <div class="share-btn-row">
-            <button id="copy-ref-link-btn" class="share-btn share-btn-copy">
-              <i class="fa-solid fa-copy"></i> Copy Link
-            </button>
-            <a id="share-ref-whatsapp-btn" href="#" target="_blank" class="share-btn share-btn-wa">
-              <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Share to WhatsApp
-            </a>
-          </div>
-        </div>
-
-
-        <!-- "Who Used My Link" Real-time Referrals Table / Feed -->
-        <div class="amb-card">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <div>
-              <h3 style="font-size:15px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-users-viewfinder" style="color:#059669; margin-right:6px;"></i> Students Who Used Your Link</h3>
-              <p style="font-size:11px; color:#6B7280; margin:2px 0 0 0;">Updated in real-time as students sign up</p>
-            </div>
-            <button id="refresh-referrals-btn" style="background:#F1F5F9; border:1px solid #E2E8F0; padding:4px 10px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; color:#475569;">
-              <i class="fa-solid fa-rotate-right"></i> Refresh
-            </button>
-          </div>
-
-          <!-- Referrals List Container -->
-          <div id="referrals-list-container">
-            <div style="text-align:center; padding:30px 10px; color:#94A3B8;">
-              <i class="fa-solid fa-spinner fa-spin" style="font-size:20px; margin-bottom:8px;"></i>
-              <div style="font-size:12px;">Loading your referrals...</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bank Details & Payout Section -->
-        <div class="amb-card">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <h3 style="font-size:15px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-building-columns" style="color:#D97706; margin-right:6px;"></i> Bank Account & Payouts</h3>
-            <span id="payout-status-badge" style="font-size:11px; background:#F1F5F9; color:#475569; padding:2px 8px; border-radius:12px; font-weight:600;">Bank Transfer</span>
-          </div>
-
-          <p style="font-size:12px; color:#6B7280; margin:0 0 14px 0; line-height:1.4;">
-            Earnings are paid directly to your Nigerian bank or digital wallet (OPay, PalmPay, Kuda, GTBank, etc.).
-          </p>
-
-          <form id="amb-bank-form" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <div>
-                <label style="font-size:11px; font-weight:600; color:#475569; display:block; margin-bottom:4px;">Bank Name</label>
-                <select id="amb-bank-name" required style="width:100%; padding:9px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px; background:#FAF9F6;">
-                  <option value="">Select Bank</option>
-                  <option value="OPay">OPay (PayCom)</option>
-                  <option value="PalmPay">PalmPay</option>
-                  <option value="Kuda Bank">Kuda Bank</option>
-                  <option value="Moniepoint">Moniepoint</option>
-                  <option value="GTBank">Guaranty Trust Bank (GTB)</option>
-                  <option value="Access Bank">Access Bank</option>
-                  <option value="Zenith Bank">Zenith Bank</option>
-                  <option value="First Bank">First Bank of Nigeria</option>
-                  <option value="UBA">United Bank for Africa (UBA)</option>
-                  <option value="Fidelity Bank">Fidelity Bank</option>
-                  <option value="Stanbic IBTC">Stanbic IBTC</option>
-                  <option value="Wema Bank">Wema Bank (ALAT)</option>
-                  <option value="Union Bank">Union Bank</option>
-                  <option value="Ecobank">Ecobank Nigeria</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-size:11px; font-weight:600; color:#475569; display:block; margin-bottom:4px;">10-digit Account Number</label>
-                <input type="text" id="amb-account-number" maxlength="10" placeholder="e.g. 8123456789" required style="width:100%; padding:9px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px;">
-              </div>
-            </div>
-            <div>
-              <label style="font-size:11px; font-weight:600; color:#475569; display:block; margin-bottom:4px;">Account Name (Must match your bank details)</label>
-              <input type="text" id="amb-account-name" placeholder="e.g. Chukwuemeka David Okoye" required style="width:100%; padding:9px 10px; border:1px solid #CBD5E1; border-radius:8px; font-size:12px;">
-            </div>
-            <div style="display:flex; gap:10px;">
-              <button type="submit" id="save-bank-btn" style="flex:1; background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B; padding:10px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">
-                <i class="fa-solid fa-floppy-disk" style="margin-right:4px;"></i> Save Bank Details
-              </button>
-              <button type="button" id="request-payout-btn" style="flex:1; background:#059669; border:none; color:#FFFFFF; padding:10px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer;">
-                <i class="fa-solid fa-money-bill-wave" style="margin-right:4px;"></i> Request Payout
-              </button>
-            </div>
-          </form>
-
-          <!-- Payout History -->
-          <div id="payout-history-container" style="border-top:1px solid #F1F5F9; padding-top:12px;">
-            <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Recent Payout Requests:</div>
-            <div id="payout-history-list" style="font-size:12px; color:#64748B;">
-              No payout requests yet.
-            </div>
-          </div>
-        </div>
-
-        <!-- Campus Ambassador Leadership Tips -->
-        <div class="amb-card" style="background:#FFFDF7; border:1px solid #FEF3C7;">
-          <div style="font-weight:700; color:#92400E; font-size:13px; margin-bottom:8px;">
-            <i class="fa-solid fa-lightbulb" style="color:#D97706; margin-right:6px;"></i> Ambassador Growth & WhatsApp Playbook
-          </div>
-          <ul style="font-size:12px; color:#78350F; margin:0; padding-left:18px; line-height:1.6;">
-            <li><strong>Department Groups:</strong> Share your referral link before exam season when students need past questions and textbooks.</li>
-            <li><strong>Hostel & Lodge Chats:</strong> Announce that graduating seniors are clearing out fans, mattresses, and gas cylinders on Campally.</li>
-            <li><strong>Perks:</strong> Reach 25 student referrals to unlock a free <strong>Pro Seller Badge</strong> and priority support.</li>
-          </ul>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ============================================================== -->
-    <!-- SECTION B: FOUNDER ADMIN OVERVIEW (HOW FOUNDER KNOWS & PAYS)    -->
-    <!-- ============================================================== -->
-    <div id="founder-view-section" style="display:none;">
-      
-      <!-- Founder Header -->
-      <div style="background:#2A1713; color:#FFFFFF; border-radius:18px; padding:20px; margin-bottom:18px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-          <span style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#FCD34D; font-weight:700;">Campally Startup Management</span>
-          <i class="fa-solid fa-crown" style="color:#FCD34D;"></i>
-        </div>
-        <h2 style="font-size:20px; margin:0 0 4px 0; font-weight:800;">Founder Ambassador Command Hub</h2>
-        <p style="font-size:12px; color:#E0E7FF; margin:0; line-height:1.4;">
-          Here is how you monitor all ambassador referrals, know exactly who joined via their links, and pay ambassadors via bank transfer!
+      <!-- Pending -->
+      <div id="amb-pending-card" class="amb-card" style="display:none; border:1.5px solid #FCD34D; background:#FFFDF7;">
+        <span style="font-size:10px; background:#FEF3C7; color:#B45309; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase;">Pending Approval</span>
+        <h3 style="margin:6px 0 8px 0; font-size:16px; color:#92400E; font-weight:800;">Application Under Review</h3>
+        <p style="font-size:12px; color:#78350F; line-height:1.5; margin:0 0 12px 0;">
+          Hello <strong id="pending-amb-name">Student</strong>! Your application to represent <strong id="pending-amb-campus">Campus</strong> is with the Founder. Your referral code (<span id="pending-amb-code" style="font-family:monospace; font-weight:700;"></span>) unlocks when you are approved.
         </p>
-
-      </div>
-
-      <!-- Founder Metrics -->
-      <div class="amb-stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));">
-        <div class="amb-stat-box" style="border-left:4px solid #D97706; background:#FFFBEB;">
-          <div style="color:#D97706; font-size:16px;"><i class="fa-solid fa-hourglass-half"></i></div>
-          <div id="adm-pending-apps-count" class="num" style="color:#B45309;">0</div>
-          <div class="label" style="color:#92400E; font-weight:700;">Pending Applications</div>
-        </div>
-        <div class="amb-stat-box">
-          <div style="color:#4F46E5; font-size:16px;"><i class="fa-solid fa-id-card-clip"></i></div>
-          <div id="adm-total-ambassadors" class="num">0</div>
-          <div class="label">Active Ambassadors</div>
-        </div>
-        <div class="amb-stat-box">
-          <div style="color:#059669; font-size:16px;"><i class="fa-solid fa-user-plus"></i></div>
-          <div id="adm-total-referrals" class="num">0</div>
-          <div class="label">Referred Students</div>
-        </div>
-        <div class="amb-stat-box">
-          <div style="color:#DC2626; font-size:16px;"><i class="fa-solid fa-clock-rotate-left"></i></div>
-          <div id="adm-pending-payouts-val" class="num">₦0</div>
-          <div class="label">Pending Payouts</div>
-        </div>
-        <div class="amb-stat-box">
-          <div style="color:#10B981; font-size:16px;"><i class="fa-solid fa-circle-check"></i></div>
-          <div id="adm-total-paid-out" class="num">₦0</div>
-          <div class="label">Total Paid Out</div>
+        <div id="pending-quals" style="background:#FFFFFF; border:1px solid #FDE68A; border-radius:12px; padding:12px; margin-bottom:12px; font-size:12px; color:#475569; line-height:1.6;"></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="pending-proof-btn" class="small-btn" style="flex:1; min-width:140px; background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B;"><i class="fa-solid fa-image"></i> View My Proof</button>
+          <button id="pending-recheck-btn" class="small-btn" style="flex:1; min-width:140px; background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B;"><i class="fa-solid fa-rotate-right"></i> Check Approval Status</button>
         </div>
       </div>
 
-      <!-- SECTION 1: Pending Ambassador Applications Queue (Needs Founder Approval) -->
-      <div class="amb-card" style="border:1.5px solid #FCD34D;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <h3 style="font-size:15px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-user-check" style="color:#D97706; margin-right:6px;"></i> Ambassador Applications Pending Approval</h3>
-              <span id="adm-pending-badge" style="background:#FEF3C7; color:#92400E; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">0 Pending</span>
-            </div>
-            <p style="font-size:11px; color:#6B7280; margin:3px 0 0 0;">Inspect proof of Course Rep / 3k+ Social Media, verify WhatsApp, and approve.</p>
-          </div>
-          <button id="adm-refresh-apps-btn" style="background:#F1F5F9; border:1px solid #CBD5E1; padding:4px 10px; border-radius:8px; font-size:11px; cursor:pointer;">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
-          </button>
-        </div>
-
-        <div id="adm-applications-queue">
-          <p style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Loading pending applications...</p>
-        </div>
-      </div>
-
-      <!-- SECTION 2: Pending Payouts Action Queue -->
-      <div class="amb-card">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-          <div>
-            <h3 style="font-size:15px; color:#1E1B4B; margin:0;"><i class="fa-solid fa-hand-holding-dollar" style="color:#E8553D; margin-right:6px;"></i> Pending Ambassador Payout Requests</h3>
-            <p style="font-size:11px; color:#6B7280; margin:2px 0 0 0;">Pay via your bank app (OPay, Kuda, GTB) then tap 'Mark as Paid'</p>
-          </div>
-          <button id="adm-refresh-btn" style="background:#F1F5F9; border:1px solid #CBD5E1; padding:4px 10px; border-radius:8px; font-size:11px; cursor:pointer;">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
-          </button>
-        </div>
-
-        <div id="adm-payouts-queue">
-          <p style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Loading pending payouts...</p>
-        </div>
-      </div>
-
-      <!-- SECTION 3: Master Ambassador Directory -->
-      <div class="amb-card">
-        <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 12px 0;"><i class="fa-solid fa-list-check" style="color:#3B82F6; margin-right:6px;"></i> All Approved Campus Ambassadors & Performance</h3>
-        <div id="adm-ambassadors-list">
-          <p style="text-align:center; color:#94A3B8; font-size:12px; padding:20px 0;">Loading ambassador roster...</p>
-        </div>
-      </div>
-
-      <!-- Founder Strategic Guidance Note -->
-      <div class="amb-card" style="background:#F0FDF4; border:1px solid #BBF7D0;">
-        <div style="font-weight:700; color:#15803D; font-size:13px; margin-bottom:6px;">
-          <i class="fa-solid fa-circle-info" style="margin-right:6px;"></i> Founder Checklist: How to Run Ambassadors Successfully
-        </div>
-        <p style="font-size:12px; color:#166534; line-height:1.6; margin:0;">
-          <strong>1. Strict Approval Quality:</strong> Only approve course reps or students who show clear proof of 3k+ real followers. Their network drives real student trades!<br>
-          <strong>2. Direct WhatsApp Welcome:</strong> Once approved, tap the applicant's WhatsApp button to send them a warm welcome and their unique link.<br>
-          <strong>3. Weekly Payouts:</strong> Pay ambassadors once weekly (e.g. every Friday evening). Copy their bank account details from the queue above, transfer via your banking app, and click <em>"Mark as Paid"</em>.
+      <!-- Rejected -->
+      <div id="amb-rejected-card" class="amb-card" style="display:none; border:1.5px solid #FCA5A5; background:#FEF2F2;">
+        <span style="font-size:10px; background:#FEE2E2; color:#991B1B; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase;">Needs Revision</span>
+        <h3 style="margin:6px 0 8px 0; font-size:16px; color:#991B1B; font-weight:800;">Application Not Approved</h3>
+        <p style="font-size:12px; color:#7F1D1D; margin:0 0 10px 0; line-height:1.5;">
+          Founder feedback: <span id="rejected-reason-text" style="font-weight:700;"></span>
         </p>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- Founder Auth Modal -->
-  <div id="founder-auth-modal" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; padding:16px;">
-    <div style="background:#FFFFFF; border-radius:20px; max-width:420px; width:100%; padding:24px; box-shadow:0 20px 40px rgba(0,0,0,0.25); text-align:left;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-        <h3 style="margin:0; font-size:17px; color:#1E1B4B; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-crown" style="color:#D97706;"></i> Founder Command Hub
-        </h3>
-        <button id="close-founder-modal-btn" style="background:none; border:none; font-size:22px; cursor:pointer; color:#888;">&times;</button>
-      </div>
-      <p style="font-size:12px; color:#6B7280; line-height:1.5; margin-bottom:16px;">
-        Welcome back, Founder! Enter your founder email or passkey to inspect applications, approve ambassadors, and manage payouts.
-      </p>
-      <form id="founder-auth-form" style="display:flex; flex-direction:column; gap:12px;">
-        <div>
-          <label style="font-size:11px; font-weight:700; color:#374151; display:block; margin-bottom:4px;">Founder Email</label>
-          <input type="email" id="founder-input-email" value="mbuharmless@gmail.com" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-        </div>
-        <div>
-          <label style="font-size:11px; font-weight:700; color:#374151; display:block; margin-bottom:4px;">Founder Passkey or Password</label>
-          <input type="password" id="founder-input-passkey" placeholder="Enter passkey (e.g. campally2026)" required style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px;">
-        </div>
-        <button type="submit" class="btn-primary" style="padding:12px; font-size:13px; font-weight:700; border-radius:12px; margin-top:4px; background:linear-gradient(135deg, #1E1B4B, #312E81);">
-          <i class="fa-solid fa-key" style="margin-right:6px;"></i> Unlock Founder Command Hub
+        <button id="reapply-amb-btn" class="btn-primary" style="background:#E8553D; padding:10px 16px; border-radius:10px; font-size:12px; font-weight:700;">
+          Update & Re-Submit Application
         </button>
-      </form>
-      <div style="margin-top:14px; text-align:center; padding-top:12px; border-top:1px solid #F1F5F9;">
-        <span style="font-size:11px; color:#64748B;">Founder email: <strong style="color:#1E1B4B;">mbuharmless@gmail.com</strong></span>
+      </div>
+
+      <!-- Approved dashboard -->
+      <div id="amb-active-dashboard" style="display:none;">
+        <div class="amb-hero">
+          <span class="amb-badge"><i class="fa-solid fa-circle-check"></i> Approved Ambassador</span>
+          <h2 id="dash-amb-name" style="margin:0 0 4px 0; font-size:20px;"></h2>
+          <div id="dash-amb-campus" style="font-size:13px; color:#C7D2FE; margin-bottom:10px;"></div>
+          <div style="font-size:12px; color:#C7D2FE;">Your code: <span id="dash-amb-code" style="font-family:monospace; font-weight:800; color:#FCD34D;"></span></div>
+        </div>
+
+        <div class="amb-stats-grid">
+          <div class="amb-stat-box"><div class="label">Students Referred</div><div class="num" id="stat-referrals-count">0</div></div>
+          <div class="amb-stat-box"><div class="label">Total Earned</div><div class="num" id="stat-total-earned">₦0</div></div>
+          <div class="amb-stat-box"><div class="label">Paid Out</div><div class="num" id="stat-paid-out">₦0</div></div>
+          <div class="amb-stat-box"><div class="label">Available to Withdraw</div><div class="num" id="stat-available">₦0</div></div>
+        </div>
+
+        <div class="amb-card">
+          <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 4px 0;">Your Referral Link</h3>
+          <p style="font-size:12px; color:#6B7280; margin:0;">Every student who signs up with this link counts for you.</p>
+          <div class="referral-link-box"><span id="display-referral-link" class="referral-link-text"></span></div>
+          <div class="share-btn-row">
+            <a id="share-ref-whatsapp-btn" class="share-btn share-btn-wa" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> Share on WhatsApp</a>
+            <button id="copy-ref-link-btn" class="share-btn share-btn-copy" type="button"><i class="fa-solid fa-copy"></i> Copy Link</button>
+          </div>
+          <a id="amb-open-flyers-btn" href="flyers.html" style="display:block; text-align:center; margin-top:10px; font-size:12px; font-weight:700; color:#4F46E5; text-decoration:none;"><i class="fa-solid fa-palette"></i> Open Marketing Flyer Studio</a>
+        </div>
+
+        <div class="amb-card">
+          <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 8px 0;">Students You Referred</h3>
+          <div id="referral-list"></div>
+        </div>
+
+        <div class="amb-card">
+          <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 4px 0;">Request a Payout</h3>
+          <p id="payout-note" style="font-size:12px; color:#6B7280; margin:0 0 12px 0;"></p>
+          <form id="payout-form" style="display:flex; flex-direction:column; gap:10px;">
+            <input type="text" id="payout-bank" class="fld" maxlength="80" placeholder="Bank name (e.g. OPay, GTBank)" required>
+            <input type="text" id="payout-number" class="fld" maxlength="10" inputmode="numeric" placeholder="10-digit account number" required>
+            <input type="text" id="payout-name" class="fld" maxlength="100" placeholder="Account name" required>
+            <button type="submit" id="payout-btn" class="btn-primary" style="font-weight:700; padding:12px;">Request Payout</button>
+          </form>
+          <div id="payout-history" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= FOUNDER VIEW ================= -->
+    <div id="founder-view-section" style="display:none;">
+      <div class="amb-card">
+        <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 10px 0;"><i class="fa-solid fa-inbox" style="color:#E8553D;"></i> Applications to Review</h3>
+        <div id="adm-pending-list"></div>
+      </div>
+      <div class="amb-card">
+        <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 10px 0;"><i class="fa-solid fa-money-bill-transfer" style="color:#059669;"></i> Payout Requests</h3>
+        <div id="adm-payouts-queue"></div>
+      </div>
+      <div class="amb-card">
+        <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 10px 0;"><i class="fa-solid fa-users" style="color:#4F46E5;"></i> Approved Ambassadors</h3>
+        <div id="adm-ambassadors-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- Proof Zoom Modal -->
-  <div id="proof-zoom-modal" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center; padding:16px;">
-    <div style="background:#FFFFFF; border-radius:16px; max-width:650px; width:100%; max-height:90vh; overflow:hidden; display:flex; flex-direction:column;">
-      <div style="padding:12px 16px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; background:#FAF9F6;">
-        <span id="proof-zoom-title" style="font-size:13px; font-weight:700; color:#1E1B4B;">Ambassador Eligibility Proof</span>
-        <button id="close-proof-zoom-btn" style="background:none; border:none; font-size:22px; cursor:pointer; color:#64748B;">&times;</button>
+  <!-- Proof zoom window -->
+  <div id="proof-zoom-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content" style="max-width:520px; text-align:center;">
+      <div class="modal-header">
+        <h3 id="proof-zoom-title" style="font-size:15px; margin:0;">Eligibility Proof</h3>
+        <button id="close-proof-zoom-btn" class="modal-close-btn">&times;</button>
       </div>
-      <div style="padding:16px; overflow-y:auto; text-align:center; background:#0F172A;">
-        <img id="proof-zoom-img" src="" alt="Proof Document" style="max-width:100%; max-height:65vh; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.5); object-fit:contain;">
-        <div id="proof-zoom-note" style="margin-top:10px; font-size:12px; color:#E2E8F0; font-style:italic;"></div>
-      </div>
+      <img id="proof-zoom-img" src="" alt="Proof" style="max-width:100%; max-height:70vh; border-radius:10px;">
+      <p id="proof-zoom-note" style="font-size:12px; color:#64748B; margin:8px 0 0 0;"></p>
     </div>
   </div>
 
@@ -748,9 +247,9 @@
   <script src="supabase-init.js"></script>
   <script src="campuses.js"></script>
   <script src="nav.js"></script>
-  <script src="ambassador.js"></script>
+  <script src="ambassador.js?v=20261018"></script>
   <script>
     loadNav("");
   </script>
-</body>
+</body>      
 </html>
