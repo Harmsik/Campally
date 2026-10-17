@@ -105,6 +105,7 @@ async function renderCampusBusinesses(campusId) {
   const bizContainer = document.getElementById("business-spotlight-cards");
   if (!bizContainer) return;
 
+  if (window.CampallyPay && window.CampallyPay.ready) await window.CampallyPay.ready;
   // 1. Fetch real active promoted businesses from CampallyPay / Server
   const paidBusinesses = window.CampallyPay && window.CampallyPay.getBusinesses
     ? window.CampallyPay.getBusinesses(campusId)
@@ -1350,17 +1351,7 @@ async function init() {
       });
     }
 
-    const openPromoteBizBtn = document.getElementById("open-promote-biz-btn");
-    if (openPromoteBizBtn) {
-      openPromoteBizBtn.addEventListener("click", () => {
-        if (window.CampallyPay && window.CampallyPay.openCampusBusinessModal) {
-          window.CampallyPay.openCampusBusinessModal(currentCampusId, () => {
-            renderCampusBusinesses(currentCampusId);
-          });
-        }
-      });
-    }
-
+    
     fetchListingsForCampus(currentCampusId);
   } catch (e) {
     console.error("Init error:", e);
