@@ -134,4 +134,4 @@ if (browseVisitorLink) {
     sessionStorage.setItem("campally_visitor_mode", "true");
     window.location.href = "home.html?visitor=true";
   });
-        }}
+    }
