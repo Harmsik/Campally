@@ -6,4 +6,4 @@ Disallow: /my-listings.html
 Disallow: /settings.html
 Disallow: /update-password.html
 
-Sitemap: https://campally.publicvm.com/sitemap.xml
+Sitemap: https://campally.com.ng/sitemap.xml
