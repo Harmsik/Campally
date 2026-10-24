@@ -49,6 +49,7 @@ if (signupForm) {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const privacyConsent = document.getElementById("privacy-consent");
+  const marketingConsent = document.getElementById("marketing-consent"); // NEW
   const submitBtn = document.getElementById("signup-submit-btn");
 
   if (privacyConsent && !privacyConsent.checked) {
@@ -81,6 +82,15 @@ if (signupForm) {
         submitBtn.textContent = "Sign Up";
       }
     } else {
+      // NEW: save the optional "email me updates" choice (never blocks signup)
+      if (marketingConsent && marketingConsent.checked && data && data.user) {
+        try {
+          await supabase.from("profiles")
+            .update({ marketing_consent: true, marketing_consent_at: new Date().toISOString() })
+            .eq("id", data.user.id);
+        } catch (e) {}
+      }
+
       sessionStorage.removeItem("campally_visitor_mode");
       localStorage.setItem("campally_just_signed_up", "true");
       localStorage.setItem("campally_show_guide_suggestion", "true");
@@ -134,4 +144,4 @@ if (browseVisitorLink) {
     sessionStorage.setItem("campally_visitor_mode", "true");
     window.location.href = "home.html?visitor=true";
   });
-    }
+                 }
