@@ -708,7 +708,7 @@ if (whatsappDigestBtn) {
     });
 
     messageLines.push(`\n👉 *Browse deals & post what you need here:*`);
-    messageLines.push(`https://campally.publicvm.com/home.html`);
+    messageLines.push(`${window.location.origin}/home.html`);
 
     const fullText = messageLines.join("\n");
     const encoded = encodeURIComponent(fullText);
