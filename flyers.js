@@ -260,7 +260,7 @@
   }
 
   function getAppUrlWithRef() {
-    const base = "https://campally.publicvm.com";
+    const base = "https://campally.com.ng";
     if (state.refCode) {
       return `${base}/?ref=${encodeURIComponent(state.refCode)}`;
     }
@@ -420,7 +420,7 @@
     ctx.textAlign = "right";
     ctx.fillStyle = "rgba(253, 211, 77, 0.9)";
     ctx.font = "bold 17px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("🌐 campally.publicvm.com", w - 70, overlineY);
+    ctx.fillText("🌐 campally.com.ng", w - 70, overlineY);
 
     // 4. Main Body: Headline & Subheading
     let currentY = headerHeight + (isStory ? 70 : 60);
@@ -561,7 +561,7 @@
 
     ctx.fillStyle = "#FCD34D";
     ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.fillText("campally.publicvm.com", 70 + ctx.measureText("Scan with your phone camera or visit: ").width + 4, footerY + 120);
+    ctx.fillText("campally.com.ng", 70 + ctx.measureText("Scan with your phone camera or visit: ").width + 4, footerY + 120);
 
     // Referral Code Box (if active)
     if (state.refCode) {
