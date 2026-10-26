@@ -56,6 +56,30 @@ window.CAMPUS_SAFE_SPOTS = [
   "Campus Main Gate Security Center"
 ];
 
+// Service types shared by the Post form and the Book a Service page
+window.CAMPALLY_SERVICE_TYPES = [
+  { name: "Barbing", icon: "fa-scissors" },
+  { name: "Hair & Braiding", icon: "fa-spa" },
+  { name: "Make-up", icon: "fa-wand-magic-sparkles" },
+  { name: "Nails & Lashes", icon: "fa-hand-sparkles" },
+  { name: "Photography & Video", icon: "fa-camera" },
+  { name: "Graphic Design", icon: "fa-palette" },
+  { name: "Web & App Design", icon: "fa-laptop-code" },
+  { name: "Tutoring & Lessons", icon: "fa-chalkboard-user" },
+  { name: "Baking & Cakes", icon: "fa-cake-candles" },
+  { name: "Catering & Cooking", icon: "fa-utensils" },
+  { name: "Laundry & Ironing", icon: "fa-shirt" },
+  { name: "Cleaning", icon: "fa-broom" },
+  { name: "Phone & Laptop Repair", icon: "fa-screwdriver-wrench" },
+  { name: "Printing & Typing", icon: "fa-print" },
+  { name: "Tailoring", icon: "fa-ruler-combined" },
+  { name: "Delivery & Errands", icon: "fa-motorcycle" },
+  { name: "Events, DJ & MC", icon: "fa-music" },
+  { name: "Fitness Training", icon: "fa-dumbbell" },
+  { name: "Moving & Hauling", icon: "fa-truck" },
+  { name: "Other", icon: "fa-ellipsis" }
+];
+
 // Currency and Swap Price Formatter
 window.formatPrice = function(val, isSwap) {
   if (isSwap) {
@@ -192,6 +216,7 @@ function loadNav(activePage) {
 
   const pages = [
     { id: "home", href: "home.html", icon: "fa-house", label: "Home" },
+    { id: "services", href: "services.html", icon: "fa-calendar-check", label: "Services" },
     { id: "post", href: "post-listing.html", icon: "fa-square-plus", label: "Post" },
     { id: "listings", href: "my-listings.html", icon: "fa-bag-shopping", label: "Listings" },
     { id: "profile", href: "profile.html", label: "Profile", icon: "fa-user", isProfile: true }
