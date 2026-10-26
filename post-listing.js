@@ -236,8 +236,11 @@ if (listingForm) {
       is_swap: isSwap,
       course_code: courseCode || null,
       safe_meetup_spot: meetupSpot || null,
-      campus_id: chosenCampusId
+      campus_id: chosenCampusId,
+      listing_type: typeInfo.type,
+      service_category: typeInfo.serviceCategory || null
     };
+      
 
     let { error: insertError } = await supabase.from("listings").insert(extendedPayload);
 
