@@ -416,7 +416,7 @@ function getFilteredListings() {
       if (activeCategory === "fashion") return text.includes("fashion") || text.includes("wear") || text.includes("shoe") || text.includes("bag") || text.includes("vintage") || text.includes("cloth");
       if (activeCategory === "services") return text.includes("service") || text.includes("skill") || text.includes("hair") || text.includes("type") || text.includes("tutor") || text.includes("graphic");
       if (activeCategory === "food") return text.includes("food") || text.includes("snack") || text.includes("choco") || text.includes("drink") || text.includes("provision");
-      return true;
+      return slug === activeCategory;
     });
   }
 
