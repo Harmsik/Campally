@@ -168,7 +168,15 @@ if (listingForm) {
     }
 
     const title = document.getElementById("title").value.trim();
-    const categoryId = document.getElementById("category").value;
+    const typeInfo = window.getPostTypeInfo ? window.getPostTypeInfo() : { type: "product" };
+    if (typeInfo.type === "service" && !typeInfo.serviceCategory) {
+      if (window.showToast) window.showToast("Please choose the type of service.", "error");
+      else alert("Please choose the type of service.");
+      return;
+    }
+    const categoryId = typeInfo.type === "service"
+      ? (typeInfo.categoryId || document.getElementById("category").value)
+      : document.getElementById("category").value;
     const rawDescription = document.getElementById("description").value.trim();
     const price = document.getElementById("price").value;
     const campusIdVal = campusSelect ? campusSelect.value : null;
