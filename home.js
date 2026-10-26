@@ -90,7 +90,8 @@ async function fetchListingsForCampus(campusId) {
       return;
     }
 
-    allListings = data;
+    // Services live on their own page (services.html), not the main product feed
+    allListings = data.filter((item) => (item.listing_type || "product") !== "service");
     populateHallFilter();
     renderCurrentView();
     renderCampusBusinesses(campusId);
