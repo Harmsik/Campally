@@ -250,38 +250,47 @@ function checkProSellerStatus() {
 }
 window.checkProSellerStatus = checkProSellerStatus;
 
-function loadVerificationData() {
-  let vData = currentUser?.user_metadata || {};
-  const localCache = localStorage.getItem("campally_student_verification_" + currentUserId);
-  if (localCache) {
-    try {
-      const parsed = JSON.parse(localCache);
-      vData = { ...vData, ...parsed };
-    } catch (e) {}
+function renderVerificationBanner(state, note) {
+  if (!verificationStatusBanner) return;
+  const box = (bg, border, color, icon, text) => `
+    <div style="background:${bg}; border:1px solid ${border}; border-radius:10px; padding:10px 14px; color:${color}; font-size:13px; font-weight:600; display:flex; align-items:flex-start; gap:8px; line-height:1.5;">
+      <i class="fa-solid ${icon}" style="font-size:16px; margin-top:2px;"></i><span>${text}</span>
+    </div>`;
+  verificationStatusBanner.style.display = "block";
+  if (state === "approved") {
+    verificationStatusBanner.innerHTML = box("#ECFDF5", "#A7F3D0", "#065F46", "fa-circle-check", "Verified Student — the Campally team confirmed your ID. Your badge is live.");
+  } else if (state === "pending") {
+    verificationStatusBanner.innerHTML = box("#FFFBEB", "#FDE68A", "#92400E", "fa-clock", "Under review — the Campally team is checking your ID. You will get the badge once it is approved.");
+  } else if (state === "rejected") {
+    const safeNote = String(note || "Please upload a clearer photo and try again.").replace(/[<>&]/g, "");
+    verificationStatusBanner.innerHTML = box("#FEF2F2", "#FECACA", "#991B1B", "fa-circle-xmark", "Not approved: " + safeNote + " You can submit again below.");
+  } else {
+    verificationStatusBanner.style.display = "none";
+  }
+}
+
+async function loadVerificationData() {
+  // The truth lives on the server: the private request row + the public badge flag.
+  const [{ data: vRow }, { data: pRow }] = await Promise.all([
+    supabase.from("student_verifications").select("matric_number, school_email, status, review_note").eq("user_id", currentUserId).maybeSingle(),
+    supabase.from("profiles").select("is_verified").eq("id", currentUserId).maybeSingle()
+  ]);
+
+  const approved = pRow?.is_verified === true;
+  const state = approved ? "approved" : (vRow?.status || "none");
+
+  if (vRow) {
+    if (matricInput && vRow.matric_number) matricInput.value = vRow.matric_number;
+    if (schoolEmailInput && vRow.school_email) schoolEmailInput.value = vRow.school_email;
   }
 
-  if (matricInput && vData.matric_number) {
-    matricInput.value = vData.matric_number;
-  }
-  if (schoolEmailInput && vData.school_email) {
-    schoolEmailInput.value = vData.school_email;
-  }
-  if (idCardPreview && vData.student_id_url) {
-    idCardPreview.src = vData.student_id_url;
-    idCardPreview.style.display = "block";
-  }
+  renderVerificationBanner(state, vRow?.review_note);
 
-  if (verificationStatusBanner) {
-    if (vData.is_verified || vData.matric_number) {
-      verificationStatusBanner.style.display = "block";
-      verificationStatusBanner.innerHTML = `
-        <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:10px 14px; color:#065F46; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-circle-check" style="font-size:16px;"></i> Verified Student ID — Your account has a verified badge!
-        </div>
-      `;
-      if (submitVerificationBtn) {
-        submitVerificationBtn.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Update Student ID Information`;
-      }
+  if (submitVerificationBtn) {
+    if (approved) {
+      verificationForm.style.display = "none";
+    } else if (state === "pending") {
+      submitVerificationBtn.innerHTML = `<i class="fa-solid fa-rotate" style="margin-right:6px;"></i> Resubmit Student ID`;
     }
   }
 }
@@ -384,7 +393,7 @@ if (profileForm) {
   });
 }
 
-// Save Student ID Verification Safely in Supabase
+// Submit Student ID for review (the Founder approves it; nobody can verify themselves)
 if (verificationForm) {
   verificationForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -393,88 +402,55 @@ if (verificationForm) {
     const schoolEmail = (schoolEmailInput?.value || "").trim();
     const cardFile = idCardInput?.files[0];
 
-    if (!matricNumber) {
+    if (matricNumber.length < 4) {
       if (window.showToast) window.showToast("Please enter your Matriculation or Student ID number", "error");
       return;
     }
-
-    if (submitVerificationBtn) {
-      submitVerificationBtn.disabled = true;
-      submitVerificationBtn.textContent = "Securing & saving in Supabase...";
+    if (!cardFile) {
+      if (window.showToast) window.showToast("Please upload a photo of your student ID card", "error");
+      return;
     }
 
-    let idCardUrl = idCardPreview?.src && !idCardPreview.src.startsWith("blob:") ? idCardPreview.src : null;
-
-    try {
-      // 1. Upload ID card photo safely to Supabase storage if provided
-      if (cardFile) {
-        const compressed = await compressImage(cardFile);
-        const cardPath = `${currentUserId}/student_id_${Date.now()}_${cardFile.name.replace(/[^a-zA-Z0-9._-]/g, "")}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(cardPath, compressed);
-
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from("avatars")
-            .getPublicUrl(cardPath);
-          idCardUrl = publicUrlData.publicUrl;
-        }
-      }
-
-      // 2. Safely store in Supabase Auth user metadata
-      const verificationPayload = {
-        matric_number: matricNumber,
-        school_email: schoolEmail || null,
-        student_id_url: idCardUrl,
-        is_verified: true,
-        verified_at: new Date().toISOString()
-      };
-
-      await supabase.auth.updateUser({
-        data: verificationPayload
-      });
-
-      // 3. Log verification record in Supabase site_feedback for admin audit
-      const campusName = campusSelect?.options[campusSelect.selectedIndex]?.text || "Campally Student";
-      try {
-        await supabase.from("site_feedback").insert({
-          name: `[STUDENT_ID_VERIFIED] ${currentUserId}`,
-          message: `Student: ${document.getElementById("full-name")?.value || "Student"} | Matric: ${matricNumber} | Campus: ${campusName} | Email: ${schoolEmail || "N/A"} | ID Image: ${idCardUrl || "None"}`
-        });
-      } catch (logErr) {
-        console.warn("Audit log notice:", logErr);
-      }
-
-      // 4. Save to local cache
-      localStorage.setItem("campally_student_verification_" + currentUserId, JSON.stringify(verificationPayload));
-
-      if (window.showToast) {
-        window.showToast("Student ID safely verified and saved in Supabase!", "success");
-      }
-
-      // Update banner immediately
-      if (verificationStatusBanner) {
-        verificationStatusBanner.style.display = "block";
-        verificationStatusBanner.innerHTML = `
-          <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:10px 14px; color:#065F46; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-circle-check" style="font-size:16px;"></i> Verified Student ID — Your account has a verified badge!
-          </div>
-        `;
-      }
-
-      if (submitVerificationBtn) {
-        submitVerificationBtn.disabled = false;
-        submitVerificationBtn.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> Student ID Verified`;
-      }
-    } catch (err) {
-      console.error("Verification save error:", err);
-      if (window.showToast) window.showToast("Saved locally: " + err.message, "info");
+    const resetBtn = () => {
       if (submitVerificationBtn) {
         submitVerificationBtn.disabled = false;
         submitVerificationBtn.innerHTML = `<i class="fa-solid fa-id-card" style="margin-right:6px;"></i> Submit Student ID Verification`;
       }
+    };
+
+    if (submitVerificationBtn) {
+      submitVerificationBtn.disabled = true;
+      submitVerificationBtn.textContent = "Sending for review...";
+    }
+
+    try {
+      // 1. Upload the ID photo to the PRIVATE bucket (only you and the Founder can open it)
+      const compressed = await compressImage(cardFile, 1400, 0.85);
+      const cardPath = `${currentUserId}/id_${Date.now()}.jpg`;
+      const { error: uploadError } = await supabase.storage
+        .from("student-ids")
+        .upload(cardPath, compressed, { contentType: "image/jpeg" });
+      if (uploadError) throw uploadError;
+
+      // 2. Create a PENDING request on the server
+      const { error: rpcError } = await supabase.rpc("submit_student_verification", {
+        p_matric: matricNumber,
+        p_email: schoolEmail,
+        p_path: cardPath
+      });
+      if (rpcError) throw rpcError;
+
+      if (window.showToast) window.showToast("Sent! The Campally team will review your ID.", "success");
+      renderVerificationBanner("pending");
+      if (submitVerificationBtn) {
+        submitVerificationBtn.disabled = false;
+        submitVerificationBtn.innerHTML = `<i class="fa-solid fa-rotate" style="margin-right:6px;"></i> Resubmit Student ID`;
+      }
+      if (idCardInput) idCardInput.value = "";
+    } catch (err) {
+      console.error("Verification submit error:", err);
+      if (window.showToast) window.showToast(err?.message || "Could not send your ID. Please try again.", "error");
+      resetBtn();
     }
   });
 }
@@ -485,4 +461,4 @@ if (logoutLink) {
     await supabase.auth.signOut();
     window.location.href = "login.html";
   });
-}
+                         }}
