@@ -105,16 +105,18 @@
     <div class="policy-card" style="border-left: 4px solid #059669;">
       <h2><i class="fa-solid fa-id-card" style="color:#059669;"></i> 3. Student ID Verification & Document Security</h2>
       <p>
-        To protect our student community from scammers and impersonators, Campally provides optional <strong>Student ID Verification</strong>:
+        To protect our student community from scammers and impersonators, Campally provides optional <strong>Student ID Verification</strong>. The <span style="background:#ECFDF5; color:#065F46; padding:2px 8px; border-radius:10px; font-weight:700; font-size:12px;"><i class="fa-solid fa-shield-check"></i> Verified Student</span> badge is never automatic: it is given only after a Campally administrator reviews your submission and approves it.
       </p>
       <ul>
-        <li><strong>Verification Data:</strong> Matriculation number, institutional student email, and photos of your student identity card.</li>
-        <li><strong>Strict Confidentiality:</strong> Your student ID cards and matric numbers are stored in secure, private cloud buckets. They are <strong>NEVER</strong> made public, sold, or shared with third parties.</li>
-        <li><strong>Purpose:</strong> Used exclusively by authorized Campally administrators to verify student status and award the <span style="background:#ECFDF5; color:#065F46; padding:2px 8px; border-radius:10px; font-weight:700; font-size:12px;"><i class="fa-solid fa-shield-check"></i> Verified Student</span> badge.</li>
+        <li><strong>What you submit:</strong> Your matriculation number, an optional institutional student email, and a photo of your student identity card.</li>
+        <li><strong>How it is reviewed:</strong> Your request shows as &ldquo;Under review&rdquo; until an authorized Campally administrator checks that your name and matric number match your ID photo. You will then see it as approved, or as not approved with a reason, and you may submit again.</li>
+        <li><strong>Where it is stored:</strong> Your ID card photo is kept in a <strong>private</strong> storage bucket and your matric number in a protected database table. Only you and authorized Campally administrators can open them. They are <strong>NEVER</strong> made public, sold, or shared with third parties.</li>
+        <li><strong>What other students see:</strong> Only whether you are verified (the badge). Your matric number, school email and ID photo are never shown to other users.</li>
+        <li><strong>How long we keep it:</strong> Your ID card photo is deleted as soon as an administrator has reviewed it, whether approved or not. We keep your matric number while your account is active, so your badge can be checked if a dispute arises. You can ask us to delete it at any time (see Section 7).</li>
       </ul>
       <div class="badge-notice" style="background:#ECFDF5; border-color:#A7F3D0; color:#065F46;">
         <i class="fa-solid fa-lock" style="font-size:16px; margin-top:2px;"></i>
-        <span><strong>Student Protection Guarantee:</strong> Only your verified badge status is visible to other students. Your actual ID card image remains confidential and encrypted.</span>
+        <span><strong>Student Protection Guarantee:</strong> Only your verified badge status is visible to other students. Your actual ID card image stays private, is seen only by authorized Campally administrators, and is deleted once reviewed.</span>
       </div>
     </div>
 
@@ -122,7 +124,7 @@
     <div class="policy-card" style="border-left: 4px solid #E8553D;">
       <h2><i class="fa-solid fa-credit-card" style="color:#E8553D;"></i> 4. Payment Information & Paystack Processing</h2>
       <p>
-        Campally offers optional student monetization features: <strong>Listing Boosts (₦300 / ₦500)</strong>, <strong>Urgent Sale Tags (₦200)</strong>, <strong>Pro Verified Seller Badges (₦500)</strong>, and <strong>Campus Business Spotlights (₦1,500)</strong>.
+        Campally offers optional student monetization features: <strong>Listing Boosts (₦300 / ₦500)</strong>, <strong>Urgent Sale Tags (₦200)</strong>, <strong>Pro Seller Badges (₦500)</strong>, and <strong>Campus Business Spotlights (₦1,500)</strong>.
       </p>
       <ul>
         <li><strong>PCI-DSS Certified Gateway:</strong> All financial transactions are processed securely through <strong>Paystack</strong>, a licensed and PCI-DSS Level 1 compliant payment processor.</li>
@@ -141,6 +143,7 @@
         <li>Display active listings, student requests, and seller profiles to relevant students.</li>
         <li>Suggest safe campus meetup spots based on seller preferences.</li>
         <li>Prevent fraud, investigate malicious listings, and protect students from scams.</li>
+        <li>Review Student ID submissions and award the Verified Student badge to students whose details we have checked.</li>
         <li>Process applications for the Campus Ambassador program.</li>
       </ul>
     </div>
@@ -155,7 +158,7 @@
         We only share data with service providers essential to running the app:
       </p>
       <ul>
-        <li><strong>Supabase:</strong> For secure database management and encrypted cloud storage.</li>
+        <li><strong>Supabase:</strong> For secure database management and private cloud storage, including your verification documents.</li>
         <li><strong>Paystack:</strong> For processing student promotion payments securely.</li>
       </ul>
     </div>

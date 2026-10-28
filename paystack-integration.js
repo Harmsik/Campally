@@ -213,7 +213,7 @@
     }
   };
 
-  // UI Modal: Pro Verified Student Seller Badge (₦500)
+  // UI Modal: Pro Seller Badge (₦500)
   CAMPALLY_PAY.openProSellerModal = function (userData, onComplete) {
     const existing = document.getElementById("pro-seller-modal");
     if (existing) existing.remove();
@@ -238,13 +238,13 @@
           <div style="width:58px; height:58px; background:#FEF3C7; color:#D97706; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:8px;">
             <i class="fa-solid fa-crown"></i>
           </div>
-          <h4 style="font-size:16px; color:#2B2B2B; margin-bottom:4px;">Pro Verified Student Seller</h4>
-          <p style="font-size:13px; color:#666; margin:0;">Win instant trust & priority placement across campus</p>
+          <h4 style="font-size:16px; color:#2B2B2B; margin-bottom:4px;">Pro Seller</h4>
+          <p style="font-size:13px; color:#666; margin:0;">Stand out & get priority placement across campus</p>
         </div>
 
         <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:12px; margin-bottom:14px;">
           <ul style="font-size:12px; color:#92400E; margin:0; padding-left:18px; line-height:1.7;">
-            <li>⭐ <strong>Pro Verified Badge</strong> next to your name on all your items</li>
+            <li>⭐ <strong>Pro Seller Badge</strong> next to your name on all your items</li>
             <li>Priority ranking when students search for items</li>
             <li>Valid for the entire academic semester (120 Days)</li>
           </ul>
@@ -292,7 +292,7 @@
 
       CAMPALLY_PAY.startCheckout({
         planId: "pro_seller",
-        itemTitle: "Pro Verified Seller Badge",
+        itemTitle: "Pro Seller Badge",
         userEmail: enteredEmail,
         onSuccess: (data) => { if (typeof onComplete === "function") onComplete(data); }
       });

@@ -330,8 +330,8 @@
         (v.school_email ? "<div>📧 " + esc(v.school_email) + "</div>" : "") +
         '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
           '<button class="small-btn" style="background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B;" data-action="vproof" data-path="' + esc(v.id_card_path) + '" data-title="' + esc("ID: " + (v.name || "")) + '" data-note="' + esc("Matric: " + v.matric_number) + '">View ID</button>' +
-          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="vapprove" data-id="' + esc(v.user_id) + '">Approve</button>' +
-          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="vreject" data-id="' + esc(v.user_id) + '">Reject</button>' +
+          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="vapprove" data-id="' + esc(v.user_id) + '" data-path="' + esc(v.id_card_path) + '">Approve</button>' +
+          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="vreject" data-id="' + esc(v.user_id) + '" data-path="' + esc(v.id_card_path) + '">Reject</button>' +
         "</div></div>"
     ).join("");
   }
@@ -436,6 +436,11 @@
       toast(result.error.message || "That did not work.", "error");
       btn.disabled = false;
       return;
+    }
+    // Privacy: once a verification is decided, delete the ID photo from the private bucket
+    if ((action === "vapprove" || action === "vreject") && btn.dataset.path) {
+      const del = await sb.storage.from("student-ids").remove([btn.dataset.path]);
+      if (del.error) toast("Saved, but the ID photo could not be deleted. Please delete it in Supabase Storage > student-ids.", "warning");
     }
     toast("Done ✓", "success");
     loadFounder();
