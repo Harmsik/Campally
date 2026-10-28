@@ -33,9 +33,9 @@
   }
 
   // ---------- Proof viewing (private files, opened with a short-lived link) ----------
-  async function openProof(path, title, note) {
+  async function openProof(path, title, note, bucket) {
     if (!path) { toast("No proof file found.", "warning"); return; }
-    const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 600);
+    const { data, error } = await sb.storage.from(bucket || BUCKET).createSignedUrl(path, 600);
     if (error || !data || !data.signedUrl) { toast("Could not open the proof file.", "error"); return; }
 
     if (path.toLowerCase().endsWith(".pdf")) {
@@ -309,6 +309,31 @@
     renderPendingApps(data.pending || []);
     renderPayouts(data.payouts || []);
     renderApproved(data.approved || []);
+    loadVerifications();
+  }
+
+  async function loadVerifications() {
+    const el = $("adm-verif-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_verifications");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load verifications.</p>'; return; }
+    const list = data || [];
+    if (!list.length) {
+      el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No student IDs waiting. 🎉</p>';
+      return;
+    }
+    el.innerHTML = list.map((v) =>
+      '<div style="background:#FFFDF5; border:1px solid #FDE68A; border-radius:14px; padding:14px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.6;">' +
+        '<div style="font-size:14px; font-weight:800; color:#1E1B4B;">' + esc(v.name || "Unnamed") + "</div>" +
+        "<div>📚 " + esc(v.department || "No department") + "</div>" +
+        "<div>🎫 Matric: <strong>" + esc(v.matric_number) + "</strong></div>" +
+        (v.school_email ? "<div>📧 " + esc(v.school_email) + "</div>" : "") +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
+          '<button class="small-btn" style="background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B;" data-action="vproof" data-path="' + esc(v.id_card_path) + '" data-title="' + esc("ID: " + (v.name || "")) + '" data-note="' + esc("Matric: " + v.matric_number) + '">View ID</button>' +
+          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="vapprove" data-id="' + esc(v.user_id) + '">Approve</button>' +
+          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="vreject" data-id="' + esc(v.user_id) + '">Reject</button>' +
+        "</div></div>"
+    ).join("");
   }
 
   function renderPendingApps(list) {
@@ -382,6 +407,7 @@
     const id = btn.dataset.id;
 
     if (action === "proof") { openProof(btn.dataset.path, btn.dataset.title, btn.dataset.note); return; }
+    if (action === "vproof") { openProof(btn.dataset.path, btn.dataset.title, btn.dataset.note, "student-ids"); return; }
 
     btn.disabled = true;
     let result;
@@ -393,6 +419,13 @@
       const reason = prompt("Reason for rejecting (the student will see this):", "Please upload clearer proof.");
       if (reason === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_ambassador", { p_id: id, p_approve: false, p_notes: reason });
+    } else if (action === "vapprove") {
+      if (!confirm("Approve this student as verified? Check that the name and matric number match the ID photo.")) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: true, p_note: null });
+    } else if (action === "vreject") {
+      const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
+      if (why === null) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
     } else if (action === "paid") {
       if (!confirm("Confirm you have sent this transfer from your bank or OPay app?")) { btn.disabled = false; return; }
       const ref = prompt("Transfer reference (optional):", "") || null;

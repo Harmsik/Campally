@@ -67,15 +67,10 @@ async function loadSellerProfile() {
   if (badgeContainer) {
     badgeContainer.innerHTML = "";
     const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "FUNAI";
-    badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
-    
-    // Check Student ID Verification
-    const hasStudentId = Boolean(
-      profile.matric_number ||
-      localStorage.getItem("campally_student_verification_" + sellerId)
-    );
-    if (hasStudentId) {
-      badgeContainer.innerHTML += ` <span class="badge-pill badge-verified" style="background:#FDF1EE; color:#E8553D; border-color:#FCD8D0;"><i class="fa-solid fa-id-card"></i> Student ID Verified</span>`;
+    if (profile.is_verified === true) {
+      badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
+    } else {
+      badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
     }
   }
 
