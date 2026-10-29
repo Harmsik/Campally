@@ -11,8 +11,12 @@
 <body>
 
   <!-- Clean Top Bar with Logo -->
-  <header class="top-bar">
+  <header class="top-bar" style="justify-content:space-between;">
     <h1 class="logo-small">Campally</h1>
+    <a id="bell-link" href="notifications.html" aria-label="Notifications" style="display:none; position:relative; width:40px; height:40px; align-items:center; justify-content:center; border-radius:50%; background:#FFF5F3; color:#E8553D; text-decoration:none; font-size:18px;">
+      <i class="fa-solid fa-bell"></i>
+      <span id="bell-count" style="display:none; position:absolute; top:-3px; right:-3px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#DC2626; color:#fff; font-size:11px; font-weight:700; align-items:center; justify-content:center; border:2px solid #fff; box-sizing:border-box;"></span>
+    </a>
   </header>
 
   <!-- Visitor indicator banner (shown when user is not logged in) -->
@@ -335,7 +339,8 @@
   <script src="campuses.js?v=20261015_02"></script>
   <script src="paystack-integration.js?v=20261015_02"></script>
   <script src="nav.js?v=20261015_02"></script>
-  <script src="home.js?v=20261015_02"></script>
+  <script src="bell.js?v=20261029"></script>
+  <script src="home.js?v=20261029"></script>
   <script>loadNav("home");</script>
 </body>
 </html>

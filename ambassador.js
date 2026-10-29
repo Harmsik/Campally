@@ -426,6 +426,13 @@
       const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
       if (why === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
+    } else if (action === "announce") {
+      const title = ($("ann-title").value || "").trim();
+      const body = ($("ann-body").value || "").trim();
+      const link = $("ann-link").value || "";
+      if (title.length < 3) { toast("Please write a title first.", "error"); btn.disabled = false; return; }
+      if (!confirm("Send this to EVERY student's notification bell?\n\n" + title)) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_post_announcement", { p_title: title, p_body: body, p_link: link });
     } else if (action === "paid") {
       if (!confirm("Confirm you have sent this transfer from your bank or OPay app?")) { btn.disabled = false; return; }
       const ref = prompt("Transfer reference (optional):", "") || null;
@@ -434,6 +441,12 @@
 
     if (result && result.error) {
       toast(result.error.message || "That did not work.", "error");
+      btn.disabled = false;
+      return;
+    }
+    if (action === "announce") {
+      $("ann-title").value = ""; $("ann-body").value = ""; $("ann-link").value = "";
+      toast("Announcement sent to everyone ✓", "success");
       btn.disabled = false;
       return;
     }

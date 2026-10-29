@@ -217,6 +217,21 @@
     <!-- ================= FOUNDER VIEW ================= -->
     <div id="founder-view-section" style="display:none;">
       <div class="amb-card">
+        <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 4px 0;"><i class="fa-solid fa-bullhorn" style="color:#E8553D;"></i> Send an Announcement</h3>
+        <p style="font-size:12px; color:#64748B; margin:0 0 10px 0; line-height:1.5;">Shows in every student's notification bell. Great for new features, events and promos.</p>
+        <input id="ann-title" type="text" maxlength="80" placeholder="Title (e.g. New: Book a Service page)" style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px; margin-bottom:8px; box-sizing:border-box;">
+        <textarea id="ann-body" maxlength="300" rows="3" placeholder="Short message (optional)" style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px; margin-bottom:8px; box-sizing:border-box; font-family:inherit;"></textarea>
+        <select id="ann-link" style="width:100%; padding:10px 12px; border:1px solid #CBD5E1; border-radius:10px; font-size:13px; margin-bottom:10px; box-sizing:border-box; background:#fff;">
+          <option value="">When tapped: do nothing</option>
+          <option value="home.html">Open Home</option>
+          <option value="services.html">Open Services</option>
+          <option value="post-listing.html">Open Post an item</option>
+          <option value="how-to-use.html">Open How to Use</option>
+          <option value="profile.html">Open Profile</option>
+        </select>
+        <button class="small-btn" style="background:#E8553D; color:#fff; width:100%; padding:11px;" data-action="announce"><i class="fa-solid fa-paper-plane"></i> Send to everyone</button>
+      </div>
+      <div class="amb-card">
         <h3 style="font-size:15px; color:#1E1B4B; margin:0 0 10px 0;"><i class="fa-solid fa-id-card" style="color:#E8553D;"></i> Student ID Verifications</h3>
         <div id="adm-verif-list"></div>
       </div>
@@ -251,7 +266,7 @@
   <script src="supabase-init.js"></script>
   <script src="campuses.js"></script>
   <script src="nav.js"></script>
-  <script src="ambassador.js?v=20261028"></script>
+  <script src="ambassador.js?v=20261029"></script>
   <script>
     loadNav("");
   </script>
