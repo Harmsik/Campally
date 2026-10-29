@@ -12,7 +12,11 @@
 
   <!-- Clean Top Bar with Logo -->
   <header class="top-bar" style="justify-content:space-between;">
-    <h1 class="logo-small">Campally</h1>
+    <h1 class="logo-small" style="margin:0; line-height:0;">
+      <a href="home.html" style="display:inline-block; line-height:0;">
+        <img src="campally-logo.png?v=20261030" alt="Campally" style="height:34px; width:auto; display:block;" onerror="this.replaceWith(document.createTextNode('Campally'))">
+      </a>
+    </h1>
     <a id="bell-link" href="notifications.html" aria-label="Notifications" style="display:inline-flex; position:relative; width:40px; height:40px; align-items:center; justify-content:center; border-radius:50%; background:#FFF5F3; color:#E8553D; text-decoration:none; font-size:18px;">
       <i class="fa-solid fa-bell"></i>
       <span id="bell-count" style="display:none; position:absolute; top:-3px; right:-3px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#DC2626; color:#fff; font-size:11px; font-weight:700; align-items:center; justify-content:center; border:2px solid #fff; box-sizing:border-box;"></span>
@@ -339,8 +343,8 @@
   <script src="campuses.js?v=20261015_02"></script>
   <script src="paystack-integration.js?v=20261015_02"></script>
   <script src="nav.js?v=20261015_02"></script>
-  <script src="bell.js?v=20261029"></script>
   <script src="home.js?v=20261029"></script>
+  <script src="bell.js?v=20261030"></script>
   <script>loadNav("home");</script>
 </body>
 </html>

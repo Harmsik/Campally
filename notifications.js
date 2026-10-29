@@ -3,6 +3,10 @@
  * Shows alerts for this student (followers, ratings, ID review)
  * plus announcements the Founder sends to everyone.
  */
+const SUPABASE_URL = "https://mhshjusbtrkkkktymiyg.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_0_s-ISa-wqGxAVm7tYeXBg_BgErqzS4";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const listEl = document.getElementById("notif-list");
 
 const STYLES = {
@@ -73,11 +77,18 @@ function render(items, seen) {
 }
 
 async function init() {
+  // Same two-step login check the other Campally pages use
   let user = null;
   try {
     const { data } = await supabase.auth.getSession();
-    user = data && data.session && data.session.user;
+    user = (data && data.session && data.session.user) || null;
   } catch (_) {}
+  if (!user) {
+    try {
+      const { data } = await supabase.auth.getUser();
+      user = (data && data.user) || null;
+    } catch (_) {}
+  }
 
   if (!user) {
     listEl.innerHTML = `

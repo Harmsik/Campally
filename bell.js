@@ -6,11 +6,19 @@
 (async function () {
   const link = document.getElementById("bell-link");
   const badge = document.getElementById("bell-count");
-  if (!link || !badge || typeof supabase === "undefined") return;
+  // Uses the Supabase client that home.js creates, so this file must load after home.js
+  if (!link || !badge || typeof supabase === "undefined" || !supabase.auth) return;
 
   try {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const user = sessionData && sessionData.session && sessionData.session.user;
+    let user = null;
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      user = (sessionData && sessionData.session && sessionData.session.user) || null;
+    } catch (_) {}
+    if (!user) {
+      const { data: userData } = await supabase.auth.getUser();
+      user = (userData && userData.user) || null;
+    }
     if (!user) return;
 
     link.style.display = "inline-flex";
