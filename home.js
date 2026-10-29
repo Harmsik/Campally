@@ -101,50 +101,88 @@ async function fetchListingsForCampus(campusId) {
   }
 }
 
-// Render Campus Student Business & Service Spotlight cards (REAL SIGNED UP USERS & BUSINESSES ONLY)
+// Render the Campus Spotlight: PAID student businesses only (never auto-added students)
+let spotlightRaf = null;   // handle for the sliding animation, so we can stop it when re-drawing
+
+function startSpotlightSlide(el) {
+  if (spotlightRaf) { cancelAnimationFrame(spotlightRaf); spotlightRaf = null; }
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const originals = Array.from(el.children);
+  if (!originals.length) return;
+
+  // Only slide when the cards are wider than the screen
+  const gap = 12;
+  const totalWidth = originals.reduce((sum, c) => sum + c.getBoundingClientRect().width + gap, 0);
+  if (totalWidth <= el.clientWidth + 4) return;
+
+  // Add a second copy of the cards so the loop never shows a gap
+  originals.forEach((c) => {
+    const copy = c.cloneNode(true);
+    copy.setAttribute("aria-hidden", "true");
+    copy.querySelectorAll("a").forEach((a) => a.setAttribute("tabindex", "-1"));
+    el.appendChild(copy);
+  });
+
+  let pos = el.scrollLeft;
+  let lastSet = el.scrollLeft;
+  let last = performance.now();
+  let pausedUntil = 0;
+  // Where the second copy starts = the exact length of one full loop
+  const loopWidth = el.children[originals.length].offsetLeft - el.children[0].offsetLeft;
+  const SPEED = 0.035; // pixels per millisecond (about 35px per second)
+
+  // Pause while the student touches or swipes, then continue after 2.5 seconds
+  const pause = () => { pausedUntil = performance.now() + 2500; };
+  ["touchstart", "mousedown", "wheel", "pointerdown"].forEach((evt) => el.addEventListener(evt, pause, { passive: true }));
+  // If the position moved by something other than us (a swipe or momentum), follow the student's finger
+  el.addEventListener("scroll", () => {
+    if (Math.abs(el.scrollLeft - lastSet) > 1.5) {
+      pos = el.scrollLeft;
+      pausedUntil = performance.now() + 1500;
+    }
+  }, { passive: true });
+
+  function step(now) {
+    const dt = Math.min(now - last, 64);
+    last = now;
+    if (now >= pausedUntil && document.visibilityState === "visible") {
+      pos += dt * SPEED;
+      if (pos >= loopWidth) pos -= loopWidth;
+      el.scrollLeft = pos;
+      lastSet = el.scrollLeft;
+    }
+    spotlightRaf = requestAnimationFrame(step);
+  }
+  spotlightRaf = requestAnimationFrame(step);
+}
+
 async function renderCampusBusinesses(campusId) {
   const bizContainer = document.getElementById("business-spotlight-cards");
   if (!bizContainer) return;
 
+  if (spotlightRaf) { cancelAnimationFrame(spotlightRaf); spotlightRaf = null; }
   if (window.CampallyPay && window.CampallyPay.ready) await window.CampallyPay.ready;
-  // 1. Fetch real active promoted businesses from CampallyPay / Server
+
+  // Only businesses that PAID (active and not expired)
   const paidBusinesses = window.CampallyPay && window.CampallyPay.getBusinesses
     ? window.CampallyPay.getBusinesses(campusId)
     : [];
 
-  // 2. Fetch real signed-up students from Supabase profiles
-  let realUsers = [];
-  try {
-    let query = supabase
-      .from("profiles")
-      .select("id, full_name, department, hall, whatsapp_number, avatar_url, campus_id, created_at, is_verified")
-      .not("full_name", "is", null);
-
-    if (campusId) {
-      query = query.eq("campus_id", campusId);
-    }
-
-    const { data, error } = await query.order("created_at", { ascending: false }).limit(20);
-    if (!error && Array.isArray(data)) {
-      realUsers = data.filter((p) => p.full_name && p.full_name.trim().length > 1);
-    }
-  } catch (err) {
-    console.warn("Could not fetch real profiles for spotlight:", err);
-  }
-
-  // If no real businesses and no real signed-up users
-  if (paidBusinesses.length === 0 && realUsers.length === 0) {
+  if (paidBusinesses.length === 0) {
+    bizContainer.style.overflowX = "hidden";
     bizContainer.innerHTML = `
       <div style="flex:1; background:#FFFFFF; border:1px dashed #E5E0D8; border-radius:14px; padding:16px 20px; text-align:center; font-size:12px; color:#777;">
-        <span>No student services or registered sellers featured yet for this campus. Be the first to <strong style="color:#E8553D; cursor:pointer;" onclick="document.getElementById('open-promote-biz-btn')?.click()">promote your business</strong>!</span>
+        <span>No businesses are featured on this campus yet. Be the first to <strong style="color:#E8553D; cursor:pointer;" onclick="document.getElementById('open-promote-biz-btn')?.click()">promote your business</strong>!</span>
       </div>
     `;
     return;
   }
 
+  bizContainer.style.overflowX = "auto";
+  bizContainer.style.scrollbarWidth = "none";
   bizContainer.innerHTML = "";
 
-  // Render real promoted student businesses (if any)
   paidBusinesses.forEach((biz) => {
     const card = document.createElement("div");
     card.style.cssText = "flex: 0 0 250px; background: #FFFFFF; border: 1.5px solid #FCD34D; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);";
@@ -179,46 +217,8 @@ async function renderCampusBusinesses(campusId) {
     bizContainer.appendChild(card);
   });
 
-  // Render real signed-up student sellers/users
-  realUsers.forEach((user) => {
-    const card = document.createElement("div");
-    card.style.cssText = "flex: 0 0 240px; background: #FFFFFF; border: 1px solid #E5E0D8; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);";
-
-    const cleanWa = (user.whatsapp_number || "").replace(/[^0-9]/g, "");
-    const waUrl = cleanWa
-      ? `https://wa.me/234${cleanWa.startsWith("0") ? cleanWa.slice(1) : cleanWa}?text=${encodeURIComponent(`Hello ${user.full_name}, I saw your student profile on Campally!`)}`
-      : null;
-
-    const avatarSrc = user.avatar_url && !user.avatar_url.includes("localhost")
-      ? user.avatar_url
-      : `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.full_name || "student")}`;
-
-    card.innerHTML = `
-      <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${avatarSrc}" alt="${user.full_name}" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:1.5px solid #FCD8D0; flex-shrink:0;">
-        <div style="overflow:hidden;">
-          <a href="seller.html?id=${user.id}" style="font-weight:700; font-size:13px; color:#2B2B2B; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block;">
-            ${user.full_name}
-          </a>
-          <div style="font-size:11px; color:${user.is_verified ? '#059669' : '#6B7280'}; font-weight:600;"><i class="fa-solid ${user.is_verified ? 'fa-shield-check' : 'fa-graduation-cap'}"></i> ${user.department ? user.department : (user.is_verified ? "Verified Student" : "Campus member")}</div>
-        </div>
-      </div>
-      <div style="font-size:11px; color:#666; display:flex; align-items:center; gap:4px;">
-        <i class="fa-solid fa-location-dot" style="color:#E8553D;"></i> ${user.hall || "Campus Member"}
-      </div>
-      <div style="display:flex; gap:6px; margin-top:auto; padding-top:4px;">
-        <a href="seller.html?id=${user.id}" style="flex:1; background:#F8F6F0; border:1px solid #E5E0D8; color:#2B2B2B; font-size:11px; font-weight:700; padding:6px 8px; border-radius:8px; text-decoration:none; text-align:center;">
-          View Profile
-        </a>
-        ${waUrl ? `
-        <a href="${waUrl}" target="_blank" rel="noopener noreferrer" style="background:#F0FDF4; border:1px solid #BBF7D0; color:#15803D; font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; text-decoration:none; display:flex; align-items:center; gap:4px;">
-          <i class="fa-brands fa-whatsapp" style="color:#22C55E;"></i> WhatsApp
-        </a>
-        ` : ""}
-      </div>
-    `;
-    bizContainer.appendChild(card);
-  });
+  // Make the row slide by itself (after the browser has measured the cards)
+  requestAnimationFrame(() => startSpotlightSlide(bizContainer));
 }
 
 // Dynamically populate Hall / Hostel filter dropdown with campus-specific hostels
