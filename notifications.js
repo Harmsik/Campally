@@ -13,6 +13,7 @@ const STYLES = {
   follow:       { icon: "fa-user-plus",   color: "#2563EB", bg: "#EFF6FF" },
   review:       { icon: "fa-star",        color: "#D97706", bg: "#FFFBEB" },
   verification: { icon: "fa-shield-check", color: "#059669", bg: "#ECFDF5" },
+  message:      { icon: "fa-comment-dots", color: "#2563EB", bg: "#EFF6FF" },
   announcement: { icon: "fa-bullhorn",    color: "#E8553D", bg: "#FFF5F3" }
 };
 

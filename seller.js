@@ -89,9 +89,15 @@ async function loadSellerProfile() {
         </a>
       </div>
     `;
-  } else if (profile.whatsapp_number) {
-    const phone = profile.whatsapp_number.replace(/\D/g, "");
-    actionEl.innerHTML = `<a href="https://wa.me/${phone}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> Contact via WhatsApp</a>`;
+  } else {
+    const waBtn = profile.whatsapp_number
+      ? `<a href="https://wa.me/${profile.whatsapp_number.replace(/\D/g, "")}" target="_blank" class="whatsapp-btn" style="margin-top:8px;"><i class="fa-brands fa-whatsapp"></i> Contact via WhatsApp</a>`
+      : "";
+    actionEl.innerHTML = `
+      <a href="chat.html?with=${encodeURIComponent(sellerId)}" class="btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; padding:10px 20px; font-size:14px; width:auto;">
+        <i class="fa-solid fa-comment-dots"></i> Message
+      </a>
+      ${waBtn ? `<div>${waBtn}</div>` : ""}`;
   }
   
   if (!isOwnProfile && currentUserId) {

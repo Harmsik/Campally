@@ -310,6 +310,30 @@
     renderPayouts(data.payouts || []);
     renderApproved(data.approved || []);
     loadVerifications();
+    loadMessageReports();
+  }
+
+  async function loadMessageReports() {
+    const el = $("adm-report-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_message_reports");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load reports.</p>'; return; }
+    const list = data || [];
+    if (!list.length) {
+      el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No reported chats. 🎉</p>';
+      return;
+    }
+    el.innerHTML = list.map((r) => {
+      const lines = (r.messages || []).map((m) =>
+        '<div style="margin-bottom:4px;"><strong style="color:' + (m.from === "reporter" ? "#1D4ED8" : "#B91C1C") + ';">' +
+        (m.from === "reporter" ? esc(r.reporter) : esc(r.other)) + ":</strong> " + esc(m.body) + "</div>").join("");
+      return '<div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:14px; padding:14px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.5;">' +
+        '<div style="font-size:13px; font-weight:800; color:#7F1D1D;">' + esc(r.reporter) + " reported " + esc(r.other) + "</div>" +
+        '<div style="margin:4px 0 8px 0;">Reason: <strong>' + esc(r.reason) + "</strong></div>" +
+        '<div style="background:#fff; border:1px solid #FEE2E2; border-radius:10px; padding:8px; max-height:180px; overflow-y:auto;">' + (lines || "No messages.") + "</div>" +
+        '<button class="small-btn" style="margin-top:10px; background:#059669; color:#fff;" data-action="rresolve" data-id="' + esc(r.report_id) + '">Mark reviewed</button>' +
+        "</div>";
+    }).join("");
   }
 
   async function loadVerifications() {
@@ -426,6 +450,8 @@
       const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
       if (why === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
+    } else if (action === "rresolve") {
+      result = await sb.rpc("admin_resolve_message_report", { p_report: id });
     } else if (action === "announce") {
       const title = ($("ann-title").value || "").trim();
       const body = ($("ann-body").value || "").trim();

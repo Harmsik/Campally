@@ -30,10 +30,22 @@
       .maybeSingle();
     const seen = (me && me.notifications_seen_at) || new Date(0).toISOString();
 
+    // Message alerts are counted on the chat icon instead, so they are not counted twice
     const { count } = await supabase
       .from("notifications")
       .select("id", { count: "exact", head: true })
+      .neq("type", "message")
       .gt("created_at", seen);
+
+    // Unread chat messages
+    const msgBadge = document.getElementById("msg-count");
+    if (msgBadge) {
+      const { data: unread } = await supabase.rpc("get_unread_message_count");
+      if (unread && unread > 0) {
+        msgBadge.textContent = unread > 9 ? "9+" : String(unread);
+        msgBadge.style.display = "flex";
+      }
+    }
 
     if (count && count > 0) {
       badge.textContent = count > 9 ? "9+" : String(count);

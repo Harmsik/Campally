@@ -272,17 +272,22 @@ async function loadListing() {
           </div>
         </div>
       `;
-    } else if (currentSeller.whatsapp_number) {
-      const phone = currentSeller.whatsapp_number.replace(/\D/g, "");
-      const msg = encodeURIComponent(`Hi ${currentSeller.full_name || "there"}, I saw your listing for "${cleanTitle}" on Campally. Is it still available?`);
-      contactContainer.innerHTML = `
-        <a href="https://wa.me/${phone}?text=${msg}" target="_blank" class="whatsapp-btn" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-decoration:none;">
-          <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> Contact Seller on WhatsApp
-        </a>
-      `;
     } else {
+      // Two ways to reach the seller: chat inside Campally, or WhatsApp
+      const chatHref = "chat.html?with=" + encodeURIComponent(item.seller_id) + "&listing=" + encodeURIComponent(listingId);
+      let waHtml = "";
+      if (currentSeller.whatsapp_number) {
+        const phone = currentSeller.whatsapp_number.replace(/\D/g, "");
+        const msg = encodeURIComponent(`Hi ${currentSeller.full_name || "there"}, I saw your listing for "${cleanTitle}" on Campally. Is it still available?`);
+        waHtml = `
+          <a href="https://wa.me/${phone}?text=${msg}" target="_blank" class="whatsapp-btn" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-decoration:none; margin-top:8px;">
+            <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> Chat on WhatsApp
+          </a>`;
+      }
       contactContainer.innerHTML = `
-        <p style="text-align:center; font-size:13px; color:#888;">Seller has not provided a WhatsApp contact yet.</p>
+        <a href="${chatHref}" class="btn-primary" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-decoration:none; box-sizing:border-box;">
+          <i class="fa-solid fa-comment-dots" style="font-size:18px;"></i> Message Seller
+        </a>${waHtml}
       `;
     }
   }
