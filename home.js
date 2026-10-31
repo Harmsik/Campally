@@ -341,6 +341,7 @@ function makeCard(item) {
       <button class="save-item-btn ${isSaved ? 'saved' : ''}" data-id="${item.id}" title="Save item">
         <i class="${isSaved ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
       </button>
+      ${(Array.isArray(item.image_urls) && item.image_urls.length > 1 && !isSold) ? `<div style="position:absolute; left:8px; top:8px; background:rgba(0,0,0,.6); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;"><i class="fa-solid fa-images"></i> ${item.image_urls.length}</div>` : ""}
     </div>
     <div class="listing-info">
       <div class="listing-title">${cleanTitle}</div>

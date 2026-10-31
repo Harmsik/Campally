@@ -60,7 +60,10 @@ async function loadListing() {
 
     // Render image
     const imgEl = document.getElementById("detail-image");
-    if (item.image_url) {
+    const galleryUrls = (Array.isArray(item.image_urls) && item.image_urls.length) ? item.image_urls : (item.image_url ? [item.image_url] : []);
+    if (galleryUrls.length && window.CampallyGallery) {
+      window.CampallyGallery.mount(imgEl, galleryUrls, cleanTitle);
+    } else if (item.image_url) {
       imgEl.outerHTML = `<img id="detail-image" src="${item.image_url}" alt="${cleanTitle}" style="width:100%; height:240px; object-fit:cover; display:block;">`;
     } else {
       imgEl.innerHTML = `<div style="text-align:center;"><i class="fa-solid fa-box-open" style="font-size:32px; margin-bottom:8px; display:block;"></i>No photo uploaded</div>`;

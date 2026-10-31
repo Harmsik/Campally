@@ -34,10 +34,8 @@
   <div id="post-form-container" class="auth-container" style="margin-top:20px; margin-bottom:100px;">
     <form id="listing-form" class="auth-form">
       
-      <div style="text-align:center; margin-bottom:10px;">
-        <img id="listing-image-preview" src="" alt="" style="width:100%; max-width:300px; height:160px; border-radius:14px; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
-        <input type="file" id="listing-image-input" accept="image/*">
-      </div>
+      <label>Photos</label>
+      <div id="photo-picker" style="margin-bottom:12px;"></div>
 
       <label>Title</label>
       <input type="text" id="title" placeholder="e.g. Calculus Past Questions" required>
@@ -133,7 +131,8 @@
   <script src="paystack-integration.js"></script>
   <script src="nav.js"></script>
   <script src="post-type.js"></script>
-  <script src="post-listing.js"></script>
+  <script src="photo-picker.js?v=20261031"></script>
+  <script src="post-listing.js?v=20261031"></script>
   <script>loadNav("post");</script>
 </body>
 </html>

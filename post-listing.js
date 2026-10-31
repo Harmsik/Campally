@@ -27,8 +27,6 @@ function compressImage(file, maxWidth = 800, quality = 0.7) {
 const categorySelect = document.getElementById("category");
 const campusSelect = document.getElementById("listing-campus");
 const listingForm = document.getElementById("listing-form");
-const imageInput = document.getElementById("listing-image-input");
-const imagePreview = document.getElementById("listing-image-preview");
 const postFormContainer = document.getElementById("post-form-container");
 const visitorPrompt = document.getElementById("visitor-post-prompt");
 
@@ -148,16 +146,6 @@ async function loadCategories() {
 
 checkAuthAndInit();
 
-if (imageInput) {
-  imageInput.addEventListener("change", async () => {
-    let file = imageInput.files[0];
-    if (file) {
-      file = await compressImage(file);
-      imagePreview.src = URL.createObjectURL(file);
-    }
-  });
-}
-
 if (listingForm) {
   listingForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -192,29 +180,37 @@ if (listingForm) {
     const meetupSpotInput = document.getElementById("meetup-spot");
     const meetupSpot = meetupSpotInput ? meetupSpotInput.value : null;
 
-    let imageUrl = null;
-    let file = imageInput.files[0];
+    // Upload up to 5 photos (the first one is the cover)
+    const photoFiles = window.CampallyPhotos ? window.CampallyPhotos.getFiles() : [];
+    let imageUrls = [];
+    // Lock the button while posting so a slow connection cannot cause a double post
+    const submitBtn = listingForm.querySelector('button[type="submit"]');
+    const originalLabel = submitBtn ? submitBtn.innerHTML : "";
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = photoFiles.length ? "Uploading photos..." : "Posting..."; }
+    if (photoFiles.length) {
 
-    if (file) {
-      file = await compressImage(file);
-      const filePath = `${currentUser.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "")}`;
+      const stamp = Date.now();
+      const results = await Promise.all(photoFiles.map(async (f, i) => {
+        const filePath = `${currentUser.id}/${stamp}_${i + 1}.jpg`;
+        const { error } = await supabase.storage
+          .from("listing-images")
+          .upload(filePath, f, { contentType: "image/jpeg" });
+        if (error) return { error };
+        const { data } = supabase.storage.from("listing-images").getPublicUrl(filePath);
+        return { url: data.publicUrl };
+      }));
 
-      const { error: uploadError } = await supabase.storage
-        .from("listing-images")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        if (window.showToast) window.showToast("Image upload failed: " + uploadError.message, "error");
-        else alert("Image upload failed: " + uploadError.message);
+      const failed = results.find((r) => r.error);
+      if (failed) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalLabel; }
+        if (window.showToast) window.showToast("Photo upload failed: " + failed.error.message, "error");
+        else alert("Photo upload failed: " + failed.error.message);
         return;
       }
-
-      const { data: publicUrlData } = supabase.storage
-        .from("listing-images")
-        .getPublicUrl(filePath);
-
-      imageUrl = publicUrlData.publicUrl;
+      imageUrls = results.map((r) => r.url);
+      if (submitBtn) submitBtn.textContent = "Posting...";
     }
+    const imageUrl = imageUrls[0] || null;
 
     // Build metadata tags to guarantee full feature support
     let metaTags = [];
@@ -233,6 +229,7 @@ if (listingForm) {
       price: price ? Number(price) : null,
       seller_id: currentUser.id,
       image_url: imageUrl,
+      image_urls: imageUrls,
       is_swap: isSwap,
       course_code: courseCode || null,
       safe_meetup_spot: meetupSpot || null,
@@ -266,6 +263,7 @@ if (listingForm) {
     }
 
     if (insertError) {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalLabel; }
       if (window.showToast) window.showToast("Failed to post: " + insertError.message, "error");
       else alert("Failed to post: " + insertError.message);
     } else {
