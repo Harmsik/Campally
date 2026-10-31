@@ -56,9 +56,9 @@
   var SLIDES = [
     { title: "Search for available lodges", sub: "Find housing & rentals near your campus", icon: "fa-house-chimney", grad: "linear-gradient(135deg,#1E1B4B,#4338CA)", img: "hero-lodges.jpg", action: "lodges" },
     { title: "Graduating soon? Sell what you don't need", sub: "Turn gadgets, books and hostel items into cash", icon: "fa-sack-dollar", grad: "linear-gradient(135deg,#E8553D,#F59E0B)", img: "hero-sell.jpg", href: "post-listing.html" },
-    { title: "Can't find it? Post a request", sub: "Tell students what you need and let sellers come to you", icon: "fa-bullhorn", grad: "linear-gradient(135deg,#047857,#10B981)", img: "hero-request.jpg", action: "requests" },
-    { title: "Hire a student service", sub: "Tutors, repairs, hair, delivery and more", icon: "fa-screwdriver-wrench", grad: "linear-gradient(135deg,#0F172A,#475569)", img: "hero-services.jpg", href: "services.html" },
-    { title: "Swap instead of paying", sub: "Trade your item for something you need", icon: "fa-repeat", grad: "linear-gradient(135deg,#7C3AED,#EC4899)", img: "hero-swap.jpg", action: "swap" }
+    { title: "Can't find it? Post a request", sub: "Tell students what you need and let sellers come to you", icon: "fa-bullhorn", grad: "linear-gradient(135deg,#047857,#10B981)", img: "request.jpg", action: "requests" },
+    { title: "Hire a student service", sub: "Tutors, repairs, hair, delivery and more", icon: "fa-screwdriver-wrench", grad: "linear-gradient(135deg,#0F172A,#475569)", img: "services.jpg", href: "services.html" },
+    { title: "Swap instead of paying", sub: "Trade your item for something you need", icon: "fa-repeat", grad: "linear-gradient(135deg,#7C3AED,#EC4899)", img: "swap.jpg", action: "swap" }
   ];
 
   function runAction(name) {
