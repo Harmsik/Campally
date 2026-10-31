@@ -20,6 +20,7 @@
   <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
     <!-- Custom Suggestion for New Users -->
     <div id="new-user-suggestion-container"></div>
+    <div id="my-follow-stats"></div>
 
     <form id="profile-form" class="auth-form">
   <div style="text-align:center; margin-bottom:10px;">
@@ -155,6 +156,8 @@
   <script src="campuses.js"></script>
   <script src="paystack-integration.js"></script>
   <script src="profile.js"></script>
+  <script src="follow-lists.js?v=20261031"></script>
+  <script>if (window.CampallyFollows) CampallyFollows.mountMine(document.getElementById("my-follow-stats"));</script>
   <script src="nav.js"></script>
   <script>loadNav("profile");</script>
 </body>

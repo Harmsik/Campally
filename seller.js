@@ -145,19 +145,25 @@ function renderFollowButton(isFollowing) {
 }
 
 async function loadFollowerCount() {
+  // Followers + Following boxes (tap one to see the list)
+  let box = document.getElementById("follow-stats");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "follow-stats";
+    hallEl.insertAdjacentElement("afterend", box);
+  }
+  if (window.CampallyFollows) {
+    await window.CampallyFollows.mount(box, sellerId);
+    return;
+  }
+
+  // Fallback: plain follower count if follow-lists.js is missing
   const { count } = await supabase
     .from("follows")
     .select("*", { count: "exact", head: true })
     .eq("following_id", sellerId);
-  
-  const existing = document.getElementById("follower-count");
-  if (existing) existing.remove();
-  
-  const countEl = document.createElement("p");
-  countEl.id = "follower-count";
-  countEl.className = "tagline";
-  countEl.textContent = (count || 0) + " followers";
-  hallEl.insertAdjacentElement("afterend", countEl);
+  box.className = "tagline";
+  box.textContent = (count || 0) + " followers";
 }
 
 async function loadSellerListings() {

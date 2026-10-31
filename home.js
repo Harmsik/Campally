@@ -95,6 +95,7 @@ async function fetchListingsForCampus(campusId) {
     populateHallFilter();
     renderCurrentView();
     renderCampusBusinesses(campusId);
+    if (window.renderTrendingSellers) window.renderTrendingSellers(campusId);
   } catch (err) {
     console.error("Listings fetch error:", err);
     container.innerHTML = "<p style='text-align:center; color:#999; padding:40px 0;'>Unable to load listings right now.</p>";
