@@ -48,6 +48,11 @@
         <span>Edit profile<small>Photo, name, campus, WhatsApp</small></span>
         <i class="fa-solid fa-chevron-right chev"></i>
       </a>
+      <a class="st-item" href="#" id="my-store-link">
+        <span class="st-ico" style="background:#EEF2FF; color:#4338CA;"><i class="fa-solid fa-store"></i></span>
+        <span>My public store<small>See your page the way buyers see it</small></span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
       <a class="st-item" href="profile.html#verify">
         <span class="st-ico" style="background:#ECFDF5; color:#059669;"><i class="fa-solid fa-shield-halved"></i></span>
         <span>Student ID verification<small>Get your green Verified badge</small></span>
@@ -119,6 +124,15 @@
   <script src="supabase-init.js"></script>
   <script src="nav.js"></script>
   <script src="settings.js"></script>
+  <script>
+    (async function () {
+      try {
+        var r = await supabase.auth.getSession();
+        var u = r.data && r.data.session && r.data.session.user;
+        document.getElementById("my-store-link").href = u ? "seller.html?id=" + u.id : "login.html";
+      } catch (e) { document.getElementById("my-store-link").href = "login.html"; }
+    })();
+  </script>
   <script>loadNav("profile");</script>
 </body>
 </html>

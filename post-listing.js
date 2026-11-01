@@ -165,6 +165,13 @@ if (listingForm) {
     const categoryId = typeInfo.type === "service"
       ? (typeInfo.categoryId || document.getElementById("category").value)
       : document.getElementById("category").value;
+    // Bookstore rules (physical books and own notes only)
+    const bookProblem = window.CampallyBook ? window.CampallyBook.validate() : "";
+    if (bookProblem) {
+      if (window.UI) UI.toast(bookProblem, "error", 6500); else alert(bookProblem);
+      return;
+    }
+    const bookFields = window.CampallyBook ? window.CampallyBook.fields() : {};
     const rawDescription = document.getElementById("description").value.trim();
     const price = document.getElementById("price").value;
     const campusIdVal = campusSelect ? campusSelect.value : null;
@@ -235,14 +242,17 @@ if (listingForm) {
       safe_meetup_spot: meetupSpot || null,
       campus_id: chosenCampusId,
       listing_type: typeInfo.type,
-      service_category: typeInfo.serviceCategory || null
+      service_category: typeInfo.serviceCategory || null,
+      ...bookFields
     };
       
 
     let { error: insertError } = await supabase.from("listings").insert(extendedPayload);
 
     // Resilient fallback if optional columns are absent in table
-    if (insertError) {
+    // Do not retry when the database refused on purpose (Bookstore rules): retrying would skip the rule
+    const refusedOnPurpose = insertError && /Bookstore|check constraint/i.test(insertError.message || "");
+    if (insertError && !refusedOnPurpose) {
       console.warn("Retrying with campus schema payload:", insertError.message);
       const payloadWithCampus = {
         title: formattedTitle,

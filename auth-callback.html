@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Signing you in</title>
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="auth-body">
+  <div class="auth-container" style="text-align:center;">
+    <h1 class="logo">Campally</h1>
+    <div id="cb-state">
+      <p class="tagline" style="margin-top:18px;"><span class="cu-spin" style="color:#E8553D;"></span>Signing you in with Google...</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script>
+    const SUPABASE_URL = "https://mhshjusbtrkkkktymiyg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_0_s-ISa-wqGxAVm7tYeXBg_BgErqzS4";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function fail(message) {
+      document.getElementById("cb-state").innerHTML =
+        '<div class="cu-alert" role="alert" style="margin-top:18px;"><i class="fa-solid fa-circle-exclamation"></i><div></div></div>' +
+        '<a href="login.html" class="btn-primary" style="display:block; text-decoration:none; text-align:center; margin-top:14px; padding:13px;">Back to login</a>';
+      document.querySelector("#cb-state .cu-alert div").textContent = message;
+      UI.progress.done();
+    }
+
+    function safeRedirect(r) {
+      if (!r || typeof r !== "string") return "";
+      if (/^[a-z][a-z0-9+.-]*:/i.test(r) || r.indexOf("//") === 0) return "";
+      return /^[a-z0-9_\-./?=&%#]+$/i.test(r) ? r : "";
+    }
+
+    function waitForUser() {
+      return new Promise(async (resolve) => {
+        let done = false;
+        const finish = (u) => { if (!done) { done = true; resolve(u); } };
+        supabase.auth.onAuthStateChange((evt, session) => { if (session && session.user) finish(session.user); });
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data && data.session && data.session.user) finish(data.session.user);
+        } catch (_) {}
+        setTimeout(() => finish(null), 9000);
+      });
+    }
+
+    (async function run() {
+      const params = new URLSearchParams(location.search + "&" + location.hash.replace(/^#/, ""));
+      if (params.get("error")) {
+        const d = (params.get("error_description") || "").replace(/\+/g, " ");
+        fail(/access_denied/i.test(params.get("error") || "") ? "You cancelled the Google sign-in. You can try again any time." : (d || "Google sign-in did not finish. Please try again."));
+        return;
+      }
+
+      const user = await waitForUser();
+      if (!user) { fail("We could not finish signing you in. Please try again, or use your email."); return; }
+
+      // Is this a brand-new account? (created within the last 2 minutes)
+      const created = new Date(user.created_at).getTime();
+      const isNew = Date.now() - created < 120000;
+
+      if (isNew) {
+        try {
+          localStorage.setItem("campally_show_guide_suggestion", "true");
+          const ref = localStorage.getItem("campally_ref_code");
+          if (ref) await supabase.rpc("apply_referral", { p_code: ref });
+        } catch (_) {}
+      }
+      if ((user.email || "").toLowerCase() === "mbuharmless@gmail.com") sessionStorage.setItem("campally_founder_verified", "true");
+
+      // Where to next? Finish the profile first if the student has not told us their WhatsApp number yet
+      let dest = safeRedirect(sessionStorage.getItem("campally_oauth_redirect")) || "home.html";
+      let name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || "";
+      try {
+        const { data: p } = await supabase.from("profiles").select("full_name, whatsapp_number").eq("id", user.id).maybeSingle();
+        if (p && p.full_name) { name = p.full_name; localStorage.setItem("campally_user_name", p.full_name); }
+        if (!p || !p.whatsapp_number) dest = "profile.html#edit";
+      } catch (_) {}
+      try { sessionStorage.removeItem("campally_oauth_redirect"); } catch (_) {}
+
+      const first = String(name).trim().split(" ")[0];
+      UI.successThen(
+        isNew ? "Account created" : "Login successful",
+        first ? (isNew ? "Welcome to Campally, " : "Good to see you, ") + first + "." : "Taking you to Campally...",
+        () => window.location.replace(dest)
+      );
+    })();
+  </script>
+</body>
+</html>

@@ -1374,7 +1374,7 @@ if (!isVisitorSession) {
     const link = document.getElementById("profile-nav-link");
     const user = data?.session?.user;
     if (link && user) {
-      link.href = "seller.html?id=" + user.id;
+      link.href = "profile.html";
     }
   }).catch(() => {});
 }

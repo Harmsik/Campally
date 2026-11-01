@@ -447,7 +447,7 @@ function loadNav(activePage) {
       const user = data?.session?.user;
       if (link) {
         if (user) {
-          link.href = "seller.html?id=" + user.id;
+          link.href = "profile.html";   // the Profile hub (your public store is the "My store" button inside it)
         } else {
           link.href = "login.html";
         }

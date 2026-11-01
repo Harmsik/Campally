@@ -82,6 +82,22 @@ async function loadListing() {
     const badgesContainer = document.getElementById("detail-badges");
     badgesContainer.innerHTML = "";
 
+    // Bookstore facts (type, level, condition, author) shown as chips
+    if (item.book_type) {
+      const TYPE = { textbook: "Textbook", manual: "Manual / Handout", past_questions: "Past questions" };
+      const COND = { new: "New", like_new: "Like new", good: "Good", fair: "Fair" };
+      const chips = [TYPE[item.book_type], item.book_level, COND[item.book_condition], item.book_author].filter(Boolean);
+      chips.forEach((c) => {
+        const s = document.createElement("span");
+        s.className = "badge-pill";
+        s.style.cssText = "background:#EEF2FF; color:#4338CA;";
+        s.textContent = c;
+        badgesContainer.appendChild(document.createTextNode(" "));
+        badgesContainer.appendChild(s);
+      });
+    }
+
+
     const isBoosted = Boolean(
       (window.CampallyPay && window.CampallyPay.isListingBoosted(listingId)) ||
       item.is_boosted === true ||
@@ -291,6 +307,9 @@ async function loadListing() {
       `;
     }
   }
+
+    // Report link (copyright, scams, wrong category)
+    if (window.CampallyReport) window.CampallyReport.attach(contactContainer, item.id, item.seller_id);
 
     // Preferred Safe Meetup Spot
     const meetupSpotMatch = (item.description || "").match(/\[Meetup:\s*([^\]]+)\]/i);
@@ -567,6 +586,6 @@ loadListing();
 supabase.auth.getUser().then(({ data }) => {
   const link = document.getElementById("profile-nav-link");
   if (link && data && data.user) {
-    link.href = "seller.html?id=" + data.user.id;
+    link.href = "profile.html";
   }
 }).catch(() => {});

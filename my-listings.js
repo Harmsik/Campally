@@ -229,6 +229,6 @@ loadMyListings();
 supabase.auth.getUser().then(({ data }) => {
   const link = document.getElementById("profile-nav-link");
   if (link && data.user) {
-    link.href = "seller.html?id=" + data.user.id;
+    link.href = "profile.html";
   }
 });

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Bookstore</title>
+  <meta name="description" content="Buy and sell textbooks, manuals and past questions on campus, or book a tutor.">
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .bk-wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 120px 16px; }
+    .bk-hero { position: relative; overflow: hidden; margin: 14px 0 0 0; border-radius: 22px; padding: 20px 18px; color: #fff; background: linear-gradient(145deg, #1E1B4B 0%, #312E81 58%, #4338CA 100%); box-shadow: 0 12px 30px rgba(30,27,75,.26); }
+    .bk-hero::before { content: ""; position: absolute; right: -50px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(252,211,77,.30), rgba(252,211,77,0) 70%); }
+    .bk-hero > * { position: relative; }
+    .bk-hero h2 { margin: 0 0 4px 0; font-size: 21px; font-weight: 800; }
+    .bk-hero p { margin: 0 0 14px 0; font-size: 13px; color: #C7D2FE; line-height: 1.5; max-width: 330px; }
+    .bk-search { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 0 14px; }
+    .bk-search i { color: #6366F1; }
+    .bk-search input { flex: 1; border: none; outline: none; padding: 13px 0; font-size: 14px; font-family: inherit; background: transparent; color: #1E1B4B; min-width: 0; }
+    .bk-sell { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; background: #FCD34D; color: #1E1B4B; font-weight: 800; font-size: 13px; text-decoration: none; padding: 10px 16px; border-radius: 12px; }
+    .bk-tabs { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: rgba(252,246,236,.94); backdrop-filter: blur(8px); padding: 12px 0 10px 0; }
+    .bk-tab { border: 1.5px solid #EEE7DD; background: #fff; border-radius: 14px; padding: 9px 2px; text-align: center; font-family: inherit; font-size: 11px; font-weight: 800; color: #4B5563; cursor: pointer; }
+    .bk-tab i { display: block; font-size: 17px; margin-bottom: 3px; color: #9CA3AF; }
+    .bk-tab.on { background: #312E81; border-color: #312E81; color: #fff; box-shadow: 0 6px 14px rgba(49,46,129,.28); }
+    .bk-tab.on i { color: #FCD34D; }
+    .bk-filters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px 0; scrollbar-width: none; }
+    .bk-filters::-webkit-scrollbar { display: none; }
+    .bk-chip { flex-shrink: 0; border: 1.5px solid #EEE7DD; background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; color: #4B5563; cursor: pointer; font-family: inherit; }
+    .bk-chip.on { background: #E8553D; border-color: #E8553D; color: #fff; }
+    .bk-sel { flex-shrink: 0; border: 1.5px solid #EEE7DD; background: #fff; border-radius: 999px; padding: 7px 10px; font-size: 12.5px; font-weight: 700; color: #4B5563; font-family: inherit; }
+    .bk-trust { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #6B7280; margin: 2px 2px 12px 2px; line-height: 1.4; }
+    .bk-trust a { color: #4338CA; font-weight: 800; cursor: pointer; text-decoration: underline; }
+    .bk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bk-card { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 10px rgba(30,27,75,.07); border: 1px solid rgba(30,27,75,.05); text-decoration: none; color: inherit; display: block; }
+    .bk-card:active { transform: scale(.985); }
+    .bk-img { position: relative; height: 150px; background: linear-gradient(145deg, #E0E7FF, #EDE9FE); display: flex; align-items: center; justify-content: center; color: #6366F1; font-size: 40px; }
+    .bk-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .bk-lvl { position: absolute; left: 8px; top: 8px; background: rgba(30,27,75,.85); color: #FCD34D; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 10px; }
+    .bk-info { padding: 10px 12px 12px 12px; }
+    .bk-title { font-size: 13.5px; font-weight: 700; color: #1E1B4B; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; }
+    .bk-price { font-size: 15px; font-weight: 800; color: #E8553D; margin-top: 4px; }
+    .bk-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .bk-tag { font-size: 10.5px; font-weight: 700; background: #F1F5F9; color: #475569; border-radius: 8px; padding: 2px 7px; }
+    .bk-tag.course { background: #EEF2FF; color: #4338CA; }
+    .bk-tag.cond-new, .bk-tag.cond-like_new { background: #ECFDF5; color: #047857; }
+    .bk-seller { font-size: 11px; color: #6B7280; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bk-seller i { color: #059669; }
+    .bk-tutors { display: flex; flex-direction: column; gap: 12px; }
+    .bk-tutor { display: flex; gap: 12px; align-items: center; background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 2px 10px rgba(30,27,75,.07); text-decoration: none; color: inherit; border: 1px solid rgba(30,27,75,.05); }
+    .bk-tav { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; background: #E0E7FF; color: #4338CA; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+    .bk-tav img { width: 100%; height: 100%; object-fit: cover; }
+    .bk-tgo { margin-left: auto; background: #312E81; color: #fff; font-size: 12px; font-weight: 800; padding: 9px 13px; border-radius: 11px; white-space: nowrap; }
+    .bk-empty { text-align: center; padding: 44px 20px; color: #94A3B8; grid-column: 1 / -1; }
+    .bk-empty i { font-size: 44px; color: #C7D2FE; margin-bottom: 12px; display: block; }
+    .bk-empty b { display: block; color: #475569; font-size: 15px; margin-bottom: 6px; }
+    .bk-empty p { font-size: 13px; line-height: 1.5; margin: 0 0 14px 0; }
+    .bk-empty a { display: inline-block; background: #E8553D; color: #fff; text-decoration: none; font-weight: 800; font-size: 13px; padding: 10px 20px; border-radius: 22px; }
+    .bk-sheet { position: fixed; inset: 0; z-index: 9000; background: rgba(15,23,42,.55); display: flex; align-items: flex-end; justify-content: center; }
+    .bk-panel { background: #fff; width: 100%; max-width: 520px; border-radius: 22px 22px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 0px)) 20px; max-height: 82vh; overflow-y: auto; }
+    .bk-panel h3 { margin: 0 0 10px 0; color: #1E1B4B; }
+    .bk-panel li { font-size: 13.5px; line-height: 1.55; color: #374151; margin-bottom: 8px; }
+    .bk-panel button { width: 100%; margin-top: 8px; background: #312E81; color: #fff; border: none; border-radius: 12px; padding: 12px; font-weight: 800; font-family: inherit; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="home.html" style="color:#2B2B2B; text-decoration:none; font-size:16px; margin-right:12px;" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1 class="logo-small">Bookstore</h1>
+  </header>
+
+  <main class="bk-wrap">
+    <section class="bk-hero">
+      <h2>Campus Bookstore</h2>
+      <p>Textbooks, manuals and past questions from students on your campus, plus tutors who can help you pass.</p>
+      <div class="bk-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="bk-q" type="search" placeholder="Search by title or course code (e.g. MTH101)" autocomplete="off">
+      </div>
+      <a class="bk-sell" id="bk-sell" href="post-listing.html?book=1&type=textbook"><i class="fa-solid fa-plus"></i> Sell a book</a>
+    </section>
+
+    <div class="bk-tabs" id="bk-tabs" role="tablist">
+      <button class="bk-tab on" data-tab="textbook" role="tab"><i class="fa-solid fa-book"></i>Textbooks</button>
+      <button class="bk-tab" data-tab="manual" role="tab"><i class="fa-solid fa-book-open"></i>Manuals</button>
+      <button class="bk-tab" data-tab="past_questions" role="tab"><i class="fa-solid fa-file-pen"></i>Past questions</button>
+      <button class="bk-tab" data-tab="tutors" role="tab"><i class="fa-solid fa-chalkboard-user"></i>Tutors</button>
+    </div>
+
+    <div class="bk-filters" id="bk-filters"></div>
+    <div class="bk-trust"><i class="fa-solid fa-shield-halved" style="color:#059669;"></i><span>Physical copies and student notes only. Meet in safe campus spots. <a id="bk-rules">Bookstore rules</a></span></div>
+
+    <div id="bk-results" class="bk-grid"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script src="books.js?v=20261101"></script>
+  <script>loadNav("home");</script>
+</body>
+</html>

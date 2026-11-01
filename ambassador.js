@@ -311,6 +311,32 @@
     renderApproved(data.approved || []);
     loadVerifications();
     loadMessageReports();
+    loadListingReports();
+  }
+
+  async function loadListingReports() {
+    const el = $("adm-listing-report-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_listing_reports");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load listing reports.</p>'; return; }
+    const list = data || [];
+    if (!list.length) {
+      el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No reported listings. 🎉</p>';
+      return;
+    }
+    const WHY = { copyright: "Copyright (pirated or photocopied)", scam: "Scam or fake item", wrong_category: "Wrong category", prohibited: "Not allowed", other: "Other" };
+    el.innerHTML = list.map((r) =>
+      '<div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:14px; padding:14px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.55;">' +
+        '<div style="font-size:13px; font-weight:800; color:#7C2D12;">' + esc(r.title) + "</div>" +
+        "<div>Seller: <strong>" + esc(r.seller) + "</strong> &bull; reported by " + esc(r.reporter) + "</div>" +
+        '<div style="margin:4px 0;">Reason: <strong>' + esc(WHY[r.reason] || r.reason) + "</strong>" + (r.total_reports > 1 ? ' <span style="color:#B91C1C; font-weight:800;">(' + r.total_reports + " reports)</span>" : "") + "</div>" +
+        (r.details ? '<div style="background:#fff; border:1px solid #FDE7D3; border-radius:8px; padding:6px 8px; margin-bottom:6px;">' + esc(r.details) + "</div>" : "") +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">' +
+          '<a class="small-btn" style="background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B; text-decoration:none;" target="_blank" href="listing.html?id=' + esc(r.listing_id) + '">View</a>' +
+          '<button class="small-btn" style="background:#DC2626; color:#fff;" data-action="lremove" data-id="' + esc(r.report_id) + '">Remove listing</button>' +
+          '<button class="small-btn" style="background:#ECFDF5; color:#047857;" data-action="ldismiss" data-id="' + esc(r.report_id) + '">Dismiss</button>' +
+        "</div></div>"
+    ).join("");
   }
 
   async function loadMessageReports() {
@@ -450,6 +476,11 @@
       const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
       if (why === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
+    } else if (action === "lremove") {
+      if (!confirm("Remove this listing from Campally? Buyers will no longer see it.")) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_resolve_listing_report", { p_report: id, p_remove: true });
+    } else if (action === "ldismiss") {
+      result = await sb.rpc("admin_resolve_listing_report", { p_report: id, p_remove: false });
     } else if (action === "rresolve") {
       result = await sb.rpc("admin_resolve_message_report", { p_report: id });
     } else if (action === "announce") {

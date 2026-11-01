@@ -54,6 +54,7 @@
   // =====================================================
   // To use real photos: upload an image with the file name in "img" next to home.html.
   var SLIDES = [
+    { title: "Campus Bookstore", sub: "Textbooks, manuals, past questions and tutors from students", icon: "fa-book", grad: "linear-gradient(135deg,#312E81,#6366F1)", img: "hero-books.jpg", href: "books.html" },
     { title: "Search for available lodges", sub: "Find housing & rentals near your campus", icon: "fa-house-chimney", grad: "linear-gradient(135deg,#1E1B4B,#4338CA)", img: "hero-lodges.jpg", action: "lodges" },
     { title: "Graduating soon? Sell what you don't need", sub: "Turn gadgets, books and hostel items into cash", icon: "fa-sack-dollar", grad: "linear-gradient(135deg,#E8553D,#F59E0B)", img: "hero-sell.jpg", href: "post-listing.html" },
     { title: "Can't find it? Post a request", sub: "Tell students what you need and let sellers come to you", icon: "fa-bullhorn", grad: "linear-gradient(135deg,#047857,#10B981)", img: "hero-request.jpg", action: "requests" },
