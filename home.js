@@ -61,7 +61,7 @@ function updateSavedCounter() {
 window.fetchListingsForCampus = fetchListingsForCampus;
 async function fetchListingsForCampus(campusId) {
   if (!container) return;
-  container.innerHTML = "<p id='loading-text' style='text-align:center; color:#999; padding:40px 0;'>Loading listings...</p>";
+  if (window.UI) UI.skeletonGrid(container, 6); else container.innerHTML = "<p id='loading-text' style='text-align:center; color:#999; padding:40px 0;'>Loading listings...</p>";
 
   try {
     let query = supabase
@@ -95,7 +95,9 @@ async function fetchListingsForCampus(campusId) {
     populateHallFilter();
     renderCurrentView();
     renderCampusBusinesses(campusId);
+    // If trending.js has not arrived yet, leave a note so it can draw as soon as it loads
     if (window.renderTrendingSellers) window.renderTrendingSellers(campusId);
+    else window.__trendingPending = { campusId: campusId };
   } catch (err) {
     console.error("Listings fetch error:", err);
     container.innerHTML = "<p style='text-align:center; color:#999; padding:40px 0;'>Unable to load listings right now.</p>";
@@ -964,7 +966,7 @@ if (ambassadorForm) {
 
 async function loadRequests() {
   if (!requestsList) return;
-  requestsList.innerHTML = "<p style='text-align:center; color:#888; padding:30px 0;'>Loading student requests...</p>";
+  if (window.UI) UI.skeletonList(requestsList, 4); else requestsList.innerHTML = "<p style='text-align:center; color:#888; padding:30px 0;'>Loading student requests...</p>";
 
   const combined = [];
 

@@ -145,7 +145,7 @@
       user = s.data && s.data.session && s.data.session.user;
       if (!user) { var u = await supabase.auth.getUser(); user = u.data && u.data.user; }
     } catch (e) {}
-    if (user) mount(el, user.id);
+    if (user) await mount(el, user.id);
   }
 
   window.CampallyFollows = { mount: mount, mountMine: mountMine };

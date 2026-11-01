@@ -6,6 +6,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const container = document.getElementById("my-listings");
 
 async function loadMyListings() {
+  if (window.UI) UI.skeletonGrid(container, 4, true);
   let user = null;
   try {
     const { data: sessionData } = await supabase.auth.getSession();

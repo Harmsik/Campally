@@ -33,22 +33,18 @@ if (loginForm) {
 
     // 1. Validate form fields before sending request
     if (!email || !password) {
-      if (window.showToast) window.showToast("Please enter both email and password.", "error");
-      else alert("Please enter both email and password.");
+      UI.formError(loginForm, "Please enter both your email and password.", { fields: [!email ? emailInput : passwordInput] });
       return;
     }
 
     if (!email.includes("@") || !email.includes(".")) {
-      if (window.showToast) window.showToast("Please enter a valid email address.", "error");
-      else alert("Please enter a valid email address.");
+      UI.formError(loginForm, "That email address does not look right. Please check it.", { fields: [emailInput] });
       return;
     }
 
     // 2. Prevent accidental duplicate submissions & show loading state
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Logging in...`;
-    }
+    UI.clearFormError(loginForm);
+    const restoreBtn = UI.busy(submitBtn, "Logging in...");
 
     try {
       // 3. Authenticate using Supabase signInWithPassword
@@ -59,15 +55,13 @@ if (loginForm) {
 
       if (error) {
         console.warn("Sign in error:", error.message);
-        if (window.showToast) {
-          window.showToast("Login failed: " + error.message, "error");
-        } else {
-          alert("Login failed: " + error.message);
-        }
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = "Log In";
-        }
+        const wrongLogin = /invalid login/i.test(error.message || "");
+        UI.formError(loginForm, UI.friendly(error), {
+          fields: wrongLogin ? [emailInput, passwordInput] : [],
+          href: wrongLogin ? "reset-password.html" : "",
+          label: "Forgot password?"
+        });
+        restoreBtn();
         return;
       }
 
@@ -81,31 +75,26 @@ if (loginForm) {
       localStorage.setItem("campally_user_email", email);
 
       const isFounder = email.toLowerCase() === "mbuharmless@gmail.com";
-      if (isFounder) {
-        sessionStorage.setItem("campally_founder_verified", "true");
-        if (window.showToast) window.showToast("Welcome back, Founder! 👑", "success");
-      } else {
-        if (window.showToast) window.showToast("Logged in successfully! Redirecting...", "success");
-      }
+      if (isFounder) sessionStorage.setItem("campally_founder_verified", "true");
+
+      // One calm "success" screen, then move on
+      const goTo = (url, who) => {
+        const first = (who || "").trim().split(" ")[0];
+        UI.successThen(
+          isFounder ? "Welcome back, Founder" : "Login successful",
+          first ? "Good to see you, " + first + "." : "Taking you to Campally...",
+          () => window.location.replace(url)
+        );
+      };
 
       const params = new URLSearchParams(window.location.search);
       const redirectUrl = params.get("redirect");
 
       // Priority 1: Explicit redirect query parameter
-      if (redirectUrl) {
-        setTimeout(() => {
-          window.location.replace(redirectUrl);
-        }, 300);
-        return;
-      }
+      if (redirectUrl) { goTo(redirectUrl, localStorage.getItem("campally_user_name")); return; }
 
       // Priority 2: Founder goes directly to marketplace
-      if (isFounder) {
-        setTimeout(() => {
-          window.location.replace("home.html");
-        }, 300);
-        return;
-      }
+      if (isFounder) { goTo("home.html", "Founder"); return; }
 
       // Priority 3: Check if profile is complete (non-blocking fallback)
       let destination = "home.html";
@@ -117,6 +106,7 @@ if (loginForm) {
           .maybeSingle();
 
         if (profileRes && profileRes.data) {
+          if (profileRes.data.full_name) localStorage.setItem("campally_user_name", profileRes.data.full_name);
           const isComplete = Boolean(profileRes.data.full_name && profileRes.data.whatsapp_number);
           destination = isComplete ? "home.html" : "profile.html";
         }
@@ -124,22 +114,12 @@ if (loginForm) {
         destination = "home.html";
       }
 
-      setTimeout(() => {
-        window.location.replace(destination);
-      }, 300);
+      goTo(destination, localStorage.getItem("campally_user_name"));
 
     } catch (err) {
       console.error("Login fatal error:", err);
-      if (window.showToast) {
-        window.showToast("Error: " + (err.message || "Failed to log in"), "error");
-      } else {
-        alert("Error: " + (err.message || "Failed to log in"));
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "Log In";
-      }
+      UI.formError(loginForm, UI.friendly(err));
+      restoreBtn();
     }
   });
 }

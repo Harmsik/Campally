@@ -182,8 +182,11 @@ async function loadProfile() {
           <i class="fa-solid fa-gauge-high"></i> Open Founder Admin Command Hub &rarr;
         </a>
       `;
+      const slot = document.getElementById("founder-slot");
       const form = document.getElementById("profile-form");
-      if (form && form.parentNode) {
+      if (slot) {
+        slot.appendChild(founderBanner);
+      } else if (form && form.parentNode) {
         form.parentNode.insertBefore(founderBanner, form);
       }
     }
@@ -385,10 +388,10 @@ if (profileForm) {
       if (window.showToast) window.showToast("Failed to save: " + error.message, "error");
       else alert("Failed to save: " + error.message);
     } else {
-      if (window.showToast) window.showToast("Profile saved successfully!", "success");
+      UI.toast("Your profile has been updated.", "success");
       setTimeout(() => {
-        window.location.href = "seller.html?id=" + currentUserId;
-      }, 500);
+        window.location.href = "profile.html";
+      }, 900);
     }
   });
 }
@@ -459,6 +462,8 @@ if (logoutLink) {
   logoutLink.addEventListener("click", async (e) => {
     e.preventDefault();
     await supabase.auth.signOut();
-    window.location.href = "login.html";
+    UI.successThen("You are logged out", "See you soon. Your account and listings are safe.", () => {
+      window.location.href = "login.html";
+    }, { tone: "info", emoji: "\uD83D\uDC4B", ms: 1300 });
   });
 }

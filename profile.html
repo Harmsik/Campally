@@ -7,158 +7,229 @@
   <link rel="stylesheet" href="style.css?v=20261015_02">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    .ph-wrap { max-width: 560px; margin: 0 auto; padding: 14px 16px 120px 16px; }
+    /* hero */
+    .ph-hero { position: relative; overflow: hidden; background: linear-gradient(145deg, #1E1B4B 0%, #312E81 58%, #4338CA 100%); color: #fff; border-radius: 24px; padding: 22px 18px 18px 18px; box-shadow: 0 14px 34px rgba(30,27,75,.28); }
+    .ph-hero::before { content: ""; position: absolute; right: -60px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(252,211,77,.28), rgba(252,211,77,0) 70%); }
+    .ph-hero::after { content: ""; position: absolute; left: -50px; bottom: -80px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.35), rgba(129,140,248,0) 70%); }
+    .ph-hero > * { position: relative; z-index: 1; }
+    .ph-top { display: flex; align-items: center; gap: 14px; }
+    .ph-av { width: 84px; height: 84px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, #FCD34D, #F97316); flex-shrink: 0; }
+    .ph-av > div { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #E0E7FF; color: #4338CA; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 28px; }
+    .ph-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ph-name { font-size: 20px; font-weight: 800; line-height: 1.2; word-break: break-word; }
+    .ph-sub { font-size: 12.5px; color: #C7D2FE; margin-top: 3px; line-height: 1.4; }
+    .ph-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ph-chip { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; gap: 5px; }
+    .ph-chip.ok { background: rgba(16,185,129,.22); color: #6EE7B7; }
+    .ph-chip.warn { background: rgba(252,211,77,.2); color: #FCD34D; }
+    .ph-stats { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ph-stats .fl-stats { display: contents; margin: 0; }
+    .ph-stats .fl-stat, .ph-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 9px 4px; text-align: center; min-width: 0; cursor: pointer; }
+    .ph-stats .fl-stat b, .ph-stat b { display: block; font-size: 18px; color: #fff; line-height: 1.2; }
+    .ph-stats .fl-stat span, .ph-stat span { font-size: 11px; color: #C7D2FE; font-weight: 600; }
+    .ph-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .ph-btn { flex: 1; text-align: center; text-decoration: none; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 800; padding: 12px 8px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .ph-btn.solid { background: #fff; color: #1E1B4B; }
+    .ph-btn.glass { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+    /* quick actions */
+    .ph-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+    .ph-q { background: #fff; border: 1px solid #EEE7DD; border-radius: 16px; padding: 12px 4px 10px 4px; text-align: center; text-decoration: none; color: #1E1B4B; font-size: 11.5px; font-weight: 700; box-shadow: 0 2px 8px rgba(30,27,75,.05); position: relative; }
+    .ph-q i { display: flex; width: 38px; height: 38px; margin: 0 auto 6px auto; border-radius: 12px; align-items: center; justify-content: center; font-size: 16px; }
+    .ph-q .dot { position: absolute; top: 6px; right: 14px; min-width: 17px; height: 17px; border-radius: 9px; background: #DC2626; color: #fff; font-size: 10px; font-weight: 800; display: none; align-items: center; justify-content: center; padding: 0 4px; }
+    /* cards */
+    .ph-card { background: #fff; border: 1px solid #EEE7DD; border-radius: 18px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(30,27,75,.05); }
+    .ph-row { display: flex; align-items: center; gap: 12px; }
+    .ph-ico { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .ph-row h3 { margin: 0; font-size: 14.5px; color: #1E1B4B; }
+    .ph-row p { margin: 2px 0 0 0; font-size: 12px; color: #6B7280; line-height: 1.4; }
+    .ph-go { margin-left: auto; background: #FFF5F3; border: 1px solid #FCD8D0; color: #E8553D; font-weight: 800; font-size: 12px; border-radius: 10px; padding: 8px 14px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .ph-card.ok { background: #F0FDF4; border-color: #BBF7D0; }
+    .ph-card.pro { background: linear-gradient(135deg, #FFFBEB, #FFF7ED); border-color: #FDE68A; }
+    .ph-link { display: flex; align-items: center; gap: 12px; padding: 14px; text-decoration: none; color: #2B2B2B; font-weight: 700; font-size: 14px; background: none; border: none; width: 100%; font-family: inherit; cursor: pointer; text-align: left; }
+    .ph-link + .ph-link { border-top: 1px solid #F3F0EA; }
+    .ph-link i:first-child { width: 22px; text-align: center; color: #E8553D; }
+    .ph-link i:last-child { margin-left: auto; color: #C7C2B8; font-size: 12px; }
+    /* sheets */
+    .ph-sheet { position: fixed; inset: 0; z-index: 8000; background: #FBF5EC; transform: translateY(100%); visibility: hidden; transition: transform .28s ease, visibility 0s .28s; display: flex; flex-direction: column; }
+    .ph-sheet.open { transform: none; visibility: visible; transition: transform .28s ease; }
+    .ph-sheet-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #fff; border-bottom: 1px solid #EEE7DD; }
+    .ph-sheet-head button { background: #F3F0EA; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 15px; cursor: pointer; }
+    .ph-sheet-head h2 { margin: 0; font-size: 17px; color: #1E1B4B; }
+    .ph-sheet-body { flex: 1; overflow-y: auto; padding: 16px 16px 60px 16px; max-width: 560px; width: 100%; margin: 0 auto; }
+    .ph-photo { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+    .ph-photo .pa { position: relative; width: 96px; height: 96px; border-radius: 50%; cursor: pointer; }
+    .ph-photo img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; background: #F0EDE6; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(30,27,75,.15); display: block; }
+    .ph-photo .cam { position: absolute; right: 0; bottom: 0; width: 32px; height: 32px; border-radius: 50%; background: #E8553D; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 3px solid #FBF5EC; }
+    .ph-photo small { margin-top: 8px; color: #6B7280; font-size: 12px; }
+    .ph-section-t { font-size: 12px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: #6B7280; margin: 16px 4px 6px 4px; }
+    .ph-sheet .auth-form { background: #fff; border: 1px solid #EEE7DD; border-radius: 18px; padding: 6px 16px 16px 16px; }
+    .ph-sheet .auth-form .ph-section-t { margin-left: 0; }
+    .ph-sheet .verification-card { margin: 0; }
+  </style>
 </head>
 <body>
 
   <header class="top-bar" style="justify-content:space-between;">
     <h1 class="logo-small">My Profile</h1>
-    <a href="settings.html" style="color:#444; text-decoration:none; font-size:18px;" title="Settings">
+    <a href="settings.html" aria-label="Settings" style="width:38px; height:38px; border-radius:50%; background:#F3F0EA; color:#444; text-decoration:none; font-size:16px; display:flex; align-items:center; justify-content:center;">
       <i class="fa-solid fa-gear"></i>
     </a>
   </header>
 
-  <div class="auth-container" style="margin-top:20px; margin-bottom:100px;">
-    <!-- Custom Suggestion for New Users -->
+  <main class="ph-wrap">
     <div id="new-user-suggestion-container"></div>
-    <div id="my-follow-stats"></div>
+    <div id="founder-slot"></div>
 
-    <form id="profile-form" class="auth-form">
-  <div style="text-align:center; margin-bottom:10px;">
-    <img id="avatar-preview" src="" alt="" style="width:90px; height:90px; border-radius:50%; object-fit:cover; background:#F0EDE6; display:block; margin:0 auto 10px;">
-    <input type="file" id="avatar-input" accept="image/*">
-  </div>
-  
-  <label>Full Name</label>
-      <input type="text" id="full-name" placeholder="Your name">
-
-      <label>Campus</label>
-      <div style="position:relative; width:100%;">
-        <input type="text" id="campus-search-input" placeholder="Type campus name or abbreviation (e.g. FUNAI, UNILAG, UNN, Ibadan)..." style="width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6;" autocomplete="off" required>
-        <div id="campus-suggestions-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; max-height:220px; overflow-y:auto; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.12);"></div>
-      </div>
-      <!-- Hidden select for form binding and backwards compatibility -->
-      <select id="campus" style="display:none;" required>
-        <option value="">Select your campus</option>
-      </select>
-
-      <label>Department</label>
-      <input type="text" id="department" placeholder="e.g. Computer Science">
-
-      <label>Hostel or Lodge</label>
-      <input type="text" id="hall" list="hostel-suggestions" placeholder="e.g. Silver Hostel, Perm Site Lodge, Moremi Hall, Hilltop Lodge">
-      <datalist id="hostel-suggestions"></datalist>
-
-      <label>WhatsApp Number</label>
-      <input type="text" id="whatsapp" placeholder="e.g. 08012345678">
-
-      <button type="submit" class="btn-primary">Save Profile</button>
-    </form>
-
-    <!-- Safe Student ID Verification Section -->
-    <div class="verification-card">
-      <div class="verification-header">
-        <div class="verification-icon-wrap" style="background:#FDF1EE; color:#E8553D; border:1px solid #FCD8D0;">
-          <i class="fa-solid fa-shield-halved"></i>
+    <!-- HERO -->
+    <section class="ph-hero" aria-label="Your profile">
+      <div class="ph-top">
+        <div class="ph-av"><div id="hub-av">?</div></div>
+        <div style="min-width:0;">
+          <div class="ph-name" id="hub-name">Loading...</div>
+          <div class="ph-sub" id="hub-sub">&nbsp;</div>
+          <div class="ph-chips" id="hub-chips"></div>
         </div>
+      </div>
+      <div class="ph-stats" id="hub-stats"><div id="my-follow-stats" style="display:contents;"></div></div>
+      <div class="ph-actions">
+        <button type="button" class="ph-btn solid" data-open="edit"><i class="fa-solid fa-pen"></i> Edit profile</button>
+        <a class="ph-btn glass" id="hub-store" href="seller.html"><i class="fa-solid fa-store"></i> My store</a>
+      </div>
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <nav class="ph-quick" aria-label="Shortcuts">
+      <a class="ph-q" href="messages.html"><i class="fa-solid fa-comment-dots" style="background:#EFF6FF; color:#2563EB;"></i>Messages<span class="dot" id="hub-msg-dot"></span></a>
+      <a class="ph-q" href="my-listings.html"><i class="fa-solid fa-bag-shopping" style="background:#FFF5F3; color:#E8553D;"></i>My items</a>
+      <a class="ph-q" href="notifications.html"><i class="fa-solid fa-bell" style="background:#FFFBEB; color:#D97706;"></i>Alerts</a>
+      <a class="ph-q" href="post-listing.html"><i class="fa-solid fa-plus" style="background:#ECFDF5; color:#059669;"></i>Sell</a>
+    </nav>
+
+    <!-- VERIFICATION STATUS (state is filled by profile-hub.js) -->
+    <section class="ph-card" id="hub-verify-card">
+      <div class="ph-row">
+        <div class="ph-ico" id="hub-verify-ico" style="background:#FDF1EE; color:#E8553D;"><i class="fa-solid fa-shield-halved"></i></div>
         <div>
-          <h3 style="font-size:16px; color:#2B2B2B; margin:0;">Student ID Verification</h3>
-          <p style="font-size:12px; color:#6B7280; margin:2px 0 0 0;">Build trust & unlock the Verified Student badge</p>
+          <h3 id="hub-verify-title">Get your Verified badge</h3>
+          <p id="hub-verify-text">Buyers trust verified students more. It takes about 2 minutes.</p>
         </div>
+        <button type="button" class="ph-go" id="hub-verify-btn" data-open="verify">Start</button>
       </div>
+    </section>
 
-      <div id="verification-status-banner" style="display:none; margin-bottom:12px;"></div>
-
-      <div class="security-notice">
-        <i class="fa-solid fa-lock" style="margin-right:4px;"></i> <strong>Safe & Confidential:</strong> Your Student ID details and card photos are kept private and used only to check you are a real student. Your ID photo is deleted as soon as the Campally team has reviewed it. They are never shared publicly with third parties.
-      </div>
-
-      <form id="verification-form">
-        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Matriculation / Student ID Number</label>
-        <input type="text" id="matric-number" placeholder="e.g. FUNAI/2022/12345 or 210805521" style="width:100%; padding:10px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
-
-        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Institutional Email (Optional)</label>
-        <input type="email" id="school-email" placeholder="e.g. student@funai.edu.ng" style="width:100%; padding:10px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
-
-        <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Upload Student ID Card Photo</label>
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-          <img id="id-card-preview" src="" alt="" style="width:80px; height:52px; border-radius:8px; object-fit:cover; background:#F0EDE6; display:none; border:1px solid #DDD;">
-          <input type="file" id="id-card-file" accept="image/*" style="font-size:12px; flex:1;">
-        </div>
-
-        <button type="submit" id="submit-verification-btn" class="btn-primary" style="background:#E8553D; margin-top:4px;">
-          <i class="fa-solid fa-id-card" style="margin-right:6px;"></i> Submit Student ID Verification
-        </button>
-      </form>
-    </div>
-
-    <!-- Campally Pro Seller Badge Upgrade Section -->
-    <div class="verification-card" style="margin-top:16px; border: 1px solid #FDE68A; background: #FFFDF5;">
-      <div class="verification-header">
-        <div class="verification-icon-wrap" style="background:#FEF3C7; color:#D97706; border:1px solid #FDE68A;">
-          <i class="fa-solid fa-crown"></i>
-        </div>
+    <!-- PRO SELLER -->
+    <section class="ph-card pro">
+      <div class="ph-row">
+        <div class="ph-ico" style="background:#FEF3C7; color:#D97706;"><i class="fa-solid fa-crown"></i></div>
         <div>
-          <h3 style="font-size:16px; color:#2B2B2B; margin:0;">Campally Pro Seller Upgrade</h3>
-          <p style="font-size:12px; color:#B45309; margin:2px 0 0 0;">Stand out & get priority placement on your campus</p>
+          <h3>Pro Seller</h3>
+          <p>Stand out with a Pro badge and priority placement for a full semester.</p>
         </div>
       </div>
-
-      <div id="pro-seller-status-banner" style="display:none; margin-bottom:12px;"></div>
-
-      <ul style="font-size:12px; color:#92400E; margin:0 0 14px 0; padding-left:18px; line-height:1.6;">
-        <li>⭐ Distinctive <strong>Pro Seller</strong> badge on profile & all your listings</li>
-        <li>Priority search placement across your campus</li>
-        <li>Valid for full academic semester (120 Days)</li>
-        <li>Note: this does not verify your ID. Student ID verification (above) is separate and free.</li>
-      </ul>
-
-      <button type="button" id="upgrade-pro-seller-btn" class="btn-primary" style="background:linear-gradient(135deg, #D97706, #B45309); margin-top:4px; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <div id="pro-seller-status-banner" style="display:none; margin-top:12px;"></div>
+      <button type="button" id="upgrade-pro-seller-btn" class="btn-primary" style="margin-top:12px; width:100%; background:linear-gradient(135deg, #D97706, #B45309); display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; font-size:14px;">
         <i class="fa-solid fa-crown"></i> Get Pro Seller Badge (₦500)
       </button>
-    </div>
+    </section>
 
-    <!-- Campus Ambassador Referral Program Card -->
-    <div class="verification-card" style="margin-top:16px; border: 1px solid #C7D2FE; background: #EEF2FF;">
-      <div class="verification-header">
-        <div class="verification-icon-wrap" style="background:#E0E7FF; color:#4338CA; border:1px solid #C7D2FE;">
-          <i class="fa-solid fa-graduation-cap"></i>
+    <!-- SHORT LIST OF EXTRAS (everything else lives in Settings) -->
+    <section class="ph-card" style="padding:0; overflow:hidden;">
+      <a class="ph-link" href="settings.html"><i class="fa-solid fa-gear"></i> Settings, referrals &amp; support <i class="fa-solid fa-chevron-right"></i></a>
+      <a class="ph-link" href="#" id="logout-link"><i class="fa-solid fa-right-from-bracket" style="color:#6B7280;"></i> Log out <i class="fa-solid fa-chevron-right"></i></a>
+    </section>
+  </main>
+
+  <!-- SHEET: EDIT PROFILE (only the essentials) -->
+  <div class="ph-sheet" id="sheet-edit" aria-hidden="true">
+    <div class="ph-sheet-head">
+      <button type="button" data-close aria-label="Close"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Edit profile</h2>
+    </div>
+    <div class="ph-sheet-body">
+      <form id="profile-form" class="auth-form">
+        <div class="ph-photo">
+          <label class="pa" for="avatar-input">
+            <img id="avatar-preview" src="" alt="Your photo">
+            <span class="cam"><i class="fa-solid fa-camera"></i></span>
+          </label>
+          <input type="file" id="avatar-input" accept="image/*" style="display:none;">
+          <small>Tap to change your photo</small>
         </div>
-        <div>
-          <h3 style="font-size:16px; color:#1E1B4B; margin:0;">Campus Ambassador & Referrals</h3>
-          <p style="font-size:12px; color:#4F46E5; margin:2px 0 0 0;">Earn ₦150 per student invited to Campally</p>
+
+        <div class="ph-section-t">About you</div>
+        <label>Full name</label>
+        <input type="text" id="full-name" placeholder="Your name">
+
+        <label>WhatsApp number</label>
+        <input type="text" id="whatsapp" placeholder="e.g. 08012345678">
+
+        <div class="ph-section-t" style="margin-top:22px;">Campus life</div>
+        <label>Campus</label>
+        <div style="position:relative; width:100%;">
+          <input type="text" id="campus-search-input" placeholder="Type your campus (e.g. FUNAI, UNILAG, UNN)" style="width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6;" autocomplete="off">
+          <div id="campus-suggestions-dropdown" style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:#FFFFFF; border:1px solid #E5E0D8; border-radius:12px; max-height:220px; overflow-y:auto; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.12);"></div>
         </div>
+        <select id="campus" style="display:none;" required>
+          <option value="">Select your campus</option>
+        </select>
+
+        <label>Department</label>
+        <input type="text" id="department" placeholder="e.g. Computer Science">
+
+        <label>Hostel or lodge</label>
+        <input type="text" id="hall" list="hostel-suggestions" placeholder="e.g. Silver Hostel, Moremi Hall">
+        <datalist id="hostel-suggestions"></datalist>
+
+        <button type="submit" class="btn-primary" style="width:100%;">Save changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SHEET: STUDENT ID VERIFICATION -->
+  <div class="ph-sheet" id="sheet-verify" aria-hidden="true">
+    <div class="ph-sheet-head">
+      <button type="button" data-close aria-label="Close"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Student ID verification</h2>
+    </div>
+    <div class="ph-sheet-body">
+      <div class="verification-card">
+        <div id="verification-status-banner" style="display:none; margin-bottom:12px;"></div>
+
+        <div class="security-notice">
+          <i class="fa-solid fa-lock" style="margin-right:4px;"></i> <strong>Safe &amp; confidential:</strong> Your ID details are private and only used to check you are a real student. Your ID photo is deleted once it has been reviewed.
+        </div>
+
+        <form id="verification-form">
+          <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Matriculation / Student ID number</label>
+          <input type="text" id="matric-number" placeholder="e.g. FUNAI/2022/12345 or 210805521" style="width:100%; padding:11px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
+
+          <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">School email (optional)</label>
+          <input type="email" id="school-email" placeholder="e.g. student@funai.edu.ng" style="width:100%; padding:11px 12px; border:1px solid #E5E0D8; border-radius:10px; font-size:14px; background:#FAF9F6; margin-bottom:12px;">
+
+          <label style="font-size:13px; font-weight:600; color:#374151; display:block; margin-bottom:4px;">Photo of your student ID card</label>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <img id="id-card-preview" src="" alt="" style="width:80px; height:52px; border-radius:8px; object-fit:cover; background:#F0EDE6; display:none; border:1px solid #DDD;">
+            <input type="file" id="id-card-file" accept="image/*" style="font-size:12px; flex:1;">
+          </div>
+
+          <button type="submit" id="submit-verification-btn" class="btn-primary" style="background:#E8553D; margin-top:4px; width:100%;">
+            <i class="fa-solid fa-id-card" style="margin-right:6px;"></i> Submit Student ID Verification
+          </button>
+        </form>
       </div>
-
-      <p style="font-size:12px; color:#3730A3; margin:0 0 12px 0; line-height:1.5;">
-        Get your personalized university referral link, share to your campus WhatsApp groups, track which students registered, and withdraw earnings to your Nigerian bank!
-      </p>
-
-      <a href="ambassador.html" class="btn-primary" style="background:#4338CA; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
-        <i class="fa-solid fa-chart-line"></i> Open Ambassador Portal & Referral Link
-      </a>
-    </div>
-
-    <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
-      <a href="reset-password.html" style="font-size:14px; color:#E8553D; text-decoration:none; font-weight:600;">
-        <i class="fa-solid fa-key" style="margin-right:6px;"></i> Change Password
-      </a>
-      <a href="settings.html" style="font-size:14px; color:#666; text-decoration:none;">
-        <i class="fa-solid fa-gear" style="margin-right:6px;"></i> Account Settings
-      </a>
-      <a href="#" id="logout-link" style="font-size:14px; color:#999; text-decoration:none; margin-top:6px;">
-        <i class="fa-solid fa-right-from-bracket" style="margin-right:6px;"></i> Log out
-      </a>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
   <script src="supabase-init.js"></script>
   <script src="campuses.js"></script>
+  <script src="nav.js"></script>
   <script src="paystack-integration.js"></script>
   <script src="profile.js"></script>
   <script src="follow-lists.js?v=20261031"></script>
-  <script>if (window.CampallyFollows) CampallyFollows.mountMine(document.getElementById("my-follow-stats"));</script>
-  <script src="nav.js"></script>
+  <script src="profile-hub.js?v=20261031"></script>
   <script>loadNav("profile");</script>
 </body>
 </html>

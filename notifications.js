@@ -78,6 +78,7 @@ function render(items, seen) {
 }
 
 async function init() {
+  if (window.UI) UI.skeletonList(listEl, 5);
   // Same two-step login check the other Campally pages use
   let user = null;
   try {

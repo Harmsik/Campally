@@ -23,16 +23,14 @@ resetForm.addEventListener("submit", async (e) => {
       redirectTo: redirectUrl
     });
 
+    UI.clearFormError(resetForm);
     if (error) {
-      if (window.showToast) window.showToast("Failed: " + error.message, "error");
-      else alert("Failed: " + error.message);
+      UI.formError(resetForm, UI.friendly(error));
     } else {
-      if (window.showToast) window.showToast("Check your email for the password reset link!", "success");
-      else alert("Check your email for a reset link!");
+      UI.toast("We sent a reset link to " + email + ". Check your inbox and spam folder.", "success", 6500);
     }
   } catch (err) {
-    if (window.showToast) window.showToast("Error: " + err.message, "error");
-    else alert("Error: " + err.message);
+    UI.formError(resetForm, UI.friendly(err));
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;

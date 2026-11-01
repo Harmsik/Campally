@@ -8,14 +8,29 @@ const updateForm = document.getElementById("update-form");
 updateForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const newPassword = document.getElementById("new-password").value;
+  const pwInput = document.getElementById("new-password");
+  const newPassword = pwInput.value;
+  const btn = updateForm.querySelector('button[type="submit"]');
 
-  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (newPassword.length < 6) {
+    UI.formError(updateForm, "Your new password needs at least 6 characters.", { fields: [pwInput] });
+    return;
+  }
 
-  if (error) {
-    alert("Failed: " + error.message);
-  } else {
-    alert("Password updated! Please log in.");
-    window.location.href = "login.html";
+  UI.clearFormError(updateForm);
+  const restore = UI.busy(btn, "Updating password...");
+  try {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      UI.formError(updateForm, UI.friendly(error));
+      restore();
+      return;
+    }
+    UI.successThen("Password updated", "Please log in with your new password.", () => {
+      window.location.href = "login.html";
+    });
+  } catch (err) {
+    UI.formError(updateForm, UI.friendly(err));
+    restore();
   }
 });

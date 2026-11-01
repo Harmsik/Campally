@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500..800&display=swap');
 * {
   margin: 0;
   padding: 0;
@@ -1150,3 +1151,100 @@ body {
 
 
 
+
+
+/* =====================================================================
+   Campally visual refresh v2  (additive: only refines existing look)
+   Brand: coral (#E8553D) for actions, deep indigo (#1E1B4B) for premium
+   surfaces, warm cream background, soft layered shadows, rounder shapes.
+   ===================================================================== */
+:root {
+  --cp-brand: #E8553D;
+  --cp-ink: #1E1B4B;
+  --cp-ink-2: #312E81;
+  --cp-line: #EEE7DD;
+  --cp-shadow-sm: 0 1px 2px rgba(30,27,75,.04), 0 6px 16px rgba(30,27,75,.06);
+  --cp-shadow-md: 0 2px 6px rgba(30,27,75,.06), 0 14px 30px rgba(30,27,75,.10);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+  background:
+    radial-gradient(900px 320px at 50% -140px, #FFE6D2 0%, rgba(255,230,210,0) 70%),
+    #FCF6EC;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.003em;
+}
+button, input, select, textarea { font-family: inherit; }
+
+/* header */
+.top-bar {
+  background: rgba(255,255,255,.92);
+  -webkit-backdrop-filter: saturate(1.5) blur(10px);
+  backdrop-filter: saturate(1.5) blur(10px);
+  box-shadow: 0 1px 0 rgba(30,27,75,.06), 0 6px 18px rgba(30,27,75,.04);
+}
+.logo-small { font-weight: 800; letter-spacing: -0.02em; }
+
+/* primary button: gradient, soft glow, tactile press */
+.btn-primary {
+  background: linear-gradient(135deg, #F2683F 0%, #E8553D 55%, #D9452C 100%);
+  border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: .1px;
+  box-shadow: 0 8px 18px rgba(232,85,61,.28);
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.btn-primary:active { transform: scale(.98); box-shadow: 0 3px 8px rgba(232,85,61,.25); filter: brightness(.97); }
+
+/* inputs */
+.auth-form input:focus {
+  border-color: var(--cp-brand);
+  box-shadow: 0 0 0 4px rgba(232,85,61,.14);
+  outline: none;
+}
+
+/* listing cards */
+.listing-card {
+  border-radius: 20px;
+  border: 1px solid rgba(30,27,75,.05);
+  box-shadow: var(--cp-shadow-sm);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.listing-card:active { transform: scale(.985); box-shadow: var(--cp-shadow-md); }
+.listing-title { font-weight: 700; color: var(--cp-ink); }
+.listing-price { font-weight: 800; letter-spacing: -0.01em; }
+
+/* chips + pills */
+.category-chip { border-radius: 999px; font-weight: 700; transition: all .15s ease; }
+.category-chip.active { box-shadow: 0 6px 14px rgba(232,85,61,.30); }
+.badge-pill { font-weight: 700; }
+
+/* bottom navigation: lifted bar with an active indicator */
+.bottom-nav {
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -8px 28px rgba(30,27,75,.10);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.nav-item { font-weight: 700; position: relative; }
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 24px;
+  height: 3px;
+  margin-left: -12px;
+  border-radius: 0 0 4px 4px;
+  background: var(--cp-brand);
+}
+
+/* premium surfaces share one indigo */
+.ambassador-banner { background: linear-gradient(135deg, #1E1B4B 0%, #312E81 58%, #4338CA 100%); }
+
+/* respect people who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+.cu-spin { animation: cuSpin .9s linear infinite !important; animation-iteration-count: infinite !important; animation-duration: .9s !important; }

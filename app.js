@@ -53,15 +53,16 @@ if (signupForm) {
   const submitBtn = document.getElementById("signup-submit-btn");
 
   if (privacyConsent && !privacyConsent.checked) {
-    if (window.showToast) window.showToast("Please agree to the Privacy Policy to sign up.", "error");
-    else alert("Please agree to the Privacy Policy before creating an account.");
+    UI.formError(signupForm, "Please tick the box to agree to the Privacy Policy before you sign up.", { fields: [privacyConsent] });
+    return;
+  }
+  if (password.length < 6) {
+    UI.formError(signupForm, "Your password needs at least 6 characters.", { fields: [document.getElementById("password")] });
     return;
   }
 
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Creating account...";
-  }
+  UI.clearFormError(signupForm);
+  const restoreBtn = UI.busy(submitBtn, "Creating your account...");
 
   try {
     // The referral code travels with the signup. The database saves it
@@ -75,12 +76,13 @@ if (signupForm) {
     });
     
     if (error) {
-      if (window.showToast) window.showToast("Signup failed: " + error.message, "error");
-      else alert("Signup failed: " + error.message);
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Sign Up";
-      }
+      const exists = /already (been )?registered/i.test(error.message || "");
+      UI.formError(signupForm, UI.friendly(error), {
+        fields: exists ? [document.getElementById("email")] : [],
+        href: exists ? "login.html" : "",
+        label: "Log in"
+      });
+      restoreBtn();
     } else {
       // NEW: save the optional "email me updates" choice (never blocks signup)
       if (marketingConsent && marketingConsent.checked && data && data.user) {
@@ -96,7 +98,7 @@ if (signupForm) {
       localStorage.setItem("campally_show_guide_suggestion", "true");
       if (fullName) localStorage.setItem("campally_user_name", fullName);
 
-      if (window.showToast) window.showToast("Account created successfully!", "success");
+      if (window.showToast) window.showToast("Account created. Welcome to Campally!", "success");
 
       const modal = document.getElementById("new-user-welcome-modal");
       const heading = document.getElementById("welcome-modal-heading");
@@ -127,12 +129,8 @@ if (signupForm) {
       }
     }
   } catch (err) {
-    if (window.showToast) window.showToast("Error: " + err.message, "error");
-    else alert("Error: " + err.message);
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Sign Up";
-    }
+    UI.formError(signupForm, UI.friendly(err));
+    restoreBtn();
   }
   });
 }

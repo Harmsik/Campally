@@ -6,51 +6,119 @@
   <title>Campally - Settings</title>
   <link rel="stylesheet" href="style.css?v=20261015_02">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .st-wrap { max-width: 560px; margin: 0 auto; padding: 8px 16px 120px 16px; }
+    .st-title { font-size: 12px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; color: #6B7280; margin: 20px 6px 8px 6px; }
+    .st-group { background: #fff; border: 1px solid #EEE7DD; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 8px rgba(30,27,75,.05); }
+    .st-item { display: flex; align-items: center; gap: 12px; padding: 13px 14px; text-decoration: none; color: #2B2B2B; font-size: 14.5px; font-weight: 700; }
+    .st-item + .st-item { border-top: 1px solid #F3F0EA; }
+    .st-item:active { background: #FBF7F1; }
+    .st-ico { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .st-item small { display: block; font-weight: 500; font-size: 12px; color: #6B7280; margin-top: 1px; }
+    .st-item .chev { margin-left: auto; color: #C7C2B8; font-size: 12px; }
+    .st-item.danger { color: #C0392B; }
+    .st-promo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; background: linear-gradient(135deg, #1E1B4B 0%, #312E81 60%, #4338CA 100%); border-radius: 18px; padding: 16px; box-shadow: 0 10px 26px rgba(30,27,75,.25); margin-top: 14px; }
+    .st-promo .t { font-size: 15px; font-weight: 800; }
+    .st-promo .d { font-size: 12px; color: #C7D2FE; margin-top: 2px; line-height: 1.4; }
+    .st-promo .ic { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,.14); color: #FCD34D; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  </style>
 </head>
 <body>
 
   <header class="top-bar">
-    <a href="#" id="back-link" style="color:#444; margin-right:12px; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i></a>
+    <a href="#" id="back-link" style="color:#444; margin-right:12px; text-decoration:none;" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="logo-small">Settings</h1>
   </header>
 
-  <div class="settings-list">
-    <a href="reset-password.html" class="settings-item">
-      <span><i class="fa-solid fa-key" style="margin-right:8px; color:#E8553D;"></i> Change / Reset Password</span>
-      <i class="fa-solid fa-chevron-right"></i>
+  <main class="st-wrap">
+
+    <a class="st-promo" href="ambassador.html">
+      <div class="ic"><i class="fa-solid fa-bullhorn"></i></div>
+      <div>
+        <div class="t">Campus Ambassador</div>
+        <div class="d">Share your referral link and earn ₦150 for every student who joins Campally.</div>
+      </div>
+      <i class="fa-solid fa-chevron-right" style="margin-left:auto; opacity:.7;"></i>
     </a>
-    <a href="update-password.html" class="settings-item">
-      <span><i class="fa-solid fa-lock" style="margin-right:8px; color:#059669;"></i> Set New Password</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-    <a href="privacy-policy.html" class="settings-item">
-      <span><i class="fa-solid fa-shield-halved" style="margin-right:8px; color:#4B5563;"></i> Privacy Policy</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-    <a href="https://wa.me/+2349119206177" target="_blank" class="settings-item">
-      <span><i class="fa-brands fa-whatsapp" style="margin-right:8px; color:#25D366;"></i> WhatsApp Support</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-    <a href="mailto:mbuharmless@gmail.com" class="settings-item">
-      <span><i class="fa-solid fa-envelope" style="margin-right:8px; color:#2563EB;"></i> Email Support</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-    <a href="#" id="logout-item" class="settings-item">
-      <span><i class="fa-solid fa-right-from-bracket" style="margin-right:8px; color:#6B7280;"></i> Log Out</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-    <a href="#" id="delete-item" class="settings-item" style="color:#C0392B;">
-      <span><i class="fa-solid fa-trash-can" style="margin-right:8px; color:#C0392B;"></i> Delete My Account</span>
-      <i class="fa-solid fa-chevron-right"></i>
-    </a>
-  </div>
+
+    <div class="st-title">Account</div>
+    <div class="st-group">
+      <a class="st-item" href="profile.html#edit">
+        <span class="st-ico" style="background:#FFF5F3; color:#E8553D;"><i class="fa-solid fa-user-pen"></i></span>
+        <span>Edit profile<small>Photo, name, campus, WhatsApp</small></span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="profile.html#verify">
+        <span class="st-ico" style="background:#ECFDF5; color:#059669;"><i class="fa-solid fa-shield-halved"></i></span>
+        <span>Student ID verification<small>Get your green Verified badge</small></span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="reset-password.html">
+        <span class="st-ico" style="background:#EFF6FF; color:#2563EB;"><i class="fa-solid fa-key"></i></span>
+        <span>Change password<small>We will email you a reset link</small></span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+    </div>
+
+    <div class="st-title">Your activity</div>
+    <div class="st-group">
+      <a class="st-item" href="messages.html">
+        <span class="st-ico" style="background:#EFF6FF; color:#2563EB;"><i class="fa-solid fa-comment-dots"></i></span>
+        <span>Messages</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="notifications.html">
+        <span class="st-ico" style="background:#FFFBEB; color:#D97706;"><i class="fa-solid fa-bell"></i></span>
+        <span>Notifications</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="how-to-use.html?from=settings">
+        <span class="st-ico" style="background:#F5F3FF; color:#7C3AED;"><i class="fa-solid fa-book-open"></i></span>
+        <span>How to use Campally<small>Guides, safety tips and app tour</small></span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+    </div>
+
+    <div class="st-title">Help &amp; legal</div>
+    <div class="st-group">
+      <a class="st-item" href="https://wa.me/+2349119206177" target="_blank" rel="noopener">
+        <span class="st-ico" style="background:#E8F8EE; color:#22A55B;"><i class="fa-brands fa-whatsapp"></i></span>
+        <span>WhatsApp support</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="mailto:mbuharmless@gmail.com">
+        <span class="st-ico" style="background:#EFF6FF; color:#2563EB;"><i class="fa-solid fa-envelope"></i></span>
+        <span>Email support</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a class="st-item" href="privacy-policy.html">
+        <span class="st-ico" style="background:#F1F5F9; color:#475569;"><i class="fa-solid fa-shield-halved"></i></span>
+        <span>Privacy policy</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+    </div>
+
+    <div class="st-title">Session</div>
+    <div class="st-group">
+      <a href="#" id="logout-item" class="st-item">
+        <span class="st-ico" style="background:#F3F4F6; color:#6B7280;"><i class="fa-solid fa-right-from-bracket"></i></span>
+        <span>Log out</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+      <a href="#" id="delete-item" class="st-item danger">
+        <span class="st-ico" style="background:#FEE2E2; color:#C0392B;"><i class="fa-solid fa-trash-can"></i></span>
+        <span>Delete my account</span>
+        <i class="fa-solid fa-chevron-right chev"></i>
+      </a>
+    </div>
+  </main>
 
   <nav class="bottom-nav"></nav>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
   <script src="supabase-init.js"></script>
-  <script src="settings.js"></script>
   <script src="nav.js"></script>
+  <script src="settings.js"></script>
   <script>loadNav("profile");</script>
 </body>
-      </html>
+</html>

@@ -15,10 +15,9 @@ document.getElementById("back-link").addEventListener("click", (e) => {
 document.getElementById("logout-item").addEventListener("click", async (e) => {
   e.preventDefault();
   await supabase.auth.signOut();
-  if (window.showToast) window.showToast("Signed out successfully", "info");
-  setTimeout(() => {
+  UI.successThen("You are logged out", "See you soon. Your account and listings are safe.", () => {
     window.location.href = "login.html";
-  }, 400);
+  }, { tone: "info", emoji: "\uD83D\uDC4B", ms: 1300 });
 });
 
 document.getElementById("delete-item").addEventListener("click", async (e) => {

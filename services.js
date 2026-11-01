@@ -137,7 +137,7 @@ function sendBooking() {
 }
 
 async function loadServices() {
-  $("svc-grid").innerHTML = '<div class="svc-empty">Loading services...</div>';
+  if (window.UI) UI.skeletonList($("svc-grid"), 4); else $("svc-grid").innerHTML = '<div class="svc-empty">Loading services...</div>';
   const { data, error } = await supabase
     .from("listings")
     .select("*, profiles(id, full_name, hall, avatar_url, whatsapp_number)")

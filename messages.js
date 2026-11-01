@@ -121,6 +121,7 @@ async function loadInbox() {
 }
 
 async function init() {
+  if (window.UI) UI.skeletonList(listEl, 5);
   try {
     const { data } = await supabase.auth.getSession();
     me = data && data.session && data.session.user;
