@@ -53,7 +53,7 @@ if (signupForm) {
   const submitBtn = document.getElementById("signup-submit-btn");
 
   if (privacyConsent && !privacyConsent.checked) {
-    UI.formError(signupForm, "Please tick the box to agree to the Privacy Policy before you sign up.", { fields: [privacyConsent] });
+    UI.formError(signupForm, "Please tick the box to agree to the Terms of Service and Privacy Policy before you sign up.", { fields: [privacyConsent] });
     return;
   }
   if (password.length < 6) {
