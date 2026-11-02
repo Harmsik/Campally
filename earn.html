@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Earn</title>
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .ea-wrap { max-width: 600px; margin: 0 auto; padding: 14px 16px 120px 16px; }
+    .ea-hero { position: relative; overflow: hidden; border-radius: 22px; padding: 18px; color: #fff; background: linear-gradient(145deg, #1E1B4B 0%, #312E81 58%, #4338CA 100%); box-shadow: 0 12px 30px rgba(30,27,75,.26); }
+    .ea-hero::before { content: ""; position: absolute; right: -50px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(252,211,77,.32), rgba(252,211,77,0) 70%); }
+    .ea-hero > * { position: relative; }
+    .ea-hero h2 { margin: 0 0 3px 0; font-size: 20px; font-weight: 800; }
+    .ea-hero p { margin: 0 0 14px 0; font-size: 12.5px; color: #C7D2FE; line-height: 1.5; }
+    .ea-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ea-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 10px 4px; text-align: center; }
+    .ea-stat b { display: block; font-size: 15px; color: #FCD34D; }
+    .ea-stat span { font-size: 10.5px; color: #C7D2FE; font-weight: 600; }
+    .ea-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 16px 0 12px 0; }
+    .ea-tab { border: 1.5px solid #EEE7DD; background: #fff; border-radius: 14px; padding: 10px 2px; font-family: inherit; font-size: 12px; font-weight: 800; color: #4B5563; cursor: pointer; position: relative; }
+    .ea-tab.on { background: #312E81; border-color: #312E81; color: #fff; box-shadow: 0 6px 14px rgba(49,46,129,.28); }
+    .ea-tab .n { position: absolute; top: -6px; right: 6px; min-width: 18px; height: 18px; border-radius: 9px; background: #DC2626; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .ea-card { background: #fff; border: 1px solid #EEE7DD; border-radius: 16px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(30,27,75,.05); }
+    .ea-row { display: flex; gap: 12px; align-items: center; }
+    .ea-img { width: 56px; height: 56px; border-radius: 12px; overflow: hidden; background: linear-gradient(145deg,#E0E7FF,#EDE9FE); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #6366F1; }
+    .ea-img img { width: 100%; height: 100%; object-fit: cover; }
+    .ea-title { font-size: 13.5px; font-weight: 800; color: #1E1B4B; line-height: 1.3; }
+    .ea-sub { font-size: 12px; color: #6B7280; margin-top: 2px; line-height: 1.4; }
+    .ea-earn { font-size: 13px; font-weight: 800; color: #B45309; }
+    .ea-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .ea-btn { border: none; border-radius: 10px; padding: 9px 13px; font-size: 12.5px; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block; }
+    .ea-btn.pri { background: #E8553D; color: #fff; }
+    .ea-btn.gold { background: #FCD34D; color: #1E1B4B; }
+    .ea-btn.ok { background: #059669; color: #fff; }
+    .ea-btn.ghost { background: #F3F0EA; color: #374151; }
+    .ea-btn.red { background: #FEE2E2; color: #B91C1C; }
+    .ea-pill { display: inline-block; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+    .ea-empty { text-align: center; color: #94A3B8; padding: 36px 16px; font-size: 13px; line-height: 1.6; }
+    .ea-empty i { font-size: 38px; color: #C7D2FE; display: block; margin-bottom: 10px; }
+    .ea-how { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px; margin-top: 16px; font-size: 12.5px; color: #78350F; line-height: 1.6; }
+    .ea-how b { color: #92400E; } .ea-how ol { margin: 6px 0 0 0; padding-left: 18px; }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="settings.html" style="color:#2B2B2B; text-decoration:none; font-size:16px; margin-right:12px;" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1 class="logo-small">Earn</h1>
+  </header>
+
+  <main class="ea-wrap">
+    <section class="ea-hero">
+      <h2>Earn with affiliate links</h2>
+      <p>Share other students' items. When a buyer you send purchases, you earn a commission.</p>
+      <div class="ea-stats">
+        <div class="ea-stat"><b id="st-pending">&#8358;0</b><span>Waiting</span></div>
+        <div class="ea-stat"><b id="st-owed">&#8358;0</b><span>Owed to you</span></div>
+        <div class="ea-stat"><b id="st-earned">&#8358;0</b><span>Paid to you</span></div>
+      </div>
+    </section>
+
+    <div class="ea-tabs" id="ea-tabs">
+      <button class="ea-tab on" data-tab="promote">Promote</button>
+      <button class="ea-tab" data-tab="mine">My earnings<span class="n" id="n-mine" style="display:none;"></span></button>
+      <button class="ea-tab" data-tab="sales">My items' sales<span class="n" id="n-sales" style="display:none;"></span></button>
+    </div>
+
+    <div id="ea-body"></div>
+
+    <section class="ea-how">
+      <b>How it works</b>
+      <ol>
+        <li>Pick an item, tap <b>Get link</b>, and post it on your status or groups.</li>
+        <li>A buyer contacts the seller through your link. That is recorded as your lead.</li>
+        <li>The buyer confirms they bought it. The seller then pays you the commission by transfer.</li>
+        <li>Not paid in 3 days? Tap <b>Report</b>. Campally reviews the chat and decides.</li>
+      </ol>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script src="earn.js?v=20261101"></script>
+  <script>loadNav("profile");</script>
+</body>
+</html>

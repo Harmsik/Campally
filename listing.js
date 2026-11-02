@@ -308,6 +308,9 @@ async function loadListing() {
     }
   }
 
+    // Affiliate link, commission and lead tracking
+    if (window.CampallyAffiliate && window.CampallyAffiliate.attach) window.CampallyAffiliate.attach(item, contactContainer);
+
     // Report link (copyright, scams, wrong category)
     if (window.CampallyReport) window.CampallyReport.attach(contactContainer, item.id, item.seller_id);
 

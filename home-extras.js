@@ -299,8 +299,56 @@
   }
   window.startCampallyTour = startTour;
 
+  // =====================================================
+  // 4. "DID YOU BUY THIS?" (affiliate sales need the buyer's answer)
+  // =====================================================
+  async function buyerQuestions() {
+    try {
+      if (typeof supabase === "undefined" || !supabase.rpc) return;
+      var s = await supabase.auth.getSession();
+      if (!(s.data && s.data.session)) return;
+      var res = await supabase.rpc("get_pending_buyer_questions");
+      var list = (res.data || []).slice(0, 2);
+      if (!list.length) return;
+      var anchor = document.getElementById("bookstore-strip") || document.getElementById("hero-carousel");
+      if (!anchor) return;
+      var host = document.createElement("div");
+      host.style.cssText = "margin:10px 20px 0 20px;";
+      anchor.parentNode.insertBefore(host, anchor);
+      list.forEach(function (q) {
+        var card = document.createElement("div");
+        card.style.cssText = "background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:16px;padding:12px 14px;margin-bottom:8px;";
+        var t = document.createElement("div");
+        t.style.cssText = "font-size:13.5px;font-weight:800;color:#78350F;line-height:1.4;";
+        t.textContent = 'Did you buy "' + String(q.title).slice(0, 50) + '" from ' + q.seller + "?";
+        var d = document.createElement("div");
+        d.style.cssText = "font-size:12px;color:#92400E;margin:3px 0 10px 0;line-height:1.5;";
+        d.textContent = "One tap helps the right people get credit. Your answer is private.";
+        var row = document.createElement("div");
+        row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
+        [["yes", "Yes, I bought it", "#059669", "#fff"], ["no", "No", "#F3F0EA", "#374151"], ["later", "Ask me later", "#FFF", "#92400E"]].forEach(function (b) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = b[1];
+          btn.style.cssText = "border:1px solid #FDE68A;border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;background:" + b[2] + ";color:" + b[3] + ";";
+          btn.addEventListener("click", async function () {
+            btn.disabled = true;
+            var r = await supabase.rpc("answer_lead_as_buyer", { p_lead: q.lead_id, p_answer: b[0] });
+            if (r.error) { if (window.UI) UI.toast(r.error.message, "error"); btn.disabled = false; return; }
+            if (window.UI) UI.toast(b[0] === "yes" ? "Thanks! We told the seller." : "Thanks for letting us know.", "success");
+            card.remove();
+          });
+          row.appendChild(btn);
+        });
+        card.appendChild(t); card.appendChild(d); card.appendChild(row);
+        host.appendChild(card);
+      });
+    } catch (err) { console.error("Buyer question error:", err); }
+  }
+
   // ---------- Go ----------
   function init() {
+    buyerQuestions();
     buildHero();
     setupCategories();
     var replay = window.location.hash === "#tour" || /[?&]tour=1/.test(window.location.search);

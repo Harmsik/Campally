@@ -172,6 +172,12 @@ if (listingForm) {
       return;
     }
     const bookFields = window.CampallyBook ? window.CampallyBook.fields() : {};
+    const affProblem = window.CampallyAffiliate ? window.CampallyAffiliate.validate() : "";
+    if (affProblem) {
+      if (window.UI) UI.toast(affProblem, "error", 6000); else alert(affProblem);
+      return;
+    }
+    const affFields = window.CampallyAffiliate ? window.CampallyAffiliate.fields() : {};
     const rawDescription = document.getElementById("description").value.trim();
     const price = document.getElementById("price").value;
     const campusIdVal = campusSelect ? campusSelect.value : null;
@@ -243,7 +249,8 @@ if (listingForm) {
       campus_id: chosenCampusId,
       listing_type: typeInfo.type,
       service_category: typeInfo.serviceCategory || null,
-      ...bookFields
+      ...bookFields,
+      ...affFields
     };
       
 
@@ -251,7 +258,7 @@ if (listingForm) {
 
     // Resilient fallback if optional columns are absent in table
     // Do not retry when the database refused on purpose (Bookstore rules): retrying would skip the rule
-    const refusedOnPurpose = insertError && /Bookstore|check constraint/i.test(insertError.message || "");
+    const refusedOnPurpose = insertError && /Bookstore|check constraint|Verified Students/i.test(insertError.message || "");
     if (insertError && !refusedOnPurpose) {
       console.warn("Retrying with campus schema payload:", insertError.message);
       const payloadWithCampus = {

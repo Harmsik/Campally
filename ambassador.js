@@ -312,6 +312,31 @@
     loadVerifications();
     loadMessageReports();
     loadListingReports();
+    loadDisputes();
+  }
+
+  async function loadDisputes() {
+    const el = $("adm-dispute-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_disputed_leads");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load disputes.</p>'; return; }
+    const list = data || [];
+    if (!list.length) { el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No disputes. 🎉</p>'; return; }
+    el.innerHTML = list.map((d) => {
+      const chat = (d.chat || []).map((m) => '<div style="margin-bottom:3px;"><strong style="color:' + (m.from === "buyer" ? "#1D4ED8" : "#B91C1C") + ';">' + (m.from === "buyer" ? esc(d.buyer) : esc(d.seller)) + ":</strong> " + esc(m.body) + "</div>").join("");
+      const rec = d.seller_record || {};
+      return '<div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:14px; padding:14px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.55;">' +
+        '<div style="font-size:13px; font-weight:800; color:#78350F;">' + esc(d.title) + " &bull; ₦" + Number(d.commission).toLocaleString() + " commission</div>" +
+        "<div>Price when contacted: ₦" + Number(d.price).toLocaleString() + " (" + d.percent + "%)</div>" +
+        "<div>Affiliate: <strong>" + esc(d.affiliate) + "</strong> &bull; Buyer: <strong>" + esc(d.buyer) + "</strong> &bull; Seller: <strong>" + esc(d.seller) + "</strong></div>" +
+        '<div style="margin:4px 0;"><strong>Why:</strong> ' + esc(d.reason) + "</div>" +
+        "<div>Buyer said: <strong>" + esc(d.buyer_answer || "no answer") + "</strong> &bull; Seller said: <strong>" + esc(d.seller_answer || "no answer") + "</strong> &bull; Seller record: paid " + (rec.paid || 0) + " of " + (rec.confirmed || 0) + "</div>" +
+        '<div style="background:#fff; border:1px solid #FDE68A; border-radius:10px; padding:8px; margin-top:8px; max-height:160px; overflow-y:auto;">' + (chat || "No chat messages found.") + "</div>" +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
+          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="dconfirm" data-id="' + esc(d.id) + '">Sale counts: seller must pay</button>' +
+          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="dreject" data-id="' + esc(d.id) + '">No sale</button>' +
+        "</div></div>";
+    }).join("");
   }
 
   async function loadListingReports() {
@@ -476,6 +501,10 @@
       const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
       if (why === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
+    } else if (action === "dconfirm" || action === "dreject") {
+      const note = prompt("Short note for your records (optional):", "");
+      if (note === null) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_resolve_lead", { p_lead: id, p_outcome: action === "dconfirm" ? "confirm" : "reject", p_note: note });
     } else if (action === "lremove") {
       if (!confirm("Remove this listing from Campally? Buyers will no longer see it.")) { btn.disabled = false; return; }
       result = await sb.rpc("admin_resolve_listing_report", { p_report: id, p_remove: true });
