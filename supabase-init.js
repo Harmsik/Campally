@@ -1,143 +1,136 @@
 /**
  * Campally - Resilient Supabase Client Initializer & Auth Guard
- * Prevents "Invalid Refresh Token" lockups, hanging getUser() queries,
- * and ensures public queries (listings, categories, profiles) always work.
+ *  - Prevents "Invalid Refresh Token" lockups.
+ *  - Logs a student out after 1 day of inactivity (checked the moment any page opens).
+ * Load this file AFTER the Supabase library and BEFORE any page script.
  */
-(function() {
+(function () {
   "use strict";
 
-  // Purge any corrupted or stale session tokens from browser storage
-  // Purge corrupt session tokens ONLY when specifically confirmed invalid by Auth server
-  function purgeCorruptSession() {
+  var INACTIVITY_LIMIT_MS = 24 * 60 * 60 * 1000; // 1 day
+  var LAST_ACTIVE_KEY = "campally_last_active";
+  var AUTO_LOGOUT_FLAG = "campally_auto_logged_out";
+
+  function tokenKeys() {
+    var keys = [];
     try {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith("sb-") && k.endsWith("-auth-token"))) {
-          keysToRemove.push(k);
-        }
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("sb-") === 0 && k.slice(-11) === "-auth-token") keys.push(k);
       }
-      keysToRemove.forEach(k => {
-        try { localStorage.removeItem(k); } catch (_) {}
-      });
     } catch (_) {}
+    return keys;
+  }
+
+  // Remove the saved login from this device
+  function purgeCorruptSession() {
+    tokenKeys().forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
   }
   window.purgeCorruptSession = purgeCorruptSession;
 
-  // Unhandled rejection shield: Only catch explicit Refresh Token Not Found / invalid_grant
-  window.addEventListener("unhandledrejection", function(event) {
-    const reason = event.reason;
-    const msg = (reason && (reason.message || reason.error_description || String(reason))) || "";
-(function() {
-  "use strict";
-
-  const INACTIVITY_LIMIT_MS = 24 * 60 * 60 * 1000; // 1 day
-  const LAST_ACTIVE_KEY = "campally_last_active";
-
-  function purgeCorruptSession() {
-    try {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith("sb-") && k.endsWith("-auth-token"))) {
-          keysToRemove.push(k);
-        }
-      }
-      keysToRemove.forEach(k => {
-        try { localStorage.removeItem(k); } catch (_) {}
-      });
-    } catch (_) {}
-  }
-  window.purgeCorruptSession = purgeCorruptSession;
-
-  window.addEventListener("unhandledrejection", function(event) {
-    const reason = event.reason;
-    const msg = (reason && (reason.message || reason.error_description || String(reason))) || "";
-    if (msg.includes("Invalid Refresh Token") || msg.includes("Refresh Token Not Found")) {
+  // Only catch explicit "refresh token" problems
+  window.addEventListener("unhandledrejection", function (event) {
+    var reason = event.reason;
+    var msg = (reason && (reason.message || reason.error_description || String(reason))) || "";
+    if (msg.indexOf("Invalid Refresh Token") > -1 || msg.indexOf("Refresh Token Not Found") > -1) {
       event.preventDefault();
       purgeCorruptSession();
       console.warn("[Campally Auth] Cleaned expired refresh token from storage");
     }
   });
 
+  // Remove empty or broken saved logins
+  tokenKeys().forEach(function (k) {
+    try {
+      var raw = localStorage.getItem(k);
+      if (!raw) return;
+      var parsed = JSON.parse(raw);
+      if (!parsed || (!parsed.access_token && !parsed.refresh_token)) localStorage.removeItem(k);
+    } catch (_) {
+      try { localStorage.removeItem(k); } catch (_) {}
+    }
+  });
+
+  // ---------- 1-day inactivity logout ----------
+  // Runs immediately, before any page script creates its Supabase client,
+  // so EVERY page respects it (not only pages that call getUser).
+  function touch() {
+    try { if (tokenKeys().length) localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now())); } catch (_) {}
+  }
   try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) {
-        const raw = localStorage.getItem(k);
-        if (raw) {
-          try {
-            const parsed = JSON.parse(raw);
-            if (!parsed || (!parsed.access_token && !parsed.refresh_token)) {
-              localStorage.removeItem(k);
-            }
-          } catch (_) {
-            localStorage.removeItem(k);
-          }
-        }
+    if (tokenKeys().length) {
+      var last = Number(localStorage.getItem(LAST_ACTIVE_KEY) || 0);
+      if (last && Date.now() - last > INACTIVITY_LIMIT_MS) {
+        purgeCorruptSession();
+        localStorage.removeItem(LAST_ACTIVE_KEY);
+        localStorage.setItem(AUTO_LOGOUT_FLAG, "1");   // login page shows a friendly note
+        console.warn("[Campally Auth] Logged out after 1 day of inactivity");
+      } else {
+        touch();   // first visit after this feature (or active student): start the clock now
       }
     }
   } catch (_) {}
 
+  // While the student is using the app, keep the clock fresh (at most once a minute)
+  var lastTouch = 0;
+  function activity() {
+    var now = Date.now();
+    if (now - lastTouch < 60000) return;
+    lastTouch = now;
+    touch();
+  }
+  ["click", "touchstart", "keydown", "scroll"].forEach(function (evt) {
+    window.addEventListener(evt, activity, { passive: true });
+  });
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") activity(); });
+
+  // ---------- wrap the Supabase client ----------
   function wrapSupabase() {
     if (!window.supabase || window.supabase.__isWrapped) return;
 
-    const origCreateClient = window.supabase.createClient;
-    window.supabase.createClient = function(url, anonKey, options) {
-      const safeOptions = Object.assign({
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
+    var origCreateClient = window.supabase.createClient;
+    window.supabase.createClient = function (url, anonKey, options) {
+      var safeOptions = Object.assign({
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
       }, options);
 
-      const client = origCreateClient.call(window.supabase, url, anonKey, safeOptions);
+      var client = origCreateClient.call(window.supabase, url, anonKey, safeOptions);
+
+      if (client.auth && typeof client.auth.onAuthStateChange === "function") {
+        // A fresh login starts a fresh inactivity clock
+        client.auth.onAuthStateChange(function (event) {
+          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            try { localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now())); localStorage.removeItem(AUTO_LOGOUT_FLAG); } catch (_) {}
+          }
+        });
+      }
 
       if (client.auth && typeof client.auth.getUser === "function") {
-        const origGetUser = client.auth.getUser.bind(client.auth);
-        client.auth.getUser = async function(jwt) {
-          // 1. Enforce 1-day inactivity logout before trusting any session
+        var origGetUser = client.auth.getUser.bind(client.auth);
+        client.auth.getUser = async function (jwt) {
+          // No artificial timeout: a slow network is never mistaken for "not logged in"
           try {
-            const lastActive = Number(localStorage.getItem(LAST_ACTIVE_KEY) || 0);
-            if (lastActive && (Date.now() - lastActive) > INACTIVITY_LIMIT_MS) {
-              await client.auth.signOut({ scope: "local" });
-              purgeCorruptSession();
-              return { data: { user: null }, error: null };
-            }
-          } catch (_) {}
-
-          // 2. Ask Supabase directly — no artificial timeout race,
-          // so a slow network is never mistaken for "not logged in"
-          try {
-            const result = await origGetUser(jwt);
+            var result = await origGetUser(jwt);
             if (result && result.error) {
-              const errMsg = result.error.message || "";
-              if (errMsg.includes("Refresh Token") || errMsg.includes("invalid_grant")) {
+              var errMsg = result.error.message || "";
+              if (errMsg.indexOf("Refresh Token") > -1 || errMsg.indexOf("invalid_grant") > -1) {
                 purgeCorruptSession();
                 return { data: { user: null }, error: null };
               }
             }
-            if (result && result.data && result.data.user) {
-              localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
-            }
             return result;
           } catch (err) {
-            const msg = err?.message || "";
-            if (msg.includes("Refresh Token") || msg.includes("invalid_grant")) {
-              purgeCorruptSession();
-            }
+            var msg = (err && err.message) || "";
+            if (msg.indexOf("Refresh Token") > -1 || msg.indexOf("invalid_grant") > -1) purgeCorruptSession();
             return { data: { user: null }, error: null };
           }
         };
       }
 
       if (client.auth && typeof client.auth.signOut === "function") {
-        const origSignOut = client.auth.signOut.bind(client.auth);
-        client.auth.signOut = async function(opts) {
-          try {
-            await origSignOut(opts || { scope: "local" });
-          } catch (_) {}
+        var origSignOut = client.auth.signOut.bind(client.auth);
+        client.auth.signOut = async function (opts) {
+          try { await origSignOut(opts || { scope: "local" }); } catch (_) {}
           try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch (_) {}
           return { error: null };
         };
@@ -152,12 +145,9 @@
   if (window.supabase) {
     wrapSupabase();
   } else {
-    const timer = setInterval(() => {
-      if (window.supabase) {
-        clearInterval(timer);
-        wrapSupabase();
-      }
+    var timer = setInterval(function () {
+      if (window.supabase) { clearInterval(timer); wrapSupabase(); }
     }, 10);
-    setTimeout(() => clearInterval(timer), 5000);
+    setTimeout(function () { clearInterval(timer); }, 5000);
   }
 })();

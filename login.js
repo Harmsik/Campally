@@ -133,3 +133,13 @@ if (browseVisitorLink) {
     window.location.replace("home.html?visitor=true");
   });
 }
+
+// If Campally logged this device out after a day away, say so (instead of a silent logout)
+try {
+  if (localStorage.getItem("campally_auto_logged_out")) {
+    localStorage.removeItem("campally_auto_logged_out");
+    setTimeout(() => {
+      if (window.UI) UI.toast("For your security, Campally logs you out after a day away. Please log in again.", "info", 6500);
+    }, 600);
+  }
+} catch (_) {}
