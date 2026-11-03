@@ -1026,8 +1026,31 @@ async function loadRequests() {
   renderRequests();
 }
 
+// The request cards had no styles at all, so they showed as plain text. These styles draw them as cards.
+function ensureRequestStyles() {
+  if (document.getElementById("request-card-styles")) return;
+  const st = document.createElement("style");
+  st.id = "request-card-styles";
+  st.textContent =
+    ".request-card{background:#fff;border:1px solid #EEE7DD;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(30,27,75,.06);}" +
+    ".request-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}" +
+    ".request-title{font-size:15px;font-weight:800;color:#1E1B4B;line-height:1.35;word-break:break-word;}" +
+    ".request-budget{flex-shrink:0;background:#ECFDF5;color:#047857;border:1px solid #A7F3D0;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;text-align:center;max-width:46%;}" +
+    ".request-details{font-size:13px;color:#475569;line-height:1.55;margin:10px 0 0 0;word-break:break-word;}" +
+    ".request-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:10px;border-top:1px dashed #E5E0D8;font-size:12px;color:#94A3B8;}";
+  document.head.appendChild(st);
+}
+
+// Requests are typed by students, so their text is shown as plain text and never as page code
+function reqEsc(t) {
+  return String(t == null ? "" : t)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 function renderRequests() {
   if (!requestsList) return;
+  ensureRequestStyles();
   if (allRequests.length === 0) {
     requestsList.innerHTML = "<p style='text-align:center; color:#888; padding:30px 0;'>No active requests on this campus. Be the first to post what you need!</p>";
     return;
@@ -1061,15 +1084,15 @@ function renderRequests() {
     card.innerHTML = `
       <div class="request-header">
         <div>
-          <div class="request-title"><i class="fa-solid fa-bullhorn" style="color:#E8553D; margin-right:4px;"></i> ${req.title}</div>
-          <div style="display:flex; gap:6px; margin-top:4px;">
-            ${req.course_code ? `<span class="badge-pill badge-course">${req.course_code}</span>` : ""}
-            ${req.hall ? `<span class="badge-pill badge-hall">📍 ${req.hall}</span>` : ""}
+          <div class="request-title"><i class="fa-solid fa-bullhorn" style="color:#E8553D; margin-right:4px;"></i> ${reqEsc(req.title)}</div>
+          <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+            ${req.course_code ? `<span class="badge-pill badge-course">${reqEsc(req.course_code)}</span>` : ""}
+            ${req.hall ? `<span class="badge-pill badge-hall">📍 ${reqEsc(req.hall)}</span>` : ""}
           </div>
         </div>
         <div class="request-budget">${budgetText}</div>
       </div>
-      ${req.details ? `<p class="request-details">${req.details}</p>` : ""}
+      ${req.details ? `<p class="request-details">${reqEsc(req.details)}</p>` : ""}
       <div class="request-meta">
         <span>Posted by student</span>
         ${contactButtonHtml}
