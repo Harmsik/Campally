@@ -25,7 +25,7 @@ async function loadListing() {
   try {
     let { data: item, error } = await supabase
       .from("listings")
-      .select("*, profiles(id, full_name, avatar_url, whatsapp_number, hall, department, is_verified)")
+      .select("*, profiles(id, full_name, avatar_url, whatsapp_number, hall, department, is_verified, account_type, is_vendor_verified, vendor_verified_at)")
       .eq("id", listingId)
       .single();
     
@@ -148,7 +148,13 @@ async function loadListing() {
     if (isProSeller) {
       badgesContainer.innerHTML += `<span class="badge-pill" style="background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; font-weight:700;"><i class="fa-solid fa-crown"></i> Pro Seller</span>`;
     }
-    if (item.profiles && item.profiles.is_verified === true) {
+    if (item.profiles && item.profiles.account_type === "vendor" && item.profiles.is_vendor_verified === true) {
+      badgesContainer.innerHTML += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor • ${campusShort}</span>`;
+      const vSince = item.profiles.vendor_verified_at ? new Date(item.profiles.vendor_verified_at).getTime() : 0;
+      if (vSince && Date.now() - vSince < 30 * 24 * 60 * 60 * 1000) {
+        badgesContainer.innerHTML += ` <span class="badge-pill badge-hall"><i class="fa-solid fa-seedling"></i> New vendor</span>`;
+      }
+    } else if (item.profiles && item.profiles.is_verified === true) {
       badgesContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
     } else {
       badgesContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
@@ -165,7 +171,13 @@ async function loadListing() {
       document.getElementById("seller-mini-link").href = "seller.html?id=" + currentSeller.id;
       
       // Verified badge only shows for sellers the Founder approved
-      document.getElementById("seller-verified-badge").style.display = currentSeller.is_verified === true ? "inline-flex" : "none";
+      const sellerBadgeEl = document.getElementById("seller-verified-badge");
+      if (currentSeller.account_type === "vendor" && currentSeller.is_vendor_verified === true) {
+        sellerBadgeEl.style.cssText = "display:inline-flex; background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;";
+        sellerBadgeEl.innerHTML = '<i class="fa-solid fa-store"></i> Vendor';
+      } else {
+        sellerBadgeEl.style.display = currentSeller.is_verified === true ? "inline-flex" : "none";
+      }
 
       const locParts = [currentSeller.hall, currentSeller.department, campusShort].filter(Boolean);
       document.getElementById("seller-mini-location").textContent = locParts.join(" • ");

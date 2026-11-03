@@ -58,6 +58,8 @@ async function loadSellerProfile() {
     return;
   }
   
+  const isVendor = profile.account_type === "vendor" && profile.is_vendor_verified === true;
+
   avatarEl.src = profile.avatar_url || "https://api.dicebear.com/7.x/identicon/svg?seed=" + (profile.full_name || "student");
   nameEl.textContent = profile.full_name || "Unnamed Student";
   departmentEl.textContent = profile.department ? `📚 ${profile.department}` : "";
@@ -67,12 +69,20 @@ async function loadSellerProfile() {
   if (badgeContainer) {
     badgeContainer.innerHTML = "";
     const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "FUNAI";
-    if (profile.is_verified === true) {
+    if (isVendor) {
+      badgeContainer.innerHTML += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor • ${campusShort}</span>`;
+      const vSince = profile.vendor_verified_at ? new Date(profile.vendor_verified_at).getTime() : 0;
+      if (vSince && Date.now() - vSince < 30 * 24 * 60 * 60 * 1000) {
+        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-seedling"></i> New vendor</span>`;
+      }
+    } else if (profile.is_verified === true) {
       badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
     } else {
       badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
     }
   }
+
+  if (isVendor) loadShopInfo(badgeContainer);
 
   const settingsIcon = document.getElementById("header-settings-link");
   if (settingsIcon) {
@@ -80,7 +90,8 @@ async function loadSellerProfile() {
   }
 
   if (isOwnProfile) {
-    actionEl.innerHTML = `<a href="profile.html" class="edit-btn">Edit Profile</a>`;
+    actionEl.innerHTML = `<a href="profile.html" class="edit-btn">Edit Profile</a>` +
+      (isVendor ? ` <a href="vendor-shop.html" class="edit-btn" style="margin-left:6px;">Edit shop</a>` : "");
   } else if (!currentUserId) {
     actionEl.innerHTML = `
       <div style="margin-top:10px;">
@@ -121,6 +132,32 @@ async function loadSellerProfile() {
       `;
     }
   }
+}
+
+function shopEsc(t) {
+  return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+// Shop details for verified campus vendors (name, about, location, opening hours, delivery areas)
+async function loadShopInfo(afterEl) {
+  if (!afterEl) return;
+  const { data: shop } = await supabase.from("vendor_shops").select("*").eq("user_id", sellerId).maybeSingle();
+  if (!shop) return;
+  if (shop.shop_name) nameEl.textContent = shop.shop_name;
+
+  const rows = [];
+  if (shop.location) rows.push('<div><i class="fa-solid fa-location-dot" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.location) + "</div>");
+  if (shop.opening_hours) rows.push('<div><i class="fa-solid fa-clock" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.opening_hours) + "</div>");
+  if (shop.delivery_areas) rows.push('<div><i class="fa-solid fa-motorcycle" style="width:18px; color:#E8553D;"></i> Delivers to: ' + shopEsc(shop.delivery_areas) + "</div>");
+  if (!rows.length && !shop.description) return;
+
+  const box = document.createElement("div");
+  box.id = "vendor-shop-info";
+  box.style.cssText = "background:#FFFBEB; border:1px solid #FDE68A; border-radius:14px; padding:12px 14px; margin:8px 14px 12px 14px; text-align:left; font-size:13px; color:#334155; line-height:1.7;";
+  box.innerHTML =
+    (shop.description ? '<div style="margin-bottom:6px; color:#475569;">' + shopEsc(shop.description) + "</div>" : "") +
+    rows.join("");
+  afterEl.insertAdjacentElement("afterend", box);
 }
 
 async function loadFollowButton() {

@@ -310,6 +310,7 @@
     renderPayouts(data.payouts || []);
     renderApproved(data.approved || []);
     loadVerifications();
+    loadVendorVerifications();
     loadMessageReports();
     loadListingReports();
     loadDisputes();
@@ -411,6 +412,42 @@
     ).join("");
   }
 
+  async function loadVendorVerifications() {
+    const el = $("adm-vendor-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_vendor_verifications");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load vendor requests.</p>'; return; }
+    const list = data || [];
+    if (!list.length) {
+      el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No vendors waiting. 🎉</p>';
+      return;
+    }
+    const btnStyle = "background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B;";
+    el.innerHTML = list.map((v) => {
+      const campus = (window.getCampusName && v.campus_id) ? window.getCampusName(v.campus_id) : (v.campus_id ? "Campus #" + v.campus_id : "No campus");
+      const paths =
+        ' data-id="' + esc(v.user_id) + '"' +
+        ' data-id-path="' + esc(v.gov_id_path) + '"' +
+        ' data-selfie-path="' + esc(v.selfie_path) + '"' +
+        ' data-shop-path="' + esc(v.shop_photo_path) + '"';
+      return '<div style="background:#FFFDF5; border:1px solid #FDE68A; border-radius:14px; padding:14px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.6;">' +
+        '<div style="font-size:14px; font-weight:800; color:#1E1B4B;">' + esc(v.business_name) + "</div>" +
+        "<div>👤 " + esc(v.name || "Unnamed") + "</div>" +
+        "<div>📞 " + esc(v.phone) + "</div>" +
+        "<div>🏫 " + esc(campus) + "</div>" +
+        "<div>📍 " + esc(v.location) + "</div>" +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
+          '<button class="small-btn" style="' + btnStyle + '" data-action="vvproof" data-path="' + esc(v.gov_id_path) + '" data-title="' + esc("ID: " + (v.business_name || "")) + '">View ID</button>' +
+          '<button class="small-btn" style="' + btnStyle + '" data-action="vvproof" data-path="' + esc(v.selfie_path) + '" data-title="' + esc("Selfie: " + (v.business_name || "")) + '">View selfie</button>' +
+          '<button class="small-btn" style="' + btnStyle + '" data-action="vvproof" data-path="' + esc(v.shop_photo_path) + '" data-title="' + esc("Shop: " + (v.business_name || "")) + '">View shop</button>' +
+        "</div>" +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">' +
+          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="vvapprove"' + paths + '>Approve</button>' +
+          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="vvreject"' + paths + '>Reject</button>' +
+        "</div></div>";
+    }).join("");
+  }
+
   function renderPendingApps(list) {
     const el = $("adm-pending-list");
     if (!list.length) {
@@ -483,6 +520,7 @@
 
     if (action === "proof") { openProof(btn.dataset.path, btn.dataset.title, btn.dataset.note); return; }
     if (action === "vproof") { openProof(btn.dataset.path, btn.dataset.title, btn.dataset.note, "student-ids"); return; }
+    if (action === "vvproof") { openProof(btn.dataset.path, btn.dataset.title, btn.dataset.note, "vendor-ids"); return; }
 
     btn.disabled = true;
     let result;
@@ -501,6 +539,13 @@
       const why = prompt("Reason for rejecting (the student will see this):", "Please upload a clearer photo of your ID card.");
       if (why === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_verification", { p_user: id, p_approve: false, p_note: why });
+    } else if (action === "vvapprove") {
+      if (!confirm("Approve this vendor? Check that the ID, selfie and shop photo match the business.")) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_vendor_verification", { p_user: id, p_approve: true, p_note: null });
+    } else if (action === "vvreject") {
+      const vwhy = prompt("Reason for rejecting (the vendor will see this):", "Please upload clearer photos of your ID and selfie.");
+      if (vwhy === null) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_vendor_verification", { p_user: id, p_approve: false, p_note: vwhy });
     } else if (action === "dconfirm" || action === "dreject") {
       const note = prompt("Short note for your records (optional):", "");
       if (note === null) { btn.disabled = false; return; }
@@ -540,6 +585,13 @@
     if ((action === "vapprove" || action === "vreject") && btn.dataset.path) {
       const del = await sb.storage.from("student-ids").remove([btn.dataset.path]);
       if (del.error) toast("Saved, but the ID photo could not be deleted. Please delete it in Supabase Storage > student-ids.", "warning");
+    }
+    // Privacy: once a vendor is decided, delete the ID photo and selfie (and the shop photo too if rejected)
+    if (action === "vvapprove" || action === "vvreject") {
+      const gone = [btn.dataset.idPath, btn.dataset.selfiePath];
+      if (action === "vvreject") gone.push(btn.dataset.shopPath);
+      const del = await sb.storage.from("vendor-ids").remove(gone.filter(Boolean));
+      if (del.error) toast("Saved, but the photos could not be deleted. Please delete them in Supabase Storage > vendor-ids.", "warning");
     }
     toast("Done ✓", "success");
     loadFounder();

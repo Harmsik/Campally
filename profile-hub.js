@@ -86,6 +86,45 @@
     }
   }
 
+  function setVendorCard(state, note) {
+    var card = $("hub-verify-card");
+    var ico = $("hub-verify-ico");
+    var title = $("hub-verify-title");
+    var text = $("hub-verify-text");
+    var btn = $("hub-verify-btn");
+    card.classList.remove("ok");
+    btn.style.display = "";
+    btn.removeAttribute("data-open");
+    btn.onclick = function () { location.href = "vendor-verify.html"; };
+    if (state === "approved") {
+      card.classList.add("ok");
+      ico.style.cssText = "background:#FEF3C7; color:#B45309;";
+      ico.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+      title.textContent = "You are a Verified Vendor";
+      text.textContent = "Your gold badge shows on your profile. Add your shop details so students know when you are open.";
+      btn.textContent = "Edit shop";
+      btn.onclick = function () { location.href = "vendor-shop.html"; };
+    } else if (state === "pending") {
+      ico.style.cssText = "background:#FEF3C7; color:#D97706;";
+      ico.innerHTML = '<i class="fa-solid fa-clock"></i>';
+      title.textContent = "Vendor request under review";
+      text.textContent = "The Campally team is checking your details. You will get an alert when it is done.";
+      btn.textContent = "View";
+    } else if (state === "rejected") {
+      ico.style.cssText = "background:#FEE2E2; color:#DC2626;";
+      ico.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      title.textContent = "Vendor request not approved";
+      text.textContent = (note || "Please upload clearer photos and try again.");
+      btn.textContent = "Try again";
+    } else {
+      ico.style.cssText = "background:#FEF3C7; color:#B45309;";
+      ico.innerHTML = '<i class="fa-solid fa-store"></i>';
+      title.textContent = "Get verified as a vendor";
+      text.textContent = "You need to be verified before you can post products.";
+      btn.textContent = "Start";
+    }
+  }
+
   async function refresh() {
     if (typeof supabase === "undefined") return;
     try {
@@ -97,13 +136,16 @@
       if (!me) return;
 
       var results = await Promise.all([
-        supabase.from("profiles").select("full_name, department, hall, avatar_url, campus_id, is_verified").eq("id", me.id).maybeSingle(),
+        supabase.from("profiles").select("full_name, department, hall, avatar_url, campus_id, is_verified, account_type, is_vendor_verified").eq("id", me.id).maybeSingle(),
         supabase.from("listings").select("id", { count: "exact", head: true }).eq("seller_id", me.id).eq("status", "active"),
-        supabase.from("student_verifications").select("status, review_note").eq("user_id", me.id).maybeSingle()
+        supabase.from("student_verifications").select("status, review_note").eq("user_id", me.id).maybeSingle(),
+        supabase.from("vendor_verifications").select("status, review_note").eq("user_id", me.id).maybeSingle()
       ]);
       var p = results[0].data || {};
       var listings = results[1].count || 0;
       var ver = results[2].data;
+      var vendorVer = results[3] ? results[3].data : null;
+      var isVendor = p.account_type === "vendor";
 
       // photo + name
       var av = $("hub-av");
@@ -130,7 +172,12 @@
         chips.appendChild(c);
       }
       if (p.campus_id && window.getCampusShort) chip("", "fa-location-dot", window.getCampusShort(p.campus_id));
-      if (p.is_verified) chip("ok", "fa-shield-check", "Verified Student");
+      if (isVendor) {
+        if (p.is_vendor_verified) {
+          chip("ok", "fa-store", "Verified Vendor");
+          chips.lastChild.style.cssText = "background:#FEF3C7; color:#92400E;";
+        } else chip("warn", "fa-store", "Vendor - not verified yet");
+      } else if (p.is_verified) chip("ok", "fa-shield-check", "Verified Student");
       else chip("warn", "fa-shield-halved", "Not verified yet");
 
       // stats: followers + following (from follow-lists.js) and listings
@@ -147,8 +194,13 @@
       stats.appendChild(L);
 
       // verification card
-      var state = p.is_verified ? "approved" : (ver && ver.status) || "none";
-      setVerifyCard(state === "approved" ? "approved" : state, ver && ver.review_note);
+      if (isVendor) {
+        var vstate = p.is_vendor_verified ? "approved" : (vendorVer && vendorVer.status) || "none";
+        setVendorCard(vstate, vendorVer && vendorVer.review_note);
+      } else {
+        var state = p.is_verified ? "approved" : (ver && ver.status) || "none";
+        setVerifyCard(state === "approved" ? "approved" : state, ver && ver.review_note);
+      }
 
       // unread messages dot
       try {

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Campally - Vendor verification</title>
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background:#FDF6EE; padding:0 !important; }
+    .vv-head { display:flex; align-items:center; gap:10px; padding:12px 14px; background:#fff; border-bottom:1px solid #EEE7DD; }
+    .vv-head a { color:#2B2B2B; font-size:17px; text-decoration:none; padding:6px 8px; }
+    .vv-head h1 { font-size:16px; margin:0; color:#1E1B4B; font-weight:800; }
+    .vv-wrap { max-width:520px; margin:0 auto; padding:16px 14px 40px 14px; }
+    .vv-card { background:#fff; border:1px solid #EEE7DD; border-radius:16px; padding:16px; margin-bottom:14px; }
+    .vv-card h2 { font-size:15px; margin:0 0 6px 0; color:#1E1B4B; }
+    .vv-card p { font-size:13px; color:#555; line-height:1.55; margin:0; }
+    .vv-state { display:flex; gap:12px; align-items:flex-start; }
+    .vv-ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .vv-form label { display:block; font-size:13px; font-weight:700; color:#1E1B4B; margin:14px 0 6px 0; }
+    .vv-form input[type=text], .vv-form input[type=tel], .vv-form select { width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6; box-sizing:border-box; font-family:inherit; }
+    .vv-form input[type=file] { width:100%; font-size:13px; }
+    .vv-hint { font-size:11.5px; color:#6B7280; margin:4px 0 0 0; line-height:1.4; }
+    .vv-privacy { background:#EFF6FF; border:1px solid #BFDBFE; color:#1E40AF; font-size:12px; border-radius:12px; padding:10px 12px; line-height:1.5; margin-top:14px; }
+    .vv-note-rej { background:#FEF2F2; border:1px solid #FECACA; color:#991B1B; font-size:13px; border-radius:12px; padding:10px 12px; margin-bottom:12px; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="vv-head">
+    <a href="home.html" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>Vendor verification</h1>
+  </div>
+
+  <div class="vv-wrap">
+    <div id="vv-loading" class="vv-card"><p>Loading...</p></div>
+
+    <div id="vv-student" class="vv-card" style="display:none;">
+      <h2>This page is for campus vendors</h2>
+      <p>Your account is a student account. Students can verify with their student ID from the Profile tab.</p>
+    </div>
+
+    <div id="vv-approved" class="vv-card" style="display:none;">
+      <div class="vv-state">
+        <div class="vv-ico" style="background:#FEF3C7; color:#B45309;"><i class="fa-solid fa-circle-check"></i></div>
+        <div><h2>You are a verified vendor</h2><p>Your vendor account is approved. You can now post your products.</p>
+        <a href="post-listing.html" class="btn-primary" style="display:inline-block; margin-top:12px; padding:10px 18px; text-decoration:none; text-align:center;">Post a product</a></div>
+      </div>
+    </div>
+
+    <div id="vv-pending" class="vv-card" style="display:none;">
+      <div class="vv-state">
+        <div class="vv-ico" style="background:#FEF3C7; color:#D97706;"><i class="fa-solid fa-clock"></i></div>
+        <div><h2>Under review</h2><p>The Campally team is checking your details. You will get an alert in your bell when it is done.</p></div>
+      </div>
+    </div>
+
+    <div id="vv-form-card" class="vv-card" style="display:none;">
+      <div id="vv-rejected" class="vv-note-rej" style="display:none;"></div>
+      <h2 id="vv-form-title">Get verified as a campus vendor</h2>
+      <p>We check every vendor so students can trust who they buy from. You cannot post products until you are approved.</p>
+
+      <form id="vv-form" class="vv-form" novalidate>
+        <label for="vv-business">Business or shop name</label>
+        <input type="text" id="vv-business" maxlength="80" placeholder="e.g. Mama Chi Kitchen" required>
+
+        <label for="vv-phone">Phone / WhatsApp number</label>
+        <input type="tel" id="vv-phone" maxlength="20" placeholder="e.g. 08012345678" required>
+
+        <label for="vv-campus">Which campus do you sell to?</label>
+        <select id="vv-campus" required><option value="">Select campus</option></select>
+
+        <label for="vv-location">Where is your shop or stall?</label>
+        <input type="text" id="vv-location" maxlength="200" placeholder="e.g. Backgate, beside the pharmacy" required>
+
+        <label for="vv-id">Photo of your government ID</label>
+        <input type="file" id="vv-id" accept="image/*" required>
+        <p class="vv-hint">National ID, driver's licence, voter's card or international passport. Make sure the name and photo are clear.</p>
+
+        <label for="vv-selfie">Selfie holding your ID</label>
+        <input type="file" id="vv-selfie" accept="image/*" required>
+
+        <label for="vv-shop">Photo of your shop or stall</label>
+        <input type="file" id="vv-shop" accept="image/*" required>
+
+        <div class="vv-privacy"><i class="fa-solid fa-lock"></i> Your ID and selfie are kept private. Only the Campally founder can see them, and they are deleted as soon as your request is decided.</div>
+
+        <button type="submit" id="vv-submit" class="btn-primary" style="width:100%; margin-top:16px;">Submit for review</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script src="campuses.js"></script>
+  <script src="vendor-verify.js"></script>
+</body>
+</html>

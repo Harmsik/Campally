@@ -66,7 +66,7 @@ async function fetchListingsForCampus(campusId) {
   try {
     let query = supabase
       .from("listings")
-      .select("*, categories(id, name, slug), profiles(id, full_name, hall, department, avatar_url, is_verified)")
+      .select("*, categories(id, name, slug), profiles(id, full_name, hall, department, avatar_url, is_verified, account_type, is_vendor_verified)")
       .order("id", { ascending: false });
 
     if (campusId) {
@@ -329,7 +329,9 @@ function makeCard(item) {
     badgesHtml += `<span class="badge-pill" style="background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; font-weight:700;"><i class="fa-solid fa-crown"></i> Pro</span> `;
   }
   // Green badge ONLY for sellers the Founder has approved; everyone else just shows their campus
-  if (item.profiles && item.profiles.is_verified === true) {
+  if (item.profiles && item.profiles.account_type === "vendor" && item.profiles.is_vendor_verified === true) {
+    badgesHtml += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor • ${campusShort}</span>`;
+  } else if (item.profiles && item.profiles.is_verified === true) {
     badgesHtml += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified • ${campusShort}</span>`;
   } else {
     badgesHtml += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;

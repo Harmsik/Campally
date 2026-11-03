@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Campally - My shop</title>
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { background:#FDF6EE; padding:0 !important; }
+    .vs-head { display:flex; align-items:center; gap:10px; padding:12px 14px; background:#fff; border-bottom:1px solid #EEE7DD; }
+    .vs-head a { color:#2B2B2B; font-size:17px; text-decoration:none; padding:6px 8px; }
+    .vs-head h1 { font-size:16px; margin:0; color:#1E1B4B; font-weight:800; }
+    .vs-wrap { max-width:520px; margin:0 auto; padding:16px 14px 40px 14px; }
+    .vs-card { background:#fff; border:1px solid #EEE7DD; border-radius:16px; padding:16px; margin-bottom:14px; }
+    .vs-card h2 { font-size:15px; margin:0 0 6px 0; color:#1E1B4B; }
+    .vs-card p { font-size:13px; color:#555; line-height:1.55; margin:0; }
+    .vs-form label { display:block; font-size:13px; font-weight:700; color:#1E1B4B; margin:14px 0 6px 0; }
+    .vs-form input[type=text], .vs-form textarea { width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6; box-sizing:border-box; font-family:inherit; }
+    .vs-form textarea { min-height:84px; resize:vertical; }
+    .vs-hint { font-size:11.5px; color:#6B7280; margin:4px 0 0 0; line-height:1.4; }
+  </style>
+</head>
+<body>
+  <div class="vs-head">
+    <a href="profile.html" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>My shop</h1>
+  </div>
+
+  <div class="vs-wrap">
+    <div id="vs-loading" class="vs-card"><p>Loading...</p></div>
+
+    <div id="vs-blocked" class="vs-card" style="display:none;">
+      <h2>Only verified vendors can edit a shop</h2>
+      <p>If you are a campus vendor, finish your verification first.</p>
+      <a href="vendor-verify.html" class="btn-primary" style="display:inline-block; margin-top:12px; padding:10px 18px; text-decoration:none;">Go to verification</a>
+    </div>
+
+    <div id="vs-form-card" class="vs-card" style="display:none;">
+      <h2>Your shop details</h2>
+      <p>Students see these on your shop page, next to your products. Your profile photo is your shop logo.</p>
+
+      <form id="vs-form" class="vs-form" novalidate>
+        <label for="vs-name">Shop name</label>
+        <input type="text" id="vs-name" maxlength="80" required>
+
+        <label for="vs-about">About your shop</label>
+        <textarea id="vs-about" maxlength="500" placeholder="What do you sell? What makes you good?"></textarea>
+
+        <label for="vs-location">Where are you?</label>
+        <input type="text" id="vs-location" maxlength="200" placeholder="e.g. Backgate, beside the pharmacy">
+
+        <label for="vs-hours">Opening hours</label>
+        <input type="text" id="vs-hours" maxlength="120" placeholder="e.g. Mon-Sat, 8am-9pm">
+
+        <label for="vs-delivery">Delivery areas</label>
+        <input type="text" id="vs-delivery" maxlength="300" placeholder="e.g. Silver Hostel, Cedar Hostel, Backgate">
+        <p class="vs-hint">Leave it empty if you do not deliver.</p>
+
+        <button type="submit" id="vs-save" class="btn-primary" style="width:100%; margin-top:16px;">Save shop</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script src="vendor-shop.js"></script>
+</body>
+</html>

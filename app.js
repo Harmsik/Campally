@@ -51,6 +51,8 @@ if (signupForm) {
   const privacyConsent = document.getElementById("privacy-consent");
   const marketingConsent = document.getElementById("marketing-consent"); // NEW
   const submitBtn = document.getElementById("signup-submit-btn");
+  const typeEl = document.querySelector('input[name="account-type"]:checked');
+  const accountType = typeEl && typeEl.value === "vendor" ? "vendor" : "student";
 
   if (privacyConsent && !privacyConsent.checked) {
     UI.formError(signupForm, "Please tick the box to agree to the Terms of Service and Privacy Policy before you sign up.", { fields: [privacyConsent] });
@@ -71,7 +73,7 @@ if (signupForm) {
       email: email,
       password: password,
       options: {
-        data: { full_name: fullName, ref_code: getRefCode() }
+        data: { full_name: fullName, ref_code: getRefCode(), account_type: accountType }
       }
     });
     
@@ -99,6 +101,12 @@ if (signupForm) {
       if (fullName) localStorage.setItem("campally_user_name", fullName);
 
       if (window.showToast) window.showToast("Account created. Welcome to Campally!", "success");
+
+      // Vendors go straight to their verification form
+      if (accountType === "vendor") {
+        setTimeout(() => { window.location.href = "vendor-verify.html?welcome=1"; }, 700);
+        return;
+      }
 
       const modal = document.getElementById("new-user-welcome-modal");
       const heading = document.getElementById("welcome-modal-heading");
