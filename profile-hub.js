@@ -86,6 +86,18 @@
     }
   }
 
+  function shopLink(show) {
+    var old = $("hub-shop-link");
+    if (old) old.remove();
+    if (!show) return;
+    var a = document.createElement("a");
+    a.id = "hub-shop-link";
+    a.href = "vendor-shop.html";
+    a.textContent = "Set up your shop details";
+    a.style.cssText = "display:inline-block; margin-top:6px; font-size:12px; font-weight:700; color:#E8553D; text-decoration:none;";
+    $("hub-verify-text").insertAdjacentElement("afterend", a);
+  }
+
   function setVendorCard(state, note) {
     var card = $("hub-verify-card");
     var ico = $("hub-verify-ico");
@@ -94,6 +106,7 @@
     var btn = $("hub-verify-btn");
     card.classList.remove("ok");
     btn.style.display = "";
+    shopLink(state !== "approved");
     btn.removeAttribute("data-open");
     btn.onclick = function () { location.href = "vendor-verify.html"; };
     if (state === "approved") {

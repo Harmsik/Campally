@@ -83,8 +83,8 @@ async function checkAuthAndInit() {
       campusSelect.appendChild(option);
     });
 
-    const initialCampusId = profile?.campus_id ? Number(profile.campus_id) : 1;
-    campusSelect.value = String(initialCampusId);
+    const initialCampusId = profile?.campus_id ? Number(profile.campus_id) : null;
+    campusSelect.value = initialCampusId ? String(initialCampusId) : "";
 
     if (campusSearchInput && campusDropdown && window.setupCampusAutocomplete) {
       window.setupCampusAutocomplete({
@@ -181,7 +181,12 @@ if (listingForm) {
     const rawDescription = document.getElementById("description").value.trim();
     const price = document.getElementById("price").value;
     const campusIdVal = campusSelect ? campusSelect.value : null;
-    const chosenCampusId = campusIdVal ? Number(campusIdVal) : (currentProfile?.campus_id || 1);
+    const chosenCampusId = campusIdVal ? Number(campusIdVal) : (currentProfile?.campus_id || null);
+    if (!chosenCampusId) {
+      if (window.showToast) window.showToast("Please choose your campus first.", "error");
+      else alert("Please choose your campus first.");
+      return;
+    }
     const hallVal = document.getElementById("listing-hall")?.value.trim() || "";
 
     const courseCodeInput = document.getElementById("course-code");

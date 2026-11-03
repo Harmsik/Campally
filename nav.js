@@ -145,8 +145,148 @@ window.toggleSaveItem = function(itemId) {
     list.push(strId);
   }
   localStorage.setItem("campally_saved_items", JSON.stringify(list));
+  if (window.__likeToDb) window.__likeToDb(strId, !exists);   // also save the heart in the database
   return !exists;
 };
+
+// ---------------------------------------------------------------------
+// Hearts saved in the database (so a seller can see likes on their products).
+// The phone copy stays, so every page keeps working the way it did.
+// ---------------------------------------------------------------------
+(function () {
+  var URL_ = "https://mhshjusbtrkkkktymiyg.supabase.co";
+  var KEY_ = "sb_publishable_0_s-ISa-wqGxAVm7tYeXBg_BgErqzS4";
+  var client = null;
+  var myId = null;
+
+  function db() {
+    if (!client && window.supabase) {
+      try { client = window.supabase.createClient(URL_, KEY_); } catch (e) {}
+    }
+    return client;
+  }
+  async function uid() {
+    if (myId) return myId;
+    var c = db();
+    if (!c) return null;
+    try {
+      var s = await c.auth.getSession();
+      myId = s.data && s.data.session ? s.data.session.user.id : null;
+    } catch (e) {}
+    return myId;
+  }
+
+  window.__likeToDb = async function (itemId, liked) {
+    try {
+      var id = await uid();
+      var c = db();
+      if (!id || !c) return;
+      if (liked) {
+        await c.from("listing_likes").upsert({ listing_id: itemId, user_id: id }, { onConflict: "listing_id,user_id", ignoreDuplicates: true });
+      } else {
+        await c.from("listing_likes").delete().eq("listing_id", itemId).eq("user_id", id);
+      }
+    } catch (e) {}
+  };
+
+  function paintHearts(list) {
+    try {
+      document.querySelectorAll(".save-item-btn[data-id]").forEach(function (b) {
+        var on = list.indexOf(String(b.getAttribute("data-id"))) !== -1;
+        b.classList.toggle("saved", on);
+        var i = b.querySelector("i");
+        if (i) i.className = on ? "fa-solid fa-heart" : "fa-regular fa-heart";
+      });
+      var counter = document.getElementById("saved-counter");
+      if (counter) counter.textContent = list.length;
+    } catch (e) {}
+  }
+
+  async function syncLikes() {
+    try {
+      var id = await uid();
+      var c = db();
+      if (!id || !c) return;
+      var flag = "campally_likes_pushed_" + id;
+      var first = !localStorage.getItem(flag);
+      if (!first) {
+        var last = Number(sessionStorage.getItem("campally_likes_synced_at") || 0);
+        if (Date.now() - last < 5 * 60 * 1000) return;
+      }
+      var r = await c.rpc("sync_my_likes", { p_ids: first ? window.getSavedItemIds() : [], p_push: first });
+      if (r.error || !Array.isArray(r.data)) return;
+      var before = JSON.stringify(window.getSavedItemIds().slice().sort());
+      var after = JSON.stringify(r.data.slice().sort());
+      localStorage.setItem("campally_saved_items", JSON.stringify(r.data));
+      if (first) localStorage.setItem(flag, "1");
+      sessionStorage.setItem("campally_likes_synced_at", String(Date.now()));
+      if (before !== after) paintHearts(r.data);
+    } catch (e) {}
+  }
+
+  // ----- Reminder for vendors who are not verified yet (shown on every page until they send their details) -----
+  var NO_NUDGE = ["", "index.html", "landing.html", "login.html", "signup.html", "auth-callback.html", "reset-password.html", "update-password.html", "vendor-verify.html"];
+
+  function showVendorNudge(rejectedNote) {
+    if (document.getElementById("vendor-nudge")) return;
+    var wrap = document.createElement("div");
+    wrap.id = "vendor-nudge";
+    wrap.style.cssText = "position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:100000; display:flex; align-items:center; justify-content:center; padding:20px;";
+    var box = document.createElement("div");
+    box.style.cssText = "background:#fff; border-radius:20px; max-width:340px; width:100%; padding:22px 20px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.25); font-family:inherit;";
+
+    var ico = document.createElement("div");
+    ico.style.cssText = "width:54px; height:54px; border-radius:16px; background:#FEF3C7; color:#B45309; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 12px auto;";
+    ico.innerHTML = '<i class="fa-solid fa-store"></i>';
+
+    var h = document.createElement("h3");
+    h.textContent = "Verify your vendor profile";
+    h.style.cssText = "margin:0 0 8px 0; font-size:17px; color:#1E1B4B;";
+
+    var p = document.createElement("p");
+    p.style.cssText = "margin:0; font-size:13.5px; color:#475569; line-height:1.55;";
+    p.textContent = rejectedNote
+      ? "Your last request was not approved: " + rejectedNote + " Please send your details again."
+      : "Please verify your profile for a better experience. Verified vendors get the gold badge and students trust them more. You cannot post products until you are verified.";
+
+    var go = document.createElement("a");
+    go.href = "vendor-verify.html";
+    go.textContent = "Verify now";
+    go.style.cssText = "display:block; margin-top:16px; padding:12px; border-radius:12px; background:#E8553D; color:#fff; font-weight:800; font-size:14px; text-decoration:none;";
+
+    var later = document.createElement("button");
+    later.type = "button";
+    later.textContent = "Later";
+    later.style.cssText = "margin-top:8px; background:none; border:none; color:#64748B; font-size:13px; font-weight:700; cursor:pointer; padding:8px;";
+    later.addEventListener("click", function () { wrap.remove(); });
+
+    box.appendChild(ico); box.appendChild(h); box.appendChild(p); box.appendChild(go); box.appendChild(later);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+  }
+
+  async function vendorNudge() {
+    try {
+      var page = (location.pathname.split("/").pop() || "").toLowerCase();
+      if (NO_NUDGE.indexOf(page) !== -1) return;
+      var id = await uid();
+      var c = db();
+      if (!id || !c) return;
+      var r = await c.from("profiles").select("account_type, is_vendor_verified").eq("id", id).maybeSingle();
+      var prof = r.data;
+      if (!prof || prof.account_type !== "vendor" || prof.is_vendor_verified === true) return;
+      var v = await c.from("vendor_verifications").select("status, review_note").eq("user_id", id).maybeSingle();
+      var st = v.data && v.data.status;
+      if (st === "pending") return;   // already sent, waiting for the Founder
+      showVendorNudge(st === "rejected" ? (v.data.review_note || "Please upload clearer photos.") : "");
+    } catch (e) {}
+  }
+
+  if (sessionStorage.getItem("campally_visitor_mode") !== "true") {
+    setTimeout(syncLikes, 400);
+    setTimeout(vendorNudge, 1200);
+  }
+})();
 
 
 // =====================================================================

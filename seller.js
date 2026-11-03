@@ -17,6 +17,7 @@ const reviewFormEl = document.getElementById("review-form-container");
 const reviewsListEl = document.getElementById("reviews-list");
 
 let currentUserId = null;
+let ownStore = false;   // true when the logged-in seller is looking at their own store
 let selectedRating = 0;
 
 async function loadSellerProfile() {
@@ -46,6 +47,7 @@ async function loadSellerProfile() {
   }
   
   const isOwnProfile = currentUserId === sellerId;
+  ownStore = isOwnProfile;
   
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -59,6 +61,9 @@ async function loadSellerProfile() {
   }
   
   const isVendor = profile.account_type === "vendor" && profile.is_vendor_verified === true;
+  const isVendorAccount = profile.account_type === "vendor";
+
+  if (isOwnProfile) applyOwnStoreView();
 
   avatarEl.src = profile.avatar_url || "https://api.dicebear.com/7.x/identicon/svg?seed=" + (profile.full_name || "student");
   nameEl.textContent = profile.full_name || "Unnamed Student";
@@ -68,21 +73,26 @@ async function loadSellerProfile() {
   const badgeContainer = document.getElementById("seller-badge-container");
   if (badgeContainer) {
     badgeContainer.innerHTML = "";
-    const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "FUNAI";
+    const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "";
+    const campusPart = campusShort ? " • " + campusShort : "";
     if (isVendor) {
-      badgeContainer.innerHTML += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor • ${campusShort}</span>`;
+      badgeContainer.innerHTML += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor${campusPart}</span>`;
       const vSince = profile.vendor_verified_at ? new Date(profile.vendor_verified_at).getTime() : 0;
       if (vSince && Date.now() - vSince < 30 * 24 * 60 * 60 * 1000) {
         badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-seedling"></i> New vendor</span>`;
       }
     } else if (profile.is_verified === true) {
-      badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student • ${campusShort}</span>`;
+      badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student${campusPart}</span>`;
     } else {
-      badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
+      if (isVendorAccount) {
+        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-store"></i> Vendor • not verified yet</span>`;
+      } else if (campusShort) {
+        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
+      }
     }
   }
 
-  if (isVendor) loadShopInfo(badgeContainer);
+  if (isVendorAccount) loadShopInfo(badgeContainer);
 
   const settingsIcon = document.getElementById("header-settings-link");
   if (settingsIcon) {
@@ -91,7 +101,7 @@ async function loadSellerProfile() {
 
   if (isOwnProfile) {
     actionEl.innerHTML = `<a href="profile.html" class="edit-btn">Edit Profile</a>` +
-      (isVendor ? ` <a href="vendor-shop.html" class="edit-btn" style="margin-left:6px;">Edit shop</a>` : "");
+      (isVendorAccount ? ` <a href="vendor-shop.html" class="edit-btn" style="margin-left:6px;">Edit shop</a>` : "");
   } else if (!currentUserId) {
     actionEl.innerHTML = `
       <div style="margin-top:10px;">
@@ -132,6 +142,79 @@ async function loadSellerProfile() {
       `;
     }
   }
+}
+
+// "My store": the seller sees only their products with manage buttons (their profile is edited on profile.html)
+function applyOwnStoreView() {
+  const card = document.querySelector(".profile-card");
+  if (card) card.style.display = "none";
+  const title = document.querySelector(".logo-small");
+  if (title) title.textContent = "My store";
+  document.querySelectorAll("h3").forEach((h) => {
+    if (h.textContent.trim() === "Listings") h.textContent = "My products";
+  });
+}
+
+function wireOwnActions(card, item, isSold, likeInfo) {
+  const bar = document.createElement("div");
+  bar.className = "own-actions";
+  bar.style.cssText = "display:flex; flex-direction:column; gap:6px; padding:0 10px 10px 10px;";
+
+  const likeCount = likeInfo ? likeInfo.count : 0;
+  const likers = likeInfo && Array.isArray(likeInfo.likers) ? likeInfo.likers : [];
+  const likersHtml = likers.map((l) =>
+    '<a href="seller.html?id=' + shopEsc(l.id) + '" style="display:block; padding:4px 0; color:#334155; text-decoration:none; font-size:12px;">' +
+    '<i class="fa-solid fa-heart" style="color:#E8553D; font-size:10px;"></i> ' + shopEsc(l.name || "Campus student") + "</a>"
+  ).join("");
+
+  bar.innerHTML =
+    '<button type="button" class="own-likes-btn" style="width:100%; padding:7px 0; font-size:12px; border-radius:8px; background:#FFF5F3; color:#E8553D; border:1px solid #FCD8D0; font-weight:700; ' + (likeCount ? "cursor:pointer;" : "cursor:default;") + '">' +
+      '<i class="fa-solid fa-heart"></i> ' + likeCount + (likeCount === 1 ? " like" : " likes") + "</button>" +
+    '<div class="own-likers" style="display:none; background:#FAF9F6; border:1px solid #EEE7DD; border-radius:8px; padding:6px 10px; max-height:140px; overflow-y:auto;">' + likersHtml + "</div>" +
+    '<div style="display:flex; gap:6px;">' +
+      '<button type="button" class="own-sold-btn" style="flex:2; padding:8px 0; font-size:12px; border-radius:8px; cursor:pointer; background:#fff; font-weight:700; border:1px solid ' + (isSold ? "#059669" : "#DC2626") + "; color:" + (isSold ? "#059669" : "#DC2626") + ';">' +
+        (isSold ? "Relist as Active" : "Mark as Sold") + "</button>" +
+      '<button type="button" class="own-del-btn" style="flex:1; padding:8px 0; font-size:12px; border-radius:8px; cursor:pointer; background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; font-weight:700;">Delete</button>' +
+    "</div>";
+  card.appendChild(bar);
+
+  const likesBtn = bar.querySelector(".own-likes-btn");
+  const likersBox = bar.querySelector(".own-likers");
+  likesBtn.addEventListener("click", () => {
+    if (!likeCount) return;
+    likersBox.style.display = likersBox.style.display === "none" ? "block" : "none";
+  });
+
+  const soldBtn = bar.querySelector(".own-sold-btn");
+  soldBtn.addEventListener("click", async () => {
+    const newStatus = isSold ? "active" : "sold";
+    soldBtn.disabled = true;
+    soldBtn.textContent = "Updating...";
+    const { error } = await supabase.from("listings").update({ status: newStatus }).eq("id", item.id);
+    if (error) {
+      if (window.showToast) window.showToast("Could not update: " + error.message, "error");
+      soldBtn.disabled = false;
+      soldBtn.textContent = isSold ? "Relist as Active" : "Mark as Sold";
+      return;
+    }
+    if (window.setItemSoldStatus) window.setItemSoldStatus(item.id, newStatus === "sold");
+    if (window.showToast) window.showToast(newStatus === "sold" ? "Item marked as Sold! Other students won't ping you." : "Item relisted as Active!", "success");
+    loadSellerListings();
+  });
+
+  bar.querySelector(".own-del-btn").addEventListener("click", () => {
+    const doDelete = async () => {
+      const { error } = await supabase.from("listings").delete().eq("id", item.id);
+      if (error) {
+        if (window.showToast) window.showToast("Failed to delete: " + error.message, "error");
+        return;
+      }
+      if (window.showToast) window.showToast("Listing removed successfully.", "success");
+      loadSellerListings();
+    };
+    if (window.showConfirm) window.showConfirm("Delete Listing", "Are you sure you want to remove this item from Campally?", doDelete);
+    else if (confirm("Delete this listing?")) doDelete();
+  });
 }
 
 function shopEsc(t) {
@@ -221,6 +304,13 @@ async function loadSellerListings() {
     return;
   }
   
+  // Likes on my own products (who liked them)
+  const likesMap = {};
+  if (ownStore) {
+    const lr = await supabase.rpc("get_my_listing_likes");
+    if (!lr.error && Array.isArray(lr.data)) lr.data.forEach((x) => { likesMap[x.listing_id] = x; });
+  }
+
   listingsEl.innerHTML = "";
   
   data.forEach((item) => {
@@ -273,8 +363,11 @@ async function loadSellerListings() {
       </div>
     `;
 
+    if (ownStore) wireOwnActions(card, item, isSold, likesMap[item.id]);
+
     card.style.cursor = "pointer";
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest && e.target.closest(".own-actions")) return;
       window.location.href = "listing.html?id=" + item.id;
     });
 

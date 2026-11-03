@@ -28,12 +28,19 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     var res = await Promise.all([
       supabase.from("profiles").select("account_type, is_vendor_verified").eq("id", me.id).maybeSingle(),
-      supabase.from("vendor_shops").select("*").eq("user_id", me.id).maybeSingle()
+      supabase.from("vendor_shops").select("*").eq("user_id", me.id).maybeSingle(),
+      supabase.from("vendor_verifications").select("business_name, location").eq("user_id", me.id).maybeSingle()
     ]);
     var p = res[0].data || {};
-    if (p.account_type !== "vendor" || p.is_vendor_verified !== true) { show("vs-blocked"); return; }
+    if (p.account_type !== "vendor") { show("vs-blocked"); return; }
+    if (p.is_vendor_verified !== true) $("vs-unverified-note").style.display = "block";
 
     var shop = res[1].data;
+    var sent = res[2].data;
+    if (!shop && sent) {
+      $("vs-name").value = sent.business_name || "";
+      $("vs-location").value = sent.location || "";
+    }
     if (shop) {
       $("vs-name").value = shop.shop_name || "";
       $("vs-about").value = shop.description || "";
