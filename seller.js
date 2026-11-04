@@ -186,7 +186,12 @@ function wireOwnActions(card, item, isSold, likeInfo) {
   });
 
   const soldBtn = bar.querySelector(".own-sold-btn");
-  soldBtn.addEventListener("click", async () => {
+  if (item.status === "pending" && soldBtn) {
+    const note = document.createElement("div");
+    note.style.cssText = "flex:2; padding:8px 6px; font-size:12px; border-radius:8px; background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; font-weight:700; text-align:center;";
+    note.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Waiting for approval';
+    soldBtn.replaceWith(note);
+  } else if (soldBtn) soldBtn.addEventListener("click", async () => {
     const newStatus = isSold ? "active" : "sold";
     soldBtn.disabled = true;
     soldBtn.textContent = "Updating...";
@@ -221,25 +226,67 @@ function shopEsc(t) {
   return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-// Shop details for verified campus vendors (name, about, location, opening hours, delivery areas)
+const SHOP_CATEGORIES = {
+  food: "Food & drinks", groceries: "Groceries & provisions", printing: "Printing & photocopy", laundry: "Laundry",
+  gadgets: "Gadgets & repairs", fashion_beauty: "Fashion & beauty", stationery: "Stationery", services: "Other services", other: "Other"
+};
+
+function lagosNow() {
+  return new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+}
+function toMinutes(t) { const p = String(t).split(":"); return Number(p[0]) * 60 + Number(p[1]); }
+// true = open now, false = closed now, null = the vendor did not set hours
+function shopOpenNow(shop) {
+  if (!shop || !shop.open_days || !shop.open_days.length || !shop.open_time || !shop.close_time) return null;
+  const n = lagosNow();
+  const day = n.getDay();
+  const mins = n.getHours() * 60 + n.getMinutes();
+  const o = toMinutes(shop.open_time);
+  const c = toMinutes(shop.close_time);
+  const days = shop.open_days.map(Number);
+  if (c > o) return days.indexOf(day) !== -1 && mins >= o && mins < c;
+  return (days.indexOf(day) !== -1 && mins >= o) || (days.indexOf((day + 6) % 7) !== -1 && mins < c);
+}
+
+// Shop details for campus vendors (name, category, about, location, hours, delivery areas, video)
 async function loadShopInfo(afterEl) {
   if (!afterEl) return;
   const { data: shop } = await supabase.from("vendor_shops").select("*").eq("user_id", sellerId).maybeSingle();
   if (!shop) return;
   if (shop.shop_name) nameEl.textContent = shop.shop_name;
 
+  const open = shopOpenNow(shop);
+  const top = [];
+  if (shop.category && SHOP_CATEGORIES[shop.category]) {
+    top.push('<span style="background:#fff; border:1px solid #FDE68A; color:#92400E; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px;">' + shopEsc(SHOP_CATEGORIES[shop.category]) + "</span>");
+  }
+  if (open === true) top.push('<span style="background:#ECFDF5; border:1px solid #A7F3D0; color:#047857; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px;">● Open now</span>');
+  if (open === false) top.push('<span style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px;">● Closed now</span>');
+
   const rows = [];
   if (shop.location) rows.push('<div><i class="fa-solid fa-location-dot" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.location) + "</div>");
   if (shop.opening_hours) rows.push('<div><i class="fa-solid fa-clock" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.opening_hours) + "</div>");
   if (shop.delivery_areas) rows.push('<div><i class="fa-solid fa-motorcycle" style="width:18px; color:#E8553D;"></i> Delivers to: ' + shopEsc(shop.delivery_areas) + "</div>");
-  if (!rows.length && !shop.description) return;
+
+  let videoHtml = "";
+  if (shop.video_path) {
+    const pub = supabase.storage.from("vendor-videos").getPublicUrl(shop.video_path);
+    const url = pub && pub.data && pub.data.publicUrl;
+    if (url) videoHtml += '<video controls preload="none" playsinline src="' + shopEsc(url) + '" style="width:100%; max-height:320px; border-radius:12px; background:#000; margin-top:8px;"></video>';
+  }
+  if (shop.video_url) {
+    videoHtml += '<a href="' + shopEsc(shop.video_url) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block; margin-top:8px; background:#fff; border:1px solid #FDE68A; color:#92400E; font-weight:800; font-size:12.5px; padding:8px 14px; border-radius:12px; text-decoration:none;"><i class="fa-solid fa-circle-play"></i> Watch our video</a>';
+  }
+
+  if (!top.length && !rows.length && !shop.description && !videoHtml) return;
 
   const box = document.createElement("div");
   box.id = "vendor-shop-info";
   box.style.cssText = "background:#FFFBEB; border:1px solid #FDE68A; border-radius:14px; padding:12px 14px; margin:8px 14px 12px 14px; text-align:left; font-size:13px; color:#334155; line-height:1.7;";
   box.innerHTML =
+    (top.length ? '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">' + top.join("") + "</div>" : "") +
     (shop.description ? '<div style="margin-bottom:6px; color:#475569;">' + shopEsc(shop.description) + "</div>" : "") +
-    rows.join("");
+    rows.join("") + videoHtml;
   afterEl.insertAdjacentElement("afterend", box);
 }
 
@@ -297,7 +344,7 @@ async function loadSellerListings() {
     .from("listings")
     .select("*")
     .eq("seller_id", sellerId)
-    .order("id", { ascending: false });
+    .order("created_at", { ascending: false });
   
   if (error || !data || data.length === 0) {
     listingsEl.innerHTML = "<p id='loading-text'>No listings posted yet.</p>";

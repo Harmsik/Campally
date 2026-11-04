@@ -85,7 +85,7 @@ function bookCard(it) {
     (it.book_level ? '<span class="bk-lvl">' + esc(it.book_level) + "</span>" : "") + "</div>" +
     '<div class="bk-info"><div class="bk-title">' + esc(cleanTitle(it.title)) + '</div><div class="bk-price">' + esc(money(it.price)) + "</div>" +
     '<div class="bk-meta">' + tags.join("") + "</div>" +
-    '<div class="bk-seller">' + (seller.is_verified ? '<i class="fa-solid fa-circle-check"></i> ' : "") + esc(seller.full_name || "Campus seller") + (seller.hall ? " \u2022 " + esc(seller.hall) : "") + "</div></div>";
+    '<div class="bk-seller">' + (seller.is_vendor_verified ? '<i class="fa-solid fa-store" style="color:#B45309;" title="Verified Vendor"></i> ' : seller.is_verified ? '<i class="fa-solid fa-circle-check"></i> ' : "") + esc(seller.full_name || "Campus seller") + (seller.hall ? " \u2022 " + esc(seller.hall) : "") + "</div></div>";
   return a;
 }
 
@@ -97,7 +97,7 @@ function tutorCard(it) {
   a.innerHTML =
     '<div class="bk-tav">' + esc(initials(s.full_name)) + (s.avatar_url ? '<img alt="" src="' + esc(s.avatar_url) + '" onerror="this.remove()">' : "") + "</div>" +
     '<div style="min-width:0;"><div class="bk-title" style="min-height:0;">' + esc(cleanTitle(it.title)) + "</div>" +
-    '<div class="bk-seller" style="margin-top:3px;">' + (s.is_verified ? '<i class="fa-solid fa-circle-check"></i> ' : "") + esc(s.full_name || "Campus tutor") + "</div>" +
+    '<div class="bk-seller" style="margin-top:3px;">' + (s.is_vendor_verified ? '<i class="fa-solid fa-store" style="color:#B45309;" title="Verified Vendor"></i> ' : s.is_verified ? '<i class="fa-solid fa-circle-check"></i> ' : "") + esc(s.full_name || "Campus tutor") + "</div>" +
     '<div class="bk-price" style="font-size:13.5px;">' + esc(it.price ? "From " + money(it.price) : "Ask for price") + "</div></div>" +
     '<span class="bk-tgo">View</span>';
   return a;
@@ -113,7 +113,7 @@ async function load() {
   }
 
   let q = supabase.from("listings")
-    .select("*, profiles(id, full_name, hall, avatar_url, is_verified)")
+    .select("*, profiles(id, full_name, hall, avatar_url, is_verified, account_type, is_vendor_verified)")
     .eq("status", "active");
   if (tutors) q = q.eq("listing_type", "service").eq("service_category", "Tutoring & Lessons");
   else {

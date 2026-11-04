@@ -71,6 +71,15 @@
       </select>
     </div>
 
+    <!-- Campus Vendors row (filled by home.js; hidden until a verified vendor exists) -->
+    <div id="vendors-row" style="display:none; margin:0 0 12px 0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:15px; font-weight:800; color:#1E1B4B;"><i class="fa-solid fa-store" style="color:#B45309;"></i> Campus Vendors</div>
+        <a href="vendors.html" id="vendors-see-all" style="font-size:12px; font-weight:700; color:#E8553D; text-decoration:none;">See all</a>
+      </div>
+      <div id="vendors-scroll" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;"></div>
+    </div>
+
     <!-- Horizontal Category Chips (1-Tap Filters) -->
     <div id="category-chips" class="category-chips-bar">
       <button class="category-chip active" data-cat="all">🌟 All Items</button>
@@ -365,8 +374,8 @@
   <script src="supabase-init.js?v=20261015_02"></script>
   <script src="campuses.js?v=20261015_02"></script>
   <script src="paystack-integration.js?v=20261015_02"></script>
-  <script src="nav.js?v=20261015_02"></script>
-  <script src="home.js?v=20261029"></script>
+  <script src="nav.js?v=20261104"></script>
+  <script src="home.js?v=20261104"></script>
   <script src="trending.js?v=20261031"></script>
   <script src="bell.js?v=20261030"></script>
   <script src="home-extras.js?v=20261030"></script>

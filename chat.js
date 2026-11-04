@@ -93,7 +93,13 @@ function renderHeader() {
   }
   const nm = $("who-name");
   nm.textContent = (other.full_name || "Campally student").trim();
-  if (other.is_verified) {
+  if (other.is_vendor_verified) {
+    const vv = document.createElement("i");
+    vv.className = "fa-solid fa-store";
+    vv.style.cssText = "color:#B45309; font-size:13px; margin-left:4px;";
+    vv.title = "Verified Vendor";
+    nm.appendChild(vv);
+  } else if (other.is_verified) {
     const v = document.createElement("i");
     v.className = "fa-solid fa-circle-check";
     v.title = "Verified Student";
@@ -432,7 +438,7 @@ async function init() {
 
   const { data: prof } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, department, is_verified, whatsapp_number")
+    .select("id, full_name, avatar_url, department, is_verified, whatsapp_number, account_type, is_vendor_verified")
     .eq("id", otherId)
     .maybeSingle();
   if (!prof) { showFatal("This student could not be found."); return; }

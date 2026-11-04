@@ -11,14 +11,25 @@
     .vs-head { display:flex; align-items:center; gap:10px; padding:12px 14px; background:#fff; border-bottom:1px solid #EEE7DD; }
     .vs-head a { color:#2B2B2B; font-size:17px; text-decoration:none; padding:6px 8px; }
     .vs-head h1 { font-size:16px; margin:0; color:#1E1B4B; font-weight:800; }
-    .vs-wrap { max-width:520px; margin:0 auto; padding:16px 14px 40px 14px; }
+    .vs-wrap { max-width:520px; margin:0 auto; padding:16px 14px 60px 14px; }
     .vs-card { background:#fff; border:1px solid #EEE7DD; border-radius:16px; padding:16px; margin-bottom:14px; }
     .vs-card h2 { font-size:15px; margin:0 0 6px 0; color:#1E1B4B; }
     .vs-card p { font-size:13px; color:#555; line-height:1.55; margin:0; }
-    .vs-form label { display:block; font-size:13px; font-weight:700; color:#1E1B4B; margin:14px 0 6px 0; }
-    .vs-form input[type=text], .vs-form textarea { width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6; box-sizing:border-box; font-family:inherit; }
+    .vs-form label.vs-l { display:block; font-size:13px; font-weight:700; color:#1E1B4B; margin:16px 0 6px 0; }
+    .vs-form input[type=text], .vs-form input[type=url], .vs-form input[type=time], .vs-form textarea, .vs-form select { width:100%; padding:12px 14px; border:1px solid #E5E0D8; border-radius:12px; font-size:14px; background:#FAF9F6; box-sizing:border-box; font-family:inherit; }
     .vs-form textarea { min-height:84px; resize:vertical; }
     .vs-hint { font-size:11.5px; color:#6B7280; margin:4px 0 0 0; line-height:1.4; }
+    .vs-days { display:flex; flex-wrap:wrap; gap:6px; }
+    .vs-day { position:relative; }
+    .vs-day input { position:absolute; opacity:0; pointer-events:none; }
+    .vs-day span { display:block; padding:8px 11px; border:1.5px solid #E5E0D8; border-radius:999px; font-size:12.5px; font-weight:700; color:#475569; background:#fff; cursor:pointer; }
+    .vs-day input:checked + span { background:#FFF5F3; border-color:#E8553D; color:#E8553D; }
+    .vs-times { display:flex; gap:10px; }
+    .vs-times > div { flex:1; }
+    .vs-times small { display:block; font-size:11.5px; color:#6B7280; margin-bottom:4px; }
+    .vs-sep { border-top:1px dashed #E5E0D8; margin:18px 0 0 0; }
+    .vs-video-box { background:#FAF9F6; border:1px solid #EEE7DD; border-radius:12px; padding:10px 12px; margin-top:8px; font-size:12.5px; color:#475569; }
+    .vs-link-btn { background:none; border:none; color:#DC2626; font-weight:700; font-size:12.5px; cursor:pointer; padding:4px 0; }
   </style>
 </head>
 <body>
@@ -38,27 +49,68 @@
 
     <div id="vs-form-card" class="vs-card" style="display:none;">
       <h2>Your shop details</h2>
-      <p>Students see these on your shop page, next to your products. Your profile photo is your shop logo.</p>
-      <p id="vs-unverified-note" style="display:none; margin-top:8px; color:#92400E; background:#FFFBEB; border:1px solid #FDE68A; border-radius:10px; padding:8px 10px;">You can set up your shop now. You can post products once the Campally team verifies you.</p>
+      <p>Students see these on your shop page and on the Campus Vendors list. Your profile photo is your shop logo.</p>
+      <p id="vs-unverified-note" style="display:none; margin-top:8px; color:#92400E; background:#FFFBEB; border:1px solid #FDE68A; border-radius:10px; padding:8px 10px;">You can set up your shop now. You can post products and upload a video once the Campally team verifies you.</p>
 
       <form id="vs-form" class="vs-form" novalidate>
-        <label for="vs-name">Shop name</label>
+        <label class="vs-l" for="vs-name">Shop name</label>
         <input type="text" id="vs-name" maxlength="80" required>
 
-        <label for="vs-about">About your shop</label>
+        <label class="vs-l" for="vs-category">What do you sell?</label>
+        <select id="vs-category">
+          <option value="">Choose a category</option>
+          <option value="food">Food &amp; drinks</option>
+          <option value="groceries">Groceries &amp; provisions</option>
+          <option value="printing">Printing &amp; photocopy</option>
+          <option value="laundry">Laundry</option>
+          <option value="gadgets">Gadgets &amp; repairs</option>
+          <option value="fashion_beauty">Fashion &amp; beauty</option>
+          <option value="stationery">Stationery</option>
+          <option value="services">Other services</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label class="vs-l" for="vs-about">About your shop</label>
         <textarea id="vs-about" maxlength="500" placeholder="What do you sell? What makes you good?"></textarea>
 
-        <label for="vs-location">Where are you?</label>
+        <label class="vs-l" for="vs-location">Where are you?</label>
         <input type="text" id="vs-location" maxlength="200" placeholder="e.g. Backgate, beside the pharmacy">
 
-        <label for="vs-hours">Opening hours</label>
-        <input type="text" id="vs-hours" maxlength="120" placeholder="e.g. Mon-Sat, 8am-9pm">
+        <div class="vs-sep"></div>
+        <label class="vs-l">Which days are you open?</label>
+        <div class="vs-days" id="vs-days">
+          <label class="vs-day"><input type="checkbox" value="1"><span>Mon</span></label>
+          <label class="vs-day"><input type="checkbox" value="2"><span>Tue</span></label>
+          <label class="vs-day"><input type="checkbox" value="3"><span>Wed</span></label>
+          <label class="vs-day"><input type="checkbox" value="4"><span>Thu</span></label>
+          <label class="vs-day"><input type="checkbox" value="5"><span>Fri</span></label>
+          <label class="vs-day"><input type="checkbox" value="6"><span>Sat</span></label>
+          <label class="vs-day"><input type="checkbox" value="0"><span>Sun</span></label>
+        </div>
+        <div class="vs-times" style="margin-top:12px;">
+          <div><small>Opens at</small><input type="time" id="vs-open"></div>
+          <div><small>Closes at</small><input type="time" id="vs-close"></div>
+        </div>
+        <p class="vs-hint">This is how students see "Open now". Leave all empty if your hours change a lot.</p>
 
-        <label for="vs-delivery">Delivery areas</label>
+        <label class="vs-l" for="vs-delivery">Delivery areas</label>
         <input type="text" id="vs-delivery" maxlength="300" placeholder="e.g. Silver Hostel, Cedar Hostel, Backgate">
-        <p class="vs-hint">Leave it empty if you do not deliver.</p>
+        <p class="vs-hint">Type the hostels you deliver to. Students can filter by their hostel. Leave empty if you do not deliver.</p>
 
-        <button type="submit" id="vs-save" class="btn-primary" style="width:100%; margin-top:16px;">Save shop</button>
+        <div class="vs-sep"></div>
+        <label class="vs-l" for="vs-video-url">Video link (optional)</label>
+        <input type="url" id="vs-video-url" maxlength="300" placeholder="Paste a TikTok, YouTube, Facebook or Instagram link">
+        <p class="vs-hint">Students tap it to watch. Nothing plays by itself, so it does not use their data.</p>
+
+        <label class="vs-l" for="vs-video-file">Or upload a short video (optional)</label>
+        <input type="file" id="vs-video-file" accept="video/mp4,video/webm,video/quicktime">
+        <p class="vs-hint" id="vs-video-hint">Up to 30 seconds and 15 MB. Only one video: a new upload replaces the old one.</p>
+        <div id="vs-video-current" class="vs-video-box" style="display:none;">
+          <i class="fa-solid fa-film"></i> You have an uploaded video.
+          <button type="button" id="vs-video-remove" class="vs-link-btn">Remove it</button>
+        </div>
+
+        <button type="submit" id="vs-save" class="btn-primary" style="width:100%; margin-top:20px;">Save shop</button>
       </form>
     </div>
   </div>

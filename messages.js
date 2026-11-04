@@ -70,7 +70,13 @@ function row(c) {
   const name = document.createElement("div");
   name.style.cssText = "font-size:14px; font-weight:800; color:#1E1B4B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;";
   name.textContent = (c.other_name || "Campally student").trim();
-  if (c.other_verified) {
+  if (c.other_vendor) {
+    const vv = document.createElement("i");
+    vv.className = "fa-solid fa-store";
+    vv.title = "Verified Vendor";
+    vv.style.cssText = "color:#B45309; font-size:12px; margin-left:4px;";
+    name.appendChild(vv);
+  } else if (c.other_verified) {
     const v = document.createElement("i");
     v.className = "fa-solid fa-circle-check";
     v.style.cssText = "color:#059669; font-size:12px; margin-left:4px;";
@@ -113,6 +119,17 @@ async function loadInbox() {
       emptyState("No messages yet", "Open an item you like and tap Message to start a chat with the seller.", true);
       return;
     }
+    // Which of these people are verified vendors (for the gold store badge)
+    try {
+      const ids = chats.map((c) => c.other_id).filter(Boolean);
+      if (ids.length) {
+        const vr = await supabase.from("profiles").select("id").in("id", ids).eq("is_vendor_verified", true);
+        const vend = {};
+        (vr.data || []).forEach((r) => { vend[r.id] = true; });
+        chats.forEach((c) => { c.other_vendor = !!vend[c.other_id]; });
+      }
+    } catch (e) {}
+
     listEl.innerHTML = "";
     chats.forEach((c) => listEl.appendChild(row(c)));
   } finally {

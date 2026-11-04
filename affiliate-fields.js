@@ -6,7 +6,7 @@
  */
 (function () {
   "use strict";
-  var on = false, pct = 0, verified = false, box;
+  var on = false, pct = 0, verified = false, isVendorAcct = false, box;
 
   var css =
     "#aff-panel{background:linear-gradient(145deg,#FFFBEB,#FFF7ED);border:1.5px solid #FDE68A;border-radius:16px;padding:14px;margin:6px 0 14px 0;}" +
@@ -63,15 +63,15 @@
     });
     var pr = document.getElementById("price"); if (pr) pr.addEventListener("input", refresh);
 
-    // Only Verified Students can offer commission
+    // Only Verified Students and Verified Vendors can offer commission
     try {
       var s = await supabase.auth.getSession();
       var u = s.data && s.data.session && s.data.session.user;
-      if (u) { var p = await supabase.from("profiles").select("is_verified").eq("id", u.id).maybeSingle(); verified = !!(p.data && p.data.is_verified); }
+      if (u) { var p = await supabase.from("profiles").select("is_verified, is_vendor_verified, account_type").eq("id", u.id).maybeSingle(); isVendorAcct = !!(p.data && p.data.account_type === "vendor"); verified = !!(p.data && (p.data.is_verified || p.data.is_vendor_verified)); }
     } catch (e) {}
     if (!verified) {
       var lock = box.querySelector(".aff-lock");
-      lock.innerHTML = '<i class="fa-solid fa-lock"></i> Only <b>Verified Students</b> can offer commission. <a href="profile.html#verify">Get verified</a> to switch this on.';
+      lock.innerHTML = '<i class="fa-solid fa-lock"></i> Only <b>Verified Students and Verified Vendors</b> can offer commission. <a href="' + (isVendorAcct ? "vendor-verify.html" : "profile.html#verify") + '">Get verified</a> to switch this on.';
       lock.style.display = "block";
       box.querySelector(".aff-sw").style.opacity = ".5";
     }
@@ -82,7 +82,7 @@
     fields: function () { return on && verified && pct ? { affiliate_enabled: true, affiliate_percent: pct } : {}; },
     validate: function () {
       if (!on) return "";
-      if (!verified) return "Only Verified Students can offer commission.";
+      if (!verified) return "Only Verified Students and Verified Vendors can offer commission.";
       if (!pct) return "Please choose a commission percentage, or switch affiliates off.";
       if (!price()) return "Please enter a price. Commission is a percentage of the price.";
       return "";

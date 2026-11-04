@@ -263,7 +263,7 @@ if (listingForm) {
 
     // Resilient fallback if optional columns are absent in table
     // Do not retry when the database refused on purpose (Bookstore rules): retrying would skip the rule
-    const refusedOnPurpose = insertError && /Bookstore|check constraint|Verified Students/i.test(insertError.message || "");
+    const refusedOnPurpose = insertError && /Bookstore|check constraint|Verified Students|vendor account|waiting for approval/i.test(insertError.message || "");
     if (insertError && !refusedOnPurpose) {
       console.warn("Retrying with campus schema payload:", insertError.message);
       const payloadWithCampus = {
@@ -290,19 +290,26 @@ if (listingForm) {
       else alert("Failed to post: " + insertError.message);
     } else {
       const selectedPromo = document.querySelector('input[name="listing_promo"]:checked')?.value || "free";
-      
+
+      // Find the item we just created (newest first) to know its id and whether it is waiting for approval
+      const { data: latestData } = await supabase
+        .from("listings")
+        .select("id, title, status")
+        .eq("seller_id", currentUser.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      const latest = latestData && latestData[0] ? latestData[0] : null;
+      const newItemId = latest ? latest.id : null;
+
+      // A vendor's first products are checked by the Campally team before they go live
+      if (latest && latest.status === "pending") {
+        if (window.showToast) window.showToast("Posted! It goes live once the Campally team approves your first products. You can boost it after it is live.", "success");
+        setTimeout(() => { window.location.href = "seller.html?id=" + currentUser.id; }, 1800);
+        return;
+      }
+
       if (selectedPromo !== "free" && window.CampallyPay) {
         if (window.showToast) window.showToast("Listing created! Opening Paystack checkout...", "info");
-        
-        // Fetch created item ID
-        const { data: latestData } = await supabase
-          .from("listings")
-          .select("id, title")
-          .eq("seller_id", currentUser.id)
-          .order("id", { ascending: false })
-          .limit(1);
-
-        const newItemId = latestData && latestData[0] ? latestData[0].id : null;
 
         window.CampallyPay.startCheckout({
           planId: selectedPromo,

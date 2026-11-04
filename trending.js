@@ -67,7 +67,13 @@
     var nm = document.createElement("div");
     nm.className = "ts-name";
     nm.textContent = (s.full_name || "Campally seller").trim();
-    if (s.is_verified) {
+    if (s._vendor) {
+      var vv = document.createElement("i");
+      vv.className = "fa-solid fa-store ts-ver";
+      vv.style.color = "#B45309";
+      vv.title = "Verified Vendor";
+      nm.appendChild(vv);
+    } else if (s.is_verified) {
       var v = document.createElement("i");
       v.className = "fa-solid fa-circle-check ts-ver";
       v.title = "Verified Student";
@@ -109,6 +115,17 @@
       if (mine !== token) return;          // a newer campus choice replaced this request
       var list = res.data || [];
       if (res.error || !list.length) { host.style.display = "none"; host.innerHTML = ""; return; }
+
+      // Mark the sellers who are verified vendors (gold store badge)
+      try {
+        var vids = list.map(function (x) { return x.id; }).filter(Boolean);
+        if (vids.length) {
+          var vr = await supabase.from("profiles").select("id").in("id", vids).eq("is_vendor_verified", true);
+          var vmap = {};
+          (vr.data || []).forEach(function (r) { vmap[r.id] = true; });
+          list.forEach(function (x) { x._vendor = !!vmap[x.id]; });
+        }
+      } catch (e) {}
 
       host.style.display = "block";
       host.innerHTML = "";

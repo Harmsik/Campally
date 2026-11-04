@@ -311,6 +311,7 @@
     renderApproved(data.approved || []);
     loadVerifications();
     loadVendorVerifications();
+    loadPendingProducts();
     loadMessageReports();
     loadListingReports();
     loadDisputes();
@@ -410,6 +411,34 @@
           '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="vreject" data-id="' + esc(v.user_id) + '" data-path="' + esc(v.id_card_path) + '">Reject</button>' +
         "</div></div>"
     ).join("");
+  }
+
+  async function loadPendingProducts() {
+    const el = $("adm-product-list");
+    if (!el) return;
+    const { data, error } = await sb.rpc("admin_list_pending_products");
+    if (error) { el.innerHTML = '<p style="text-align:center; color:#B91C1C; font-size:12px; padding:14px 0;">Could not load products.</p>'; return; }
+    const list = data || [];
+    if (!list.length) {
+      el.innerHTML = '<p style="text-align:center; color:#94A3B8; font-size:12px; padding:14px 0;">No products waiting. 🎉</p>';
+      return;
+    }
+    el.innerHTML = list.map((p) => {
+      const img = p.image
+        ? '<img src="' + esc(p.image) + '" alt="" style="width:72px; height:72px; object-fit:cover; border-radius:10px; flex-shrink:0; background:#F1F5F9;">'
+        : '<div style="width:72px; height:72px; border-radius:10px; background:#F1F5F9; flex-shrink:0;"></div>';
+      const price = p.price ? "₦" + Number(p.price).toLocaleString() : "No price";
+      return '<div style="background:#FFFDF5; border:1px solid #FDE68A; border-radius:14px; padding:12px; margin-bottom:12px; font-size:12px; color:#334155; line-height:1.55;">' +
+        '<div style="display:flex; gap:10px;">' + img +
+          '<div style="min-width:0;"><div style="font-size:14px; font-weight:800; color:#1E1B4B;">' + esc(p.title) + "</div>" +
+          "<div>" + esc(price) + " · " + esc(p.seller_name || "Vendor") + "</div>" +
+          '<div style="color:#64748B;">' + esc(p.description || "") + "</div></div></div>" +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
+          '<a class="small-btn" style="background:#F8FAFC; border:1px solid #CBD5E1; color:#1E293B; text-decoration:none;" href="listing.html?id=' + esc(p.id) + '" target="_blank" rel="noopener">View</a>' +
+          '<button class="small-btn" style="background:#059669; color:#fff;" data-action="ppapprove" data-id="' + esc(p.id) + '">Approve</button>' +
+          '<button class="small-btn" style="background:#FEE2E2; color:#991B1B;" data-action="ppreject" data-id="' + esc(p.id) + '">Reject</button>' +
+        "</div></div>";
+    }).join("");
   }
 
   async function loadVendorVerifications() {
@@ -546,6 +575,13 @@
       const vwhy = prompt("Reason for rejecting (the vendor will see this):", "Please upload clearer photos of your ID and selfie.");
       if (vwhy === null) { btn.disabled = false; return; }
       result = await sb.rpc("admin_review_vendor_verification", { p_user: id, p_approve: false, p_note: vwhy });
+    } else if (action === "ppapprove") {
+      if (!confirm("Approve this product? It will go live for students right away.")) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_product", { p_listing: id, p_approve: true, p_note: null });
+    } else if (action === "ppreject") {
+      const pwhy = prompt("Reason for rejecting (the vendor will see this). The product will be removed:", "Please add a clearer photo and a correct price.");
+      if (pwhy === null) { btn.disabled = false; return; }
+      result = await sb.rpc("admin_review_product", { p_listing: id, p_approve: false, p_note: pwhy });
     } else if (action === "dconfirm" || action === "dreject") {
       const note = prompt("Short note for your records (optional):", "");
       if (note === null) { btn.disabled = false; return; }

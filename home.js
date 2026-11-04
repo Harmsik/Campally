@@ -59,8 +59,55 @@ function updateSavedCounter() {
 }
 
 window.fetchListingsForCampus = fetchListingsForCampus;
+// Campus Vendors row: verified vendors on the chosen campus (or all campuses when none is chosen)
+async function loadVendorsRow(campusId) {
+  const row = document.getElementById("vendors-row");
+  const box = document.getElementById("vendors-scroll");
+  if (!row || !box) return;
+  try {
+    let q = supabase
+      .from("profiles")
+      .select("id, full_name, avatar_url, campus_id")
+      .eq("account_type", "vendor")
+      .eq("is_vendor_verified", true)
+      .order("vendor_verified_at", { ascending: false })
+      .limit(12);
+    if (campusId) q = q.eq("campus_id", campusId);
+    const { data: vendors, error } = await q;
+    if (error || !vendors || !vendors.length) { row.style.display = "none"; return; }
+
+    const { data: shops } = await supabase
+      .from("vendor_shops")
+      .select("user_id, shop_name, location")
+      .in("user_id", vendors.map((v) => v.id));
+    const shopMap = {};
+    (shops || []).forEach((s) => { shopMap[s.user_id] = s; });
+
+    box.innerHTML = vendors.map((v) => {
+      const shop = shopMap[v.id] || {};
+      const name = shop.shop_name || v.full_name || "Campus vendor";
+      const logo = v.avatar_url
+        ? '<img src="' + reqEsc(v.avatar_url) + '" alt="" style="width:46px; height:46px; border-radius:50%; object-fit:cover; background:#FEF3C7;">'
+        : '<div style="width:46px; height:46px; border-radius:50%; background:#FEF3C7; color:#B45309; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fa-solid fa-store"></i></div>';
+      return '<a href="seller.html?id=' + reqEsc(v.id) + '" style="flex:0 0 150px; background:#fff; border:1px solid #EEE7DD; border-radius:14px; padding:10px; text-decoration:none; box-shadow:0 2px 8px rgba(30,27,75,.05); display:flex; flex-direction:column; gap:6px;">' +
+        logo +
+        '<div style="font-size:13px; font-weight:800; color:#1E1B4B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + reqEsc(name) + "</div>" +
+        '<div style="font-size:11px; color:#64748B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + (shop.location ? "📍 " + reqEsc(shop.location) : "Campus vendor") + "</div>" +
+        '<span style="align-self:flex-start; background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px;"><i class="fa-solid fa-store"></i> Verified</span>' +
+        "</a>";
+    }).join("");
+
+    const seeAll = document.getElementById("vendors-see-all");
+    if (seeAll) seeAll.href = "vendors.html" + (campusId ? "?campus=" + encodeURIComponent(campusId) : "");
+    row.style.display = "block";
+  } catch (_) {
+    row.style.display = "none";
+  }
+}
+
 async function fetchListingsForCampus(campusId) {
   if (!container) return;
+  loadVendorsRow(campusId);
   if (window.UI) UI.skeletonGrid(container, 6); else container.innerHTML = "<p id='loading-text' style='text-align:center; color:#999; padding:40px 0;'>Loading listings...</p>";
 
   try {
