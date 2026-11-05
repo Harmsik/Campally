@@ -564,6 +564,29 @@ if (openStatusBtn) {
   });
 }
 
+// One tap: share the product picture together with the message, so it shows up as a proper photo post in WhatsApp.
+// Phones that cannot share a file keep the normal text link.
+if (shareWaDirectLink) {
+  shareWaDirectLink.addEventListener("click", async (e) => {
+    if (!(navigator.share && navigator.canShare) || !statusCanvas || !currentListing) return;
+    e.preventDefault();
+    const fallback = () => { window.location.href = shareWaDirectLink.href; };
+    try {
+      const isSwap = Boolean(currentListing.is_swap || (currentListing.title && currentListing.title.includes("[SWAP]")));
+      const priceText = window.formatPrice(currentListing.price, isSwap);
+      const cleanTitle = (currentListing.title || "").replace(/^\[SWAP\]\s*/i, "");
+      const text = `🔥 Found on Campally:\n\n*${cleanTitle}*\n💰 ${priceText}\n📍 ${currentSeller?.hall || "Campus"}\n\nCheck details here: ${window.location.href}`;
+      const blob = await new Promise((resolve) => statusCanvas.toBlob(resolve, "image/png"));
+      if (!blob) return fallback();
+      const file = new File([blob], "campally-item.png", { type: "image/png" });
+      if (!navigator.canShare({ files: [file] })) return fallback();
+      await navigator.share({ files: [file], text });
+    } catch (err) {
+      if (!err || err.name !== "AbortError") fallback();
+    }
+  });
+}
+
 if (closeStatusBtn) {
   closeStatusBtn.addEventListener("click", () => {
     if (statusModal) statusModal.style.display = "none";

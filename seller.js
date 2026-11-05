@@ -287,6 +287,20 @@ async function loadShopInfo(afterEl) {
     (top.length ? '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">' + top.join("") + "</div>" : "") +
     (shop.description ? '<div style="margin-bottom:6px; color:#475569;">' + shopEsc(shop.description) + "</div>" : "") +
     rows.join("") + videoHtml;
+  // Share this shop on WhatsApp
+  const shopName = shop.shop_name || "this shop";
+  const shareText = "🛍️ *" + shopName + "* is on Campally" +
+    (shop.location ? "\n📍 " + shop.location : "") +
+    (shop.opening_hours ? "\n🕒 " + shop.opening_hours : "") +
+    "\n\nSee their products: " + window.location.href;
+  const shareBtn = document.createElement("a");
+  shareBtn.href = "https://wa.me/?text=" + encodeURIComponent(shareText);
+  shareBtn.target = "_blank";
+  shareBtn.rel = "noopener noreferrer";
+  shareBtn.style.cssText = "display:inline-block; margin-top:10px; background:#25D366; color:#fff; font-weight:800; font-size:12.5px; padding:8px 14px; border-radius:12px; text-decoration:none;";
+  shareBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Share this shop';
+  box.appendChild(shareBtn);
+
   afterEl.insertAdjacentElement("afterend", box);
 }
 
