@@ -55,7 +55,8 @@
     body.home-loading #page-skeleton { display: block; }
     body.home-offline #page-offline { display: block; }
     /* while loading or offline, hold back the real page content (header, bottom bar and messages stay) */
-    body.home-hold > *:not(header):not(#page-skeleton):not(#page-offline):not(script):not(style):not(link):not(nav):not(.bottom-nav):not([id^="cu-"]):not([class^="cu-"]):not(#campally-confirm-modal) { display: none !important; }
+    body.home-hold > *:not(header):not(#page-skeleton):not(#page-offline):not(script):not(style):not(link):not(nav):not(.bottom-nav):not([id^="cu-"]):not([class^="cu-"]):not(#campally-confirm-modal) { position: absolute !important; left: -200vw !important; top: 0 !important; width: 100% !important; visibility: hidden !important; }
+    body.home-hold { height: 100vh; overflow: hidden; }
     body.home-revealed #hero-carousel, body.home-revealed #bookstore-strip, body.home-revealed .view-tabs-container, body.home-revealed #listings-view { animation: hsFade .35s ease both; }
     .hs-wrap { padding: 0 20px 100px 20px; }
     .hs-hero { height: 150px; border-radius: 18px; margin: 10px 0 12px 0; }
@@ -83,6 +84,7 @@
       clearTimeout(window.__homeTimer);
       document.body.classList.remove("home-hold", "home-loading", "home-offline");
       document.body.classList.add("home-revealed");
+      window.dispatchEvent(new Event("resize"));   // category rows, banners and strips measure themselves again
     };
     window.homeFailed = function () {
       var b = document.body;
