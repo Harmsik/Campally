@@ -59,11 +59,29 @@ function updateSavedCounter() {
 }
 
 window.fetchListingsForCampus = fetchListingsForCampus;
-// Campus Vendors row: verified vendors on the chosen campus (or all campuses when none is chosen)
+// Campus Vendors section (bottom of Home): verified vendors on the chosen campus, drawn like the Trending Sellers cards
+const VENDOR_CATEGORIES = {
+  food: "Food & drinks", groceries: "Groceries", printing: "Printing", laundry: "Laundry", gadgets: "Gadgets & repairs",
+  fashion_beauty: "Fashion & beauty", stationery: "Stationery", services: "Services", other: "Vendor"
+};
+
+function vendorOpenNow(v) {
+  if (!v || !v.open_days || !v.open_days.length || !v.open_time || !v.close_time) return null;
+  const n = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+  const day = n.getDay();
+  const mins = n.getHours() * 60 + n.getMinutes();
+  const tm = (t) => { const p = String(t).split(":"); return Number(p[0]) * 60 + Number(p[1]); };
+  const o = tm(v.open_time), c = tm(v.close_time);
+  const days = v.open_days.map(Number);
+  if (c > o) return days.indexOf(day) !== -1 && mins >= o && mins < c;
+  return (days.indexOf(day) !== -1 && mins >= o) || (days.indexOf((day + 6) % 7) !== -1 && mins < c);
+}
+
+let vendorsToken = 0;
 async function loadVendorsRow(campusId) {
-  const row = document.getElementById("vendors-row");
-  const box = document.getElementById("vendors-scroll");
-  if (!row || !box) return;
+  const host = document.getElementById("vendors-section");
+  if (!host) return;
+  const mine = ++vendorsToken;
   try {
     let q = supabase
       .from("profiles")
@@ -74,35 +92,73 @@ async function loadVendorsRow(campusId) {
       .limit(12);
     if (campusId) q = q.eq("campus_id", campusId);
     const { data: vendors, error } = await q;
-    if (error || !vendors || !vendors.length) { row.style.display = "none"; return; }
+    if (mine !== vendorsToken) return;
+    if (error || !vendors || !vendors.length) { host.style.display = "none"; host.innerHTML = ""; return; }
 
-    const { data: shops } = await supabase
-      .from("vendor_shops")
-      .select("user_id, shop_name, location")
-      .in("user_id", vendors.map((v) => v.id));
-    const shopMap = {};
-    (shops || []).forEach((s) => { shopMap[s.user_id] = s; });
+    const ids = vendors.map((v) => v.id);
+    const [shopsRes, itemsRes, revRes] = await Promise.all([
+      supabase.from("vendor_shops").select("user_id, shop_name, category, location, open_days, open_time, close_time").in("user_id", ids),
+      supabase.from("listings").select("seller_id").in("seller_id", ids).eq("status", "active"),
+      supabase.from("reviews").select("seller_id, rating").in("seller_id", ids)
+    ]);
+    if (mine !== vendorsToken) return;
 
-    box.innerHTML = vendors.map((v) => {
-      const shop = shopMap[v.id] || {};
-      const name = shop.shop_name || v.full_name || "Campus vendor";
-      const logo = v.avatar_url
-        ? '<img src="' + reqEsc(v.avatar_url) + '" alt="" style="width:46px; height:46px; border-radius:50%; object-fit:cover; background:#FEF3C7;">'
-        : '<div style="width:46px; height:46px; border-radius:50%; background:#FEF3C7; color:#B45309; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fa-solid fa-store"></i></div>';
-      return '<a href="seller.html?id=' + reqEsc(v.id) + '" style="flex:0 0 150px; background:#fff; border:1px solid #EEE7DD; border-radius:14px; padding:10px; text-decoration:none; box-shadow:0 2px 8px rgba(30,27,75,.05); display:flex; flex-direction:column; gap:6px;">' +
-        logo +
-        '<div style="font-size:13px; font-weight:800; color:#1E1B4B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + reqEsc(name) + "</div>" +
-        '<div style="font-size:11px; color:#64748B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + (shop.location ? "📍 " + reqEsc(shop.location) : "Campus vendor") + "</div>" +
-        '<span style="align-self:flex-start; background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px;"><i class="fa-solid fa-store"></i> Verified</span>' +
-        "</a>";
+    const shops = {}; (shopsRes.data || []).forEach((s) => { shops[s.user_id] = s; });
+    const items = {}; (itemsRes.data || []).forEach((r) => { items[r.seller_id] = (items[r.seller_id] || 0) + 1; });
+    const rate = {}; (revRes.data || []).forEach((r) => { const x = rate[r.seller_id] || (rate[r.seller_id] = { sum: 0, n: 0 }); x.sum += Number(r.rating) || 0; x.n += 1; });
+
+    const initials = (name) => String(name || "?").trim().split(/\s+/).slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join("") || "?";
+
+    const cards = vendors.map((v) => {
+      const shop = shops[v.id] || {};
+      const name = (shop.shop_name || v.full_name || "Campus vendor").trim();
+      const cat = VENDOR_CATEGORIES[shop.category] || "Vendor";
+      const n = items[v.id] || 0;
+      const r = rate[v.id];
+      const open = vendorOpenNow(shop);
+      const openLine = open === true ? '<span class="vr-open on">\u25CF Open now</span>'
+        : open === false ? '<span class="vr-open off">\u25CF Closed now</span>'
+        : '<span class="vr-open na">Hours not set</span>';
+      const avatar = v.avatar_url
+        ? '<img src="' + reqEsc(v.avatar_url) + '" alt="" loading="lazy" onerror="this.remove()">'
+        : "";
+      const campus = (v.campus_id && window.getCampusShort) ? window.getCampusShort(v.campus_id) : "";
+      return '<div class="vr-card">' +
+        '<div class="vr-cat">' + reqEsc(cat) + "</div>" +
+        '<div class="vr-av"><div class="vr-av-in">' + reqEsc(initials(name)) + avatar + "</div></div>" +
+        '<div class="vr-name">' + reqEsc(name) + ' <i class="fa-solid fa-store vr-ver" style="color:#FCD34D;" title="Verified Vendor"></i></div>' +
+        '<div class="vr-sub">' + reqEsc(shop.location || campus || "") + "</div>" +
+        '<div class="vr-stats"><b>' + n + "</b> item" + (n === 1 ? "" : "s") +
+          (r && r.n ? ' &bull; <i class="fa-solid fa-star" style="color:#FCD34D;"></i> <b>' + (r.sum / r.n).toFixed(1) + "</b> (" + r.n + ")" : "") +
+          openLine + "</div>" +
+        '<a class="vr-btn" href="seller.html?id=' + encodeURIComponent(v.id) + '">Visit shop</a>' +
+        "</div>";
     }).join("");
 
-    const seeAll = document.getElementById("vendors-see-all");
-    if (seeAll) seeAll.href = "vendors.html" + (campusId ? "?campus=" + encodeURIComponent(campusId) : "");
-    row.style.display = "block";
+    host.innerHTML =
+      '<div class="vr-head"><span class="vr-title">\uD83C\uDFEA Campus Vendors</span>' +
+      '<a class="vr-see" href="vendors.html' + (campusId ? "?campus=" + encodeURIComponent(campusId) : "") + '">See all</a></div>' +
+      '<div class="vr-row">' + cards + "</div>";
+    host.style.display = "block";
   } catch (_) {
-    row.style.display = "none";
+    host.style.display = "none";
   }
+}
+
+// A failed request because there is no internet (as opposed to a rule or data problem)
+function isNetworkError(e) {
+  const msg = String((e && (e.message || e.details)) || e || "");
+  return !navigator.onLine || /failed to fetch|networkerror|load failed|network request failed/i.test(msg);
+}
+
+function showListingsError(message, campusId) {
+  if (!container) return;
+  container.innerHTML =
+    '<div style="text-align:center; padding:40px 20px; color:#64748B; font-size:14px; line-height:1.55;">' +
+    "<p style='margin:0 0 14px 0;'>" + message + "</p>" +
+    '<button type="button" id="retry-listings" style="background:#E8553D; color:#fff; border:none; border-radius:12px; padding:11px 24px; font-weight:800; font-size:14px; cursor:pointer;">Try again</button></div>';
+  const b = document.getElementById("retry-listings");
+  if (b) b.addEventListener("click", () => fetchListingsForCampus(campusId));
 }
 
 async function fetchListingsForCampus(campusId) {
@@ -133,7 +189,9 @@ async function fetchListingsForCampus(campusId) {
     }
 
     if (error || !data) {
-      container.innerHTML = "<p style='text-align:center; color:#999; padding:40px 0;'>Error loading listings. Please refresh.</p>";
+      if (isNetworkError(error)) { if (window.homeFailed) window.homeFailed(); return; }
+      showListingsError("We could not load the listings.", campusId);
+      if (window.homeReady) window.homeReady();
       return;
     }
 
@@ -141,13 +199,16 @@ async function fetchListingsForCampus(campusId) {
     allListings = data.filter((item) => (item.listing_type || "product") !== "service");
     populateHallFilter();
     renderCurrentView();
+    if (window.homeReady) window.homeReady();
     renderCampusBusinesses(campusId);
     // If trending.js has not arrived yet, leave a note so it can draw as soon as it loads
     if (window.renderTrendingSellers) window.renderTrendingSellers(campusId);
     else window.__trendingPending = { campusId: campusId };
   } catch (err) {
     console.error("Listings fetch error:", err);
-    container.innerHTML = "<p style='text-align:center; color:#999; padding:40px 0;'>Unable to load listings right now.</p>";
+    if (isNetworkError(err)) { if (window.homeFailed) window.homeFailed(); return; }
+    showListingsError("Unable to load listings right now.", campusId);
+    if (window.homeReady) window.homeReady();
   }
 }
 

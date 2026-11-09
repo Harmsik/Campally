@@ -17,9 +17,81 @@
   <title>Campally - Home</title>
   <link rel="stylesheet" href="style.css?v=20261015_02">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script defer src="https://js.paystack.co/v1/inline.js"></script>
+  <style>
+    /* ---- Loading screen (skeleton) and no-connection screen for Home ---- */
+    /* Campus Vendors section (same card design as Trending Sellers) */
+    #vendors-section{padding:6px 20px 4px 20px;}
+    .vr-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+    .vr-title{font-size:16px;font-weight:800;color:#1E1B4B;}
+    .vr-row{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 16px 2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .vr-row::-webkit-scrollbar{display:none;}
+    .vr-card{display:flex;flex-direction:column;flex:0 0 160px;position:relative;overflow:hidden;color:#fff;background:linear-gradient(150deg,#1E1B4B 0%,#312E81 58%,#4338CA 100%);border-radius:20px;padding:16px 12px 12px 12px;text-align:center;box-shadow:0 10px 24px rgba(30,27,75,.28);}
+    .vr-card::before{content:'';position:absolute;right:-34px;top:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(252,211,77,.30),rgba(252,211,77,0) 70%);}
+    .vr-card>*{position:relative;z-index:1;}
+    .vr-rank{position:absolute !important;top:10px;left:10px;background:rgba(252,211,77,.18);color:#FCD34D;font-size:11px;font-weight:800;border-radius:10px;padding:2px 8px;border:1px solid rgba(252,211,77,.35);}
+    .vr-av{width:64px;height:64px;border-radius:50%;margin:6px auto 9px auto;padding:2.5px;background:linear-gradient(135deg,#FCD34D,#F97316);}
+    .vr-av-in{width:100%;height:100%;border-radius:50%;overflow:hidden;background:#E0E7FF;color:#4338CA;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;}
+    .vr-av-in img{width:100%;height:100%;object-fit:cover;display:block;}
+    .vr-name{font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .vr-sub{font-size:11px;color:#C7D2FE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px;margin-top:1px;}
+    .vr-stats{font-size:11px;color:#E0E7FF;margin:9px 0 11px 0;line-height:1.6;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:6px 4px;}
+    .vr-stats b{color:#fff;}
+    .vr-btn{display:block;margin-top:auto;background:#fff;color:#1E1B4B;font-size:12.5px;font-weight:800;text-decoration:none;padding:9px 0;border-radius:11px;}
+    .vr-ver{color:#6EE7B7;font-size:11px;margin-left:3px;}
+    .vr-head{justify-content:space-between;}
+    .vr-see{font-size:12px;font-weight:800;color:#E8553D;text-decoration:none;}
+    .vr-cat{position:absolute !important;top:10px;left:10px;max-width:calc(100% - 20px);background:rgba(252,211,77,.18);color:#FCD34D;font-size:10.5px;font-weight:800;border-radius:10px;padding:2px 8px;border:1px solid rgba(252,211,77,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .vr-av{margin-top:24px !important;}
+    .vr-open{display:block;margin-top:4px;font-size:11px;font-weight:800;}
+    .vr-open.on{color:#6EE7B7;}
+    .vr-open.off{color:#FCA5A5;}
+    .vr-open.na{color:#C7D2FE;font-weight:600;}
+    .hs { background: linear-gradient(90deg, #EFEAE3 25%, #F8F4EF 37%, #EFEAE3 63%); background-size: 400% 100%; animation: hsShimmer 1.3s ease infinite; border-radius: 12px; }
+    @keyframes hsShimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+    @keyframes hsFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .hs { animation: none; } }
+    #page-skeleton, #page-offline { display: none; }
+    body.home-loading #page-skeleton { display: block; }
+    body.home-offline #page-offline { display: block; }
+    /* while loading or offline, hold back the real page content (header, bottom bar and messages stay) */
+    body.home-hold > *:not(header):not(#page-skeleton):not(#page-offline):not(script):not(style):not(link):not(nav):not(.bottom-nav):not([id^="cu-"]):not([class^="cu-"]):not(#campally-confirm-modal) { display: none !important; }
+    body.home-revealed #hero-carousel, body.home-revealed #bookstore-strip, body.home-revealed .view-tabs-container, body.home-revealed #listings-view { animation: hsFade .35s ease both; }
+    .hs-wrap { padding: 0 20px 100px 20px; }
+    .hs-hero { height: 150px; border-radius: 18px; margin: 10px 0 12px 0; }
+    .hs-strip { height: 62px; border-radius: 16px; margin-bottom: 14px; }
+    .hs-tabs { display: flex; gap: 10px; margin-bottom: 14px; }
+    .hs-tab { flex: 1; height: 44px; border-radius: 12px; }
+    .hs-bar { height: 46px; border-radius: 14px; margin-bottom: 12px; }
+    .hs-chips { display: flex; gap: 8px; overflow: hidden; margin-bottom: 16px; }
+    .hs-chip { flex: 0 0 auto; width: 84px; height: 34px; border-radius: 999px; }
+    .hs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .hs-card { background: #fff; border: 1px solid #EEE7DD; border-radius: 16px; padding: 10px; }
+    .hs-img { height: 128px; border-radius: 12px; margin-bottom: 10px; }
+    .hs-l1 { height: 12px; width: 85%; margin-bottom: 8px; }
+    .hs-l2 { height: 12px; width: 50%; }
+    .po-card { margin: 60px 24px 0 24px; background: #fff; border: 1px solid #EEE7DD; border-radius: 20px; padding: 28px 20px; text-align: center; box-shadow: 0 4px 18px rgba(30,27,75,.06); }
+    .po-ico { width: 64px; height: 64px; border-radius: 20px; background: #FFF5F3; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center; }
+    .po-card h3 { margin: 0 0 6px 0; font-size: 18px; color: #1E1B4B; }
+    .po-card p { margin: 0 0 18px 0; font-size: 13.5px; color: #64748B; line-height: 1.55; }
+    .po-btn { background: #E8553D; color: #fff; border: none; border-radius: 12px; padding: 12px 26px; font-weight: 800; font-size: 14px; cursor: pointer; }
+  </style>
 </head>
-<body>
+<body class="home-hold home-loading">
+  <script>
+    window.homeReady = function () {
+      clearTimeout(window.__homeTimer);
+      document.body.classList.remove("home-hold", "home-loading", "home-offline");
+      document.body.classList.add("home-revealed");
+    };
+    window.homeFailed = function () {
+      var b = document.body;
+      if (b.classList.contains("home-revealed")) return;
+      clearTimeout(window.__homeTimer);
+      b.classList.remove("home-loading");
+      b.classList.add("home-offline");
+    };
+  </script>
 
   <!-- Clean Top Bar with Logo -->
   <header class="top-bar" style="justify-content:space-between;">
@@ -44,6 +116,33 @@
   <div id="visitor-banner" style="display:none; background:#FFF5F3; border-bottom:1px solid #FED7AA; padding:9px 16px; font-size:12px; color:#7C2D12; justify-content:space-between; align-items:center;">
     <span><i class="fa-solid fa-eye" style="color:#E8553D; margin-right:6px;"></i> Browsing marketplace as <strong>Visitor</strong></span>
     <a href="login.html" style="background:#E8553D; color:white; padding:4px 12px; border-radius:14px; font-weight:600; text-decoration:none; font-size:12px;">Sign In to Trade</a>
+  </div>
+
+  <!-- Loading screen: shows the page layout at once while data loads -->
+  <div id="page-skeleton" class="hs-wrap" aria-hidden="true">
+    <div class="hs hs-hero"></div>
+    <div class="hs hs-strip"></div>
+    <div class="hs-tabs"><div class="hs hs-tab"></div><div class="hs hs-tab"></div></div>
+    <div class="hs hs-bar"></div>
+    <div class="hs-chips"><div class="hs hs-chip"></div><div class="hs hs-chip"></div><div class="hs hs-chip"></div><div class="hs hs-chip"></div><div class="hs hs-chip"></div></div>
+    <div class="hs-grid">
+      <div class="hs-card"><div class="hs hs-img"></div><div class="hs hs-l1"></div><div class="hs hs-l2"></div></div>
+      <div class="hs-card"><div class="hs hs-img"></div><div class="hs hs-l1"></div><div class="hs hs-l2"></div></div>
+      <div class="hs-card"><div class="hs hs-img"></div><div class="hs hs-l1"></div><div class="hs hs-l2"></div></div>
+      <div class="hs-card"><div class="hs hs-img"></div><div class="hs hs-l1"></div><div class="hs hs-l2"></div></div>
+    </div>
+  </div>
+
+  <!-- No connection screen -->
+  <div id="page-offline">
+    <div class="po-card">
+      <div class="po-ico">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E8553D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5 12.4a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="#E8553D"/><path d="M3 3l18 18"/></svg>
+      </div>
+      <h3>No connection</h3>
+      <p>Campally cannot reach the internet right now. Check your network and try again. It will also load by itself when your connection comes back.</p>
+      <button type="button" id="po-retry" class="po-btn">Try again</button>
+    </div>
   </div>
 
   <!-- Hero slider (auto-sliding banners) -->
@@ -80,15 +179,6 @@
       <select id="campus-select" style="display:none;">
         <option value="">🏫 All Campuses (Nigeria)</option>
       </select>
-    </div>
-
-    <!-- Campus Vendors row (filled by home.js; hidden until a verified vendor exists) -->
-    <div id="vendors-row" style="display:none; margin:0 0 12px 0;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <div style="font-size:15px; font-weight:800; color:#1E1B4B;"><i class="fa-solid fa-store" style="color:#B45309;"></i> Campus Vendors</div>
-        <a href="vendors.html" id="vendors-see-all" style="font-size:12px; font-weight:700; color:#E8553D; text-decoration:none;">See all</a>
-      </div>
-      <div id="vendors-scroll" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;"></div>
     </div>
 
     <!-- Horizontal Category Chips (1-Tap Filters) -->
@@ -178,6 +268,9 @@
     <div id="category-rows" style="padding-bottom:10px;">
       <p id="loading-text" style="text-align:center; color:#999; padding:40px 0;">Loading listings...</p>
     </div>
+
+    <!-- Campus Vendors (filled by home.js). Sits at the bottom, the mirror of Trending Sellers at the top. -->
+    <div id="vendors-section" style="display:none;"></div>
   </div>
 
   <!-- Student Requests (Wanted) View Section -->
@@ -391,5 +484,17 @@
   <script src="bell.js?v=20261030"></script>
   <script src="home-extras.js?v=20261030"></script>
   <script>loadNav("home");</script>
+  <script>
+    (function () {
+      var body = document.body;
+      var retry = document.getElementById("po-retry");
+      if (retry) retry.addEventListener("click", function () { window.location.reload(); });
+      window.addEventListener("online", function () { if (body.classList.contains("home-offline")) window.location.reload(); });
+      window.addEventListener("offline", function () { if (body.classList.contains("home-loading")) window.homeFailed(); });
+      // the app library did not load (no internet), or loading is taking very long
+      if (!window.supabase) window.homeFailed();
+      window.__homeTimer = setTimeout(function () { if (!body.classList.contains("home-revealed")) window.homeFailed(); }, 15000);
+    })();
+  </script>
 </body>
 </html>

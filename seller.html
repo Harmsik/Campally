@@ -14,9 +14,59 @@
   <meta name="twitter:title" content="Campally - Your campus marketplace">
   <meta name="twitter:description" content="Buy, sell and swap with verified students, and find shops and vendors near your campus. Free to join.">
   <meta name="twitter:image" content="https://campally.com.ng/og-image.png">
-  <title>Campally - Seller Profile</title>
+  <title>Campally - Profile</title>
   <link rel="stylesheet" href="style.css?v=20261015_02">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .ph-hero { position: relative; overflow: hidden; background: linear-gradient(145deg, #1E1B4B 0%, #312E81 58%, #4338CA 100%); color: #fff; border-radius: 24px; padding: 22px 18px 18px 18px; box-shadow: 0 14px 34px rgba(30,27,75,.28); }
+    .ph-hero::before { content: ""; position: absolute; right: -60px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(252,211,77,.28), rgba(252,211,77,0) 70%); }
+    .ph-hero::after { content: ""; position: absolute; left: -50px; bottom: -80px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,.35), rgba(129,140,248,0) 70%); }
+    .ph-hero > * { position: relative; z-index: 1; }
+    .ph-top { display: flex; align-items: center; gap: 14px; }
+    .ph-av { width: 84px; height: 84px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, #FCD34D, #F97316); flex-shrink: 0; }
+    .ph-av > div { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #E0E7FF; color: #4338CA; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 28px; }
+    .ph-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ph-name { font-size: 20px; font-weight: 800; line-height: 1.2; word-break: break-word; }
+    .ph-sub { font-size: 12.5px; color: #C7D2FE; margin-top: 3px; line-height: 1.4; }
+    .ph-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ph-chip { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; gap: 5px; }
+    .ph-chip.ok { background: rgba(16,185,129,.22); color: #6EE7B7; }
+    .ph-chip.warn { background: rgba(252,211,77,.2); color: #FCD34D; }
+    .ph-stats { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ph-stats .fl-stats { display: contents; margin: 0; }
+    .ph-stats .fl-stat, .ph-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 9px 4px; text-align: center; min-width: 0; cursor: pointer; }
+    .ph-stats .fl-stat b, .ph-stat b { display: block; font-size: 18px; color: #fff; line-height: 1.2; }
+    .ph-stats .fl-stat span, .ph-stat span { font-size: 11px; color: #C7D2FE; font-weight: 600; }
+    .ph-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .ph-btn { flex: 1; text-align: center; text-decoration: none; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 800; padding: 12px 8px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .ph-btn.solid { background: #fff; color: #1E1B4B; }
+    .ph-btn.glass { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+    .sp-wrap { max-width: 560px; margin: 0 auto; padding: 14px 16px 120px 16px; }
+    .ph-av { overflow: visible; }
+    .sp-tabs { display: flex; gap: 6px; background: #EFEAE3; border-radius: 14px; padding: 4px; margin: 16px 0 14px 0; }
+    .sp-tab { flex: 1; border: none; background: transparent; font-family: inherit; font-size: 13.5px; font-weight: 800; color: #6B7280; padding: 10px 6px; border-radius: 11px; cursor: pointer; transition: background .2s, color .2s, box-shadow .2s; }
+    .sp-tab.active { background: #fff; color: #1E1B4B; box-shadow: 0 2px 8px rgba(30,27,75,.10); }
+    .sp-tab .n { display: inline-block; min-width: 18px; margin-left: 4px; padding: 0 6px; border-radius: 9px; background: #E5E0D8; color: #475569; font-size: 11px; line-height: 18px; }
+    .sp-tab.active .n { background: #FFF5F3; color: #E8553D; }
+    .sp-pane { display: none; }
+    .sp-pane.active { display: block; animation: spFade .3s ease both; }
+    @keyframes spFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .sp-empty { text-align: center; color: #94A3B8; font-size: 13.5px; padding: 36px 10px; line-height: 1.6; }
+    .sp-empty i { display: block; font-size: 30px; color: #D6CFC4; margin-bottom: 10px; }
+    .sp-sum { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid #EEE7DD; border-radius: 18px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(30,27,75,.05); }
+    .sp-sum b { font-size: 34px; line-height: 1; color: #1E1B4B; }
+    .sp-sum .st { color: #F59E0B; letter-spacing: 2px; font-size: 15px; }
+    .sp-sum small { color: #6B7280; font-size: 12px; }
+    .sp-rev { background: #fff; border: 1px solid #EEE7DD; border-radius: 16px; padding: 13px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(30,27,75,.04); }
+    .sp-rev-top { display: flex; align-items: center; gap: 10px; }
+    .sp-rev-av { width: 34px; height: 34px; border-radius: 50%; background: #E0E7FF; color: #4338CA; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sp-rev-name { font-weight: 800; font-size: 13.5px; color: #1E1B4B; }
+    .sp-rev-stars { color: #F59E0B; font-size: 12px; letter-spacing: 1px; }
+    .sp-rev-text { margin: 8px 0 0 0; font-size: 13px; color: #475569; line-height: 1.55; word-break: break-word; }
+    .sp-actions-note { margin-top: 12px; font-size: 12.5px; color: #C7D2FE; text-align: center; }
+    #vendor-shop-info { margin: 12px 0 0 0 !important; }
+    #seller-listings { padding: 0 !important; }
+  </style>
 </head>
 <body>
 
@@ -31,30 +81,44 @@
       <i class="fa-solid fa-gear"></i>
     </a>
   </header>
+  <script src="page-shell.js" data-skeleton="profile"></script>
 
-  <div class="profile-card">
-    <img id="seller-avatar" class="profile-avatar" src="" alt="">
-    <h2 id="seller-name">Loading...</h2>
-    <div id="seller-badge-container" style="display:flex; justify-content:center; gap:6px; margin:4px 0 8px 0;"></div>
-    <p id="seller-department" class="tagline" style="margin-bottom:2px;"></p>
-    <p id="seller-hall" class="tagline" style="margin-bottom:8px;"></p>
+  <div class="sp-wrap">
+    <section class="ph-hero" id="seller-hero">
+      <div class="ph-top">
+        <div class="ph-av"><div id="seller-av-box"></div></div>
+        <div style="min-width:0; flex:1;">
+          <div class="ph-name" id="seller-name">Loading...</div>
+          <div class="ph-sub" id="seller-sub"></div>
+          <div class="ph-chips" id="seller-badge-container"></div>
+        </div>
+      </div>
+      <div class="ph-stats" id="seller-stats">
+        <div id="follow-stats"></div>
+        <div class="ph-stat" id="stat-items"><b>0</b><span>Items</span></div>
+      </div>
+      <div class="ph-actions" id="seller-actions">
+        <div id="profile-action" style="display:contents;"></div>
+        <div id="follow-section" style="display:contents;"></div>
+      </div>
+    </section>
 
-    <div id="follow-section"></div>
-    <div id="profile-action"></div>
+    <div class="sp-tabs" role="tablist">
+      <button type="button" class="sp-tab active" id="tab-products" data-pane="pane-products">Products<span class="n" id="n-products">0</span></button>
+      <button type="button" class="sp-tab" id="tab-reviews" data-pane="pane-reviews">Reviews<span class="n" id="n-reviews">0</span></button>
+    </div>
+
+    <div class="sp-pane active" id="pane-products">
+      <div id="seller-listings" class="listings-grid">
+        <p id="loading-text">Loading listings...</p>
+      </div>
+    </div>
+
+    <div class="sp-pane" id="pane-reviews">
+      <div id="review-form-container"></div>
+      <div id="reviews-list"></div>
+    </div>
   </div>
-  <div style="padding: 0 20px; margin-top: 10px;">
-    <h3 style="font-size:15px; margin-bottom:10px;">Listings</h3>
-  </div>
-  
-  <div id="seller-listings" class="listings-grid">
-  <p id="loading-text">Loading listings...</p>
-</div>
-
-<div style="padding: 0 20px; margin-top: 20px;">
-  <h3 style="font-size:15px; margin-bottom:10px;">Reviews</h3>
-  <div id="review-form-container"></div>
-  <div id="reviews-list"></div>
-</div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
   <script src="supabase-init.js"></script>

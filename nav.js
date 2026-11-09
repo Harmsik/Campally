@@ -597,3 +597,116 @@ function loadNav(activePage) {
     });
   }
 }
+
+
+// ---------------------------------------------------------------------
+// Site-wide UI polish: offline strip, press feedback, image fade-in and lazy loading,
+// top bar shadow on scroll, back-to-top button, keyboard focus outline.
+// ---------------------------------------------------------------------
+(function () {
+  if (window.__cuUx) return;
+  window.__cuUx = true;
+
+  var css =
+    "*{-webkit-tap-highlight-color:transparent;}" +
+    "button,.btn-primary,.ph-btn,.ph-q,.category-chip,.listing-card,.vr-card,.vr-btn,.sp-tab,.small-btn{transition:transform .12s ease,box-shadow .2s ease,background-color .2s ease;}" +
+    "button:not(:disabled):active,.btn-primary:active,.ph-btn:active,.ph-q:active,.category-chip:active,.vr-btn:active,.sp-tab:active,.small-btn:active{transform:scale(.96);}" +
+    ".listing-card:active,.vr-card:active{transform:scale(.985);}" +
+    "a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(232,85,61,.45);outline-offset:2px;}" +
+    "img.cu-fade{opacity:0;transition:opacity .35s ease;}" +
+    "img.cu-fade.cu-loaded{opacity:1;}" +
+    ".top-bar{transition:box-shadow .25s ease;}" +
+    ".top-bar.cu-scrolled{box-shadow:0 6px 18px rgba(30,27,75,.10);}" +
+    "#cu-offline-bar{position:fixed;top:0;left:0;right:0;z-index:100001;text-align:center;font-size:12.5px;font-weight:700;padding:7px 12px;color:#fff;background:#1E1B4B;transform:translateY(-100%);transition:transform .25s ease;}" +
+    "#cu-offline-bar.show{transform:none;}" +
+    "#cu-offline-bar.ok{background:#059669;}" +
+    "#cu-top{position:fixed;right:16px;bottom:92px;z-index:9990;width:44px;height:44px;border-radius:50%;border:none;background:#1E1B4B;color:#fff;font-size:18px;box-shadow:0 8px 20px rgba(30,27,75,.35);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .25s ease,transform .25s ease;}" +
+    "#cu-top.show{opacity:1;pointer-events:auto;transform:none;}" +
+    "@media (prefers-reduced-motion:reduce){*{transition:none !important;}img.cu-fade{opacity:1;}}";
+  var st = document.createElement("style");
+  st.id = "cu-ux-style";
+  st.textContent = css;
+  document.head.appendChild(st);
+
+  // ----- offline strip (when the connection drops while the app is open) -----
+  var bar = null, hideTimer = null;
+  function barEl() {
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "cu-offline-bar";
+      bar.setAttribute("role", "status");
+      document.body.appendChild(bar);
+    }
+    return bar;
+  }
+  function goOffline() {
+    if (document.documentElement.classList.contains("ps-offline")) return;   // the full-page card is already showing
+    clearTimeout(hideTimer);
+    var b = barEl();
+    b.classList.remove("ok");
+    b.textContent = "You are offline. Some things may not load.";
+    requestAnimationFrame(function () { b.classList.add("show"); });
+  }
+  function goOnline() {
+    if (!bar || !bar.classList.contains("show")) return;
+    bar.classList.add("ok");
+    bar.textContent = "Back online";
+    hideTimer = setTimeout(function () { bar.classList.remove("show"); }, 1800);
+  }
+  window.addEventListener("offline", goOffline);
+  window.addEventListener("online", goOnline);
+  if (navigator.onLine === false) setTimeout(goOffline, 600);
+
+  // ----- images: load only when needed, and fade in -----
+  function prepImg(img) {
+    if (!img || img.__cuDone) return;
+    img.__cuDone = true;
+    if (img.closest && img.closest("header, .top-bar, #cu-top")) return;   // the logo should not fade
+    if (!img.hasAttribute("loading")) img.setAttribute("loading", "lazy");
+    if (img.complete && img.naturalWidth > 0) return;                       // already there
+    img.classList.add("cu-fade");
+    var done = function () { img.classList.add("cu-loaded"); };
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+    setTimeout(done, 4000);                                                  // never leave an image invisible
+  }
+  function scanImages(root) {
+    if (!root || !root.querySelectorAll) return;
+    if (root.tagName === "IMG") prepImg(root);
+    root.querySelectorAll("img").forEach(prepImg);
+  }
+  scanImages(document);
+  try {
+    new MutationObserver(function (list) {
+      list.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType === 1) scanImages(n); }); });
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
+
+  // ----- top bar shadow + back to top -----
+  var topBtn = null, ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var y = window.scrollY || document.documentElement.scrollTop || 0;
+      var hdr = document.querySelector(".top-bar");
+      if (hdr) hdr.classList.toggle("cu-scrolled", y > 4);
+      if (y > 900) {
+        if (!topBtn) {
+          topBtn = document.createElement("button");
+          topBtn.id = "cu-top";
+          topBtn.type = "button";
+          topBtn.setAttribute("aria-label", "Back to top");
+          topBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+          topBtn.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+          document.body.appendChild(topBtn);
+        }
+        requestAnimationFrame(function () { topBtn.classList.add("show"); });
+      } else if (topBtn) {
+        topBtn.classList.remove("show");
+      }
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+})();

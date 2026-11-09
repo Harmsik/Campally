@@ -6,10 +6,10 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const params = new URLSearchParams(window.location.search);
 let sellerId = params.get("id");
 
-const avatarEl = document.getElementById("seller-avatar");
+const avBoxEl = document.getElementById("seller-av-box");
 const nameEl = document.getElementById("seller-name");
-const departmentEl = document.getElementById("seller-department");
-const hallEl = document.getElementById("seller-hall");
+const subEl = document.getElementById("seller-sub");
+const badgeBoxEl = document.getElementById("seller-badge-container");
 const actionEl = document.getElementById("profile-action");
 const followEl = document.getElementById("follow-section");
 const listingsEl = document.getElementById("seller-listings");
@@ -65,94 +65,87 @@ async function loadSellerProfile() {
 
   if (isOwnProfile) applyOwnStoreView();
 
-  avatarEl.src = profile.avatar_url || "https://api.dicebear.com/7.x/identicon/svg?seed=" + (profile.full_name || "student");
-  nameEl.textContent = profile.full_name || "Unnamed Student";
-  departmentEl.textContent = profile.department ? `📚 ${profile.department}` : "";
-  hallEl.textContent = profile.hall ? `📍 ${profile.hall}` : "";
-  
-  const badgeContainer = document.getElementById("seller-badge-container");
-  if (badgeContainer) {
-    badgeContainer.innerHTML = "";
-    const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "";
-    const campusPart = campusShort ? " • " + campusShort : "";
-    if (isVendor) {
-      badgeContainer.innerHTML += `<span class="badge-pill" style="background:#FFF7D6; color:#8A5A00; border:1px solid #F5C451; font-weight:700;"><i class="fa-solid fa-store"></i> Verified Vendor${campusPart}</span>`;
-      const vSince = profile.vendor_verified_at ? new Date(profile.vendor_verified_at).getTime() : 0;
-      if (vSince && Date.now() - vSince < 30 * 24 * 60 * 60 * 1000) {
-        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-seedling"></i> New vendor</span>`;
-      }
-    } else if (profile.is_verified === true) {
-      badgeContainer.innerHTML += `<span class="badge-pill badge-verified"><i class="fa-solid fa-shield-check"></i> Verified Student${campusPart}</span>`;
-    } else {
-      if (isVendorAccount) {
-        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-store"></i> Vendor • not verified yet</span>`;
-      } else if (campusShort) {
-        badgeContainer.innerHTML += `<span class="badge-pill badge-hall"><i class="fa-solid fa-graduation-cap"></i> ${campusShort}</span>`;
-      }
+  // avatar: photo, or the first letters of the name
+  const displayName = profile.full_name || "Unnamed Student";
+  if (profile.avatar_url) {
+    avBoxEl.innerHTML = '<img src="' + shopEsc(profile.avatar_url) + '" alt="">';
+  } else {
+    avBoxEl.textContent = displayName.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
+  }
+  nameEl.textContent = displayName;
+
+  const campusShort = (profile.campus_id && window.getCampusShort) ? window.getCampusShort(profile.campus_id) : "";
+  const subParts = isVendorAccount
+    ? ["Campus vendor", campusShort]
+    : [profile.department, profile.hall];
+  subEl.textContent = subParts.filter(Boolean).join("  \u2022  ");
+
+  badgeBoxEl.innerHTML = "";
+  const campusPart = campusShort ? " \u2022 " + shopEsc(campusShort) : "";
+  if (isVendor) {
+    badgeBoxEl.innerHTML += '<span class="ph-chip warn"><i class="fa-solid fa-store"></i> Verified Vendor' + campusPart + "</span>";
+    const vSince = profile.vendor_verified_at ? new Date(profile.vendor_verified_at).getTime() : 0;
+    if (vSince && Date.now() - vSince < 30 * 24 * 60 * 60 * 1000) {
+      badgeBoxEl.innerHTML += '<span class="ph-chip"><i class="fa-solid fa-seedling"></i> New vendor</span>';
     }
+  } else if (profile.is_verified === true) {
+    badgeBoxEl.innerHTML += '<span class="ph-chip ok"><i class="fa-solid fa-shield-check"></i> Verified Student' + campusPart + "</span>";
+  } else if (isVendorAccount) {
+    badgeBoxEl.innerHTML += '<span class="ph-chip"><i class="fa-solid fa-store"></i> Vendor \u2022 not verified yet</span>';
+  } else if (campusShort) {
+    badgeBoxEl.innerHTML += '<span class="ph-chip"><i class="fa-solid fa-graduation-cap"></i> ' + shopEsc(campusShort) + "</span>";
   }
 
-  if (isVendorAccount) loadShopInfo(badgeContainer);
+  if (isVendorAccount) loadShopInfo(document.getElementById("seller-hero"));
 
   const settingsIcon = document.getElementById("header-settings-link");
   if (settingsIcon) {
     settingsIcon.style.display = isOwnProfile ? "inline-block" : "none";
   }
 
+  const loginBack = "login.html?redirect=seller.html%3Fid%3D" + encodeURIComponent(sellerId);
   if (isOwnProfile) {
-    actionEl.innerHTML = `<a href="profile.html" class="edit-btn">Edit Profile</a>` +
-      (isVendorAccount ? ` <a href="vendor-shop.html" class="edit-btn" style="margin-left:6px;">Edit shop</a>` : "");
+    actionEl.innerHTML =
+      '<a href="profile.html" class="ph-btn solid"><i class="fa-solid fa-pen"></i> Edit profile</a>' +
+      (isVendorAccount ? '<a href="vendor-shop.html" class="ph-btn glass"><i class="fa-solid fa-store"></i> Edit shop</a>' : "");
   } else if (!currentUserId) {
-    actionEl.innerHTML = `
-      <div style="margin-top:10px;">
-        <a href="login.html?redirect=seller.html%3Fid%3D${sellerId}" class="btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; padding:10px 20px; font-size:13px; width:auto;">
-          <i class="fa-solid fa-lock"></i> Sign In to Contact Seller
-        </a>
-      </div>
-    `;
+    actionEl.innerHTML = '<a href="' + loginBack + '" class="ph-btn solid"><i class="fa-solid fa-lock"></i> Sign in to contact</a>';
   } else {
-    const waBtn = profile.whatsapp_number
-      ? `<a href="https://wa.me/${profile.whatsapp_number.replace(/\D/g, "")}" target="_blank" class="whatsapp-btn" style="margin-top:8px;"><i class="fa-brands fa-whatsapp"></i> Contact via WhatsApp</a>`
-      : "";
-    actionEl.innerHTML = `
-      <a href="chat.html?with=${encodeURIComponent(sellerId)}" class="btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; padding:10px 20px; font-size:14px; width:auto;">
-        <i class="fa-solid fa-comment-dots"></i> Message
-      </a>
-      ${waBtn ? `<div>${waBtn}</div>` : ""}`;
+    const wa = profile.whatsapp_number ? String(profile.whatsapp_number).replace(/\D/g, "") : "";
+    actionEl.innerHTML =
+      '<a href="chat.html?with=' + encodeURIComponent(sellerId) + '" class="ph-btn solid"><i class="fa-solid fa-comment-dots"></i> Message</a>' +
+      (wa ? '<a href="https://wa.me/' + wa + '" target="_blank" rel="noopener noreferrer" class="ph-btn glass" style="flex:0 0 auto; padding:12px 16px;" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" style="color:#4ADE80; font-size:17px;"></i></a>' : "");
   }
-  
+
   if (!isOwnProfile && currentUserId) {
     loadFollowButton();
   }
-  
+
   loadFollowerCount();
   loadSellerListings();
   loadReviews();
-  
+
   if (!isOwnProfile) {
     if (currentUserId) {
       renderReviewForm();
     } else {
-      reviewFormEl.innerHTML = `
-        <div style="background:#FFF8F6; border:1px solid #FED7AA; border-radius:12px; padding:14px; text-align:center; margin-bottom:16px;">
-          <p style="font-size:13px; color:#7C2D12; font-weight:600; margin-bottom:4px;"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> Want to rate or review this seller?</p>
-          <p style="font-size:12px; color:#666; margin-bottom:10px;">Sign in to rate sellers and leave reviews.</p>
-          <a href="login.html?redirect=seller.html%3Fid%3D${sellerId}" class="btn-primary" style="display:inline-block; font-size:12px; padding:8px 18px; text-decoration:none; width:auto;">Sign In to Rate</a>
-        </div>
-      `;
+      reviewFormEl.innerHTML =
+        '<div class="sp-sum" style="flex-direction:column; text-align:center; gap:6px;">' +
+        '<div style="font-weight:800; color:#1E1B4B;"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> Want to rate or review this seller?</div>' +
+        '<div style="font-size:12.5px; color:#6B7280;">Sign in to rate sellers and leave reviews.</div>' +
+        '<a href="' + loginBack + '" class="btn-primary" style="display:inline-block; font-size:13px; padding:9px 20px; text-decoration:none; width:auto; margin-top:4px;">Sign in to review</a></div>';
     }
   }
 }
 
 // "My store": the seller sees only their products with manage buttons (their profile is edited on profile.html)
 function applyOwnStoreView() {
-  const card = document.querySelector(".profile-card");
-  if (card) card.style.display = "none";
+  const hero = document.getElementById("seller-hero");
+  if (hero) hero.style.display = "none";
   const title = document.querySelector(".logo-small");
   if (title) title.textContent = "My store";
-  document.querySelectorAll("h3").forEach((h) => {
-    if (h.textContent.trim() === "Listings") h.textContent = "My products";
-  });
+  const tp = document.getElementById("tab-products");
+  if (tp) tp.firstChild.textContent = "My products";
 }
 
 function wireOwnActions(card, item, isSold, likeInfo) {
@@ -254,6 +247,7 @@ async function loadShopInfo(afterEl) {
   const { data: shop } = await supabase.from("vendor_shops").select("*").eq("user_id", sellerId).maybeSingle();
   if (!shop) return;
   if (shop.shop_name) nameEl.textContent = shop.shop_name;
+  if (ownStore) return;   // "My store" shows only the products
 
   const open = shopOpenNow(shop);
   const top = [];
@@ -316,10 +310,10 @@ async function loadFollowButton() {
 }
 
 function renderFollowButton(isFollowing) {
-  followEl.innerHTML = isFollowing ?
-    `<button id="follow-btn" class="edit-btn" style="background:#999;">Following</button>` :
-    `<button id="follow-btn" class="edit-btn">Follow</button>`;
-  
+  followEl.innerHTML = isFollowing
+    ? '<button id="follow-btn" type="button" class="ph-btn glass"><i class="fa-solid fa-check"></i> Following</button>'
+    : '<button id="follow-btn" type="button" class="ph-btn glass"><i class="fa-solid fa-user-plus"></i> Follow</button>';
+
   document.getElementById("follow-btn").addEventListener("click", async () => {
     if (isFollowing) {
       await supabase.from("follows").delete().eq("follower_id", currentUserId).eq("following_id", sellerId);
@@ -333,24 +327,22 @@ function renderFollowButton(isFollowing) {
 
 async function loadFollowerCount() {
   // Followers + Following boxes (tap one to see the list)
-  let box = document.getElementById("follow-stats");
-  if (!box) {
-    box = document.createElement("div");
-    box.id = "follow-stats";
-    hallEl.insertAdjacentElement("afterend", box);
+  const box = document.getElementById("follow-stats");
+  if (!box) return;
+  // the follower-list script loads after this one: wait for it if the page is still loading
+  if (!window.CampallyFollows && document.readyState === "loading") {
+    await new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true }));
   }
   if (window.CampallyFollows) {
     await window.CampallyFollows.mount(box, sellerId);
     return;
   }
-
-  // Fallback: plain follower count if follow-lists.js is missing
   const { count } = await supabase
     .from("follows")
     .select("*", { count: "exact", head: true })
     .eq("following_id", sellerId);
-  box.className = "tagline";
-  box.textContent = (count || 0) + " followers";
+  box.className = "ph-stat";
+  box.innerHTML = "<b>" + (count || 0) + "</b><span>Followers</span>";
 }
 
 async function loadSellerListings() {
@@ -361,7 +353,9 @@ async function loadSellerListings() {
     .order("created_at", { ascending: false });
   
   if (error || !data || data.length === 0) {
-    listingsEl.innerHTML = "<p id='loading-text'>No listings posted yet.</p>";
+    listingsEl.innerHTML = '<div class="sp-empty" style="grid-column:1/-1;"><i class="fa-solid fa-box-open"></i>' + (ownStore ? "You have not posted any products yet." : "No products posted yet.") + "</div>";
+    setCount("n-products", 0);
+    setItemsStat(0);
     return;
   }
   
@@ -398,7 +392,7 @@ async function loadSellerListings() {
     const formattedPrice = window.formatPrice ? window.formatPrice(item.price, isSwap) : `₦${item.price ?? "N/A"}`;
     
     let imageInner = item.image_url ?
-      `<img src="${item.image_url}" class="listing-image" style="object-fit:cover;" alt="${cleanTitle}">` :
+      `<img src="${shopEsc(item.image_url)}" class="listing-image" style="object-fit:cover;" alt="${shopEsc(cleanTitle)}">` :
       `<div class="listing-image"><i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:4px;"></i> No image</div>`;
 
     if (isSold) {
@@ -418,7 +412,7 @@ async function loadSellerListings() {
         ${imageInner}
       </div>
       <div class="listing-info">
-        <div class="listing-title">${cleanTitle}</div>
+        <div class="listing-title">${shopEsc(cleanTitle)}</div>
         <div class="listing-price">${formattedPrice}</div>
         ${badgeHtml ? `<div class="card-badges">${badgeHtml}</div>` : ""}
       </div>
@@ -434,6 +428,18 @@ async function loadSellerListings() {
 
     listingsEl.appendChild(card);
   });
+
+  setCount("n-products", data.length);
+  setItemsStat(data.filter((x) => x.status === "active").length);
+}
+
+function setCount(id, n) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = n;
+}
+function setItemsStat(n) {
+  const el = document.querySelector("#stat-items b");
+  if (el) el.textContent = n;
 }
 
 
@@ -495,28 +501,44 @@ async function loadReviews() {
     .select("*, profiles!reviews_reviewer_id_fkey(full_name)")
     .eq("seller_id", sellerId)
     .order("created_at", { ascending: false });
-  
+
   if (error || !data || data.length === 0) {
-    reviewsListEl.innerHTML = "<p id='loading-text'>No reviews yet.</p>";
+    reviewsListEl.innerHTML = '<div class="sp-empty"><i class="fa-regular fa-star"></i>No reviews yet.</div>';
+    setCount("n-reviews", 0);
     return;
   }
-  
-  const avg = (data.reduce((sum, r) => sum + r.rating, 0) / data.length).toFixed(1);
-  
-  let html = `<p style="font-weight:600; margin-bottom:10px;">⭐ ${avg} average (${data.length} review${data.length > 1 ? "s" : ""})</p>`;
-  
+
+  const avg = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
+  const full = Math.floor(avg);
+  setCount("n-reviews", data.length);
+
+  // rating chip in the header
+  const old = document.getElementById("rating-chip");
+  if (old) old.remove();
+  badgeBoxEl.insertAdjacentHTML("beforeend", '<span class="ph-chip warn" id="rating-chip"><i class="fa-solid fa-star"></i> ' + avg.toFixed(1) + " (" + data.length + ")</span>");
+
+  let html =
+    '<div class="sp-sum"><b>' + avg.toFixed(1) + '</b><div><div class="st">' + "\u2605".repeat(full) + "\u2606".repeat(5 - full) + "</div>" +
+    "<small>" + data.length + " review" + (data.length > 1 ? "s" : "") + "</small></div></div>";
+
   data.forEach((r) => {
-    const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
-    html += `
-      <div class="review-card">
-        <div class="review-stars">${stars}</div>
-        <div class="review-name">${r.profiles?.full_name || "Anonymous"}</div>
-        ${r.comment ? `<div class="review-comment">${r.comment}</div>` : ""}
-      </div>
-    `;
+    const name = (r.profiles && r.profiles.full_name) || "Anonymous";
+    const stars = "\u2605".repeat(r.rating) + "\u2606".repeat(5 - r.rating);
+    html +=
+      '<div class="sp-rev"><div class="sp-rev-top"><div class="sp-rev-av">' + shopEsc(name.trim().charAt(0).toUpperCase() || "?") + "</div>" +
+      '<div><div class="sp-rev-name">' + shopEsc(name) + '</div><div class="sp-rev-stars">' + stars + "</div></div></div>" +
+      (r.comment ? '<p class="sp-rev-text">' + shopEsc(r.comment) + "</p>" : "") + "</div>";
   });
-  
+
   reviewsListEl.innerHTML = html;
 }
+
+// Products / Reviews tabs
+document.querySelectorAll(".sp-tab").forEach((tab) => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".sp-tab").forEach((t) => t.classList.toggle("active", t === tab));
+    document.querySelectorAll(".sp-pane").forEach((p) => p.classList.toggle("active", p.id === tab.dataset.pane));
+  });
+});
 
 loadSellerProfile();
