@@ -121,9 +121,9 @@ async function loadMyListings() {
           <button class="boost-listing-btn" data-id="${item.id}" data-title="${cleanTitle}" style="flex:1; background:${isBoosted ? '#FFF7ED' : '#FDF1EE'}; border:1px solid ${isBoosted ? '#FDBA74' : '#FCD8D0'}; color:${isBoosted ? '#C2410C' : '#E8553D'}; font-size:11px; font-weight:700; padding:6px 4px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
             <i class="fa-solid ${isBoosted ? 'fa-check' : 'fa-bolt'}"></i> ${isBoosted ? 'Boost Active' : 'Boost (₦300)'}
           </button>
-          <button class="urgent-listing-btn" data-id="${item.id}" data-title="${cleanTitle}" style="flex:1; background:${isUrgent ? '#FEF2F2' : '#FFFFFF'}; border:1px solid ${isUrgent ? '#FCA5A5' : '#E5E0D8'}; color:${isUrgent ? '#DC2626' : '#666'}; font-size:11px; font-weight:700; padding:6px 4px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
-            <i class="fa-solid fa-triangle-exclamation"></i> ${isUrgent ? 'Urgent Active' : 'Urgent (₦200)'}
-          </button>
+          <a href="edit-listing.html?id=${item.id}" class="edit-listing-btn" style="flex:1; background:#EFF6FF; border:1px solid #BFDBFE; color:#1D4ED8; font-size:11px; font-weight:700; padding:6px 4px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; text-decoration:none;">
+            <i class="fa-solid fa-pen"></i> Edit
+          </a>
         </div>
       `;
     }
@@ -151,7 +151,7 @@ async function loadMyListings() {
     container.appendChild(card);
   });
 
-  // Attach Boost & Urgent button listeners
+  // Attach Boost button listeners
   document.querySelectorAll(".boost-listing-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
@@ -162,16 +162,6 @@ async function loadMyListings() {
     });
   });
 
-  document.querySelectorAll(".urgent-listing-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const title = btn.dataset.title;
-      if (window.CampallyPay && window.CampallyPay.openUrgentModal) {
-        window.CampallyPay.openUrgentModal(id, title, () => loadMyListings());
-      }
-    });
-  });
-  
   // Toggle Sold Status
   document.querySelectorAll(".toggle-sold-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {

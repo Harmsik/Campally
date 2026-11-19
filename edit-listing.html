@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campally - Edit Listing</title>
+  <link rel="stylesheet" href="style.css?v=20261015_02">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1 class="logo-small">Edit Listing</h1>
+  </header>
+
+  <div id="edit-status" style="text-align:center; padding:40px 20px; color:#666; font-size:14px;">Loading your listing...</div>
+
+  <div id="edit-container" class="auth-container" style="display:none; margin-top:20px; margin-bottom:100px;">
+    <form id="edit-form" class="auth-form">
+
+      <div id="edit-type-banner" style="background:#F0EDE6; border-radius:12px; padding:10px 12px; font-size:13px; font-weight:700; color:#2B2B2B; margin-bottom:14px;"></div>
+
+      <label>Photos</label>
+      <div id="edit-photos" style="margin-bottom:12px;"></div>
+
+      <label>Title</label>
+      <input type="text" id="e-title" maxlength="120" required>
+
+      <div id="e-category-box">
+        <label>Category</label>
+        <select id="e-category"></select>
+      </div>
+
+      <div id="e-service-box" style="display:none;">
+        <label>Type of service</label>
+        <select id="e-service"></select>
+      </div>
+
+      <div id="e-course-box">
+        <label>Course Code (optional)</label>
+        <input type="text" id="e-course" placeholder="e.g. MTH101, GST102">
+      </div>
+
+      <label>Your Hostel or Lodge</label>
+      <input type="text" id="e-hall" placeholder="e.g. Silver Hostel, Moremi Hall">
+
+      <label>Description</label>
+      <input type="text" id="e-desc" placeholder="Brief details about condition, edition, etc.">
+
+      <label id="e-price-label">Price (₦)</label>
+      <input type="number" id="e-price" placeholder="e.g. 1500 (leave blank if free / swap only)">
+
+      <div id="e-swap-box" style="display:flex; align-items:center; gap:10px; margin-top:14px; background:#FDF1EE; padding:12px; border-radius:12px; border:1px solid #FCD8D0;">
+        <input type="checkbox" id="e-swap" style="width:20px; height:20px; accent-color:#E8553D; margin:0; cursor:pointer;">
+        <label for="e-swap" style="margin:0; font-size:13px; color:#9C2A18; cursor:pointer; font-weight:600;">
+          <i class="fa-solid fa-repeat"></i> Open to Swap / Trade for other items
+        </label>
+      </div>
+
+      <label style="margin-top:16px;">Preferred Safe Meetup Spot</label>
+      <select id="e-meetup">
+        <option value="University Main Library Foyer">University Main Library Foyer</option>
+        <option value="Student Union Building (SUB)">Student Union Building (SUB)</option>
+        <option value="Hostel Porter's Lodge">Hostel Porter's Lodge / Reception</option>
+        <option value="Faculty Lecture Corridor">Faculty Lecture Theater Corridor</option>
+        <option value="Campus Main Gate">Campus Main Gate Security Post</option>
+      </select>
+
+      <button type="submit" id="e-save" class="btn-primary" style="margin-top:20px;">Save Changes</button>
+      <a href="my-listings.html" style="display:block; text-align:center; margin-top:12px; font-size:13px; color:#888; text-decoration:none;">Cancel</a>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="nav.js"></script>
+  <script src="edit-listing.js?v=20261119"></script>
+  <script>loadNav("listings");</script>
+</body>
+</html>

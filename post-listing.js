@@ -116,6 +116,9 @@ async function checkAuthAndInit() {
   }
 
   loadCategories();
+
+  // Ask "Product or Service?" before the person starts filling the form
+  if (window.openPostTypeChooser) window.openPostTypeChooser();
 }
 
 function updateHostelSuggestions(campusId) {
