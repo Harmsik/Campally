@@ -258,7 +258,8 @@ async function loadShopInfo(afterEl) {
   if (open === false) top.push('<span style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px;">● Closed now</span>');
 
   const rows = [];
-  if (shop.location) rows.push('<div><i class="fa-solid fa-location-dot" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.location) + "</div>");
+  const locParts = window.CampallyLoc ? CampallyLoc.split(shop.location || "") : { text: shop.location || "", url: "" };
+  if (locParts.text || locParts.url) rows.push('<div><i class="fa-solid fa-location-dot" style="width:18px; color:#E8553D;"></i> ' + shopEsc(locParts.text || "Pin on the map") + (window.CampallyLoc ? CampallyLoc.linkHtml(locParts.url) : "") + "</div>");
   if (shop.opening_hours) rows.push('<div><i class="fa-solid fa-clock" style="width:18px; color:#E8553D;"></i> ' + shopEsc(shop.opening_hours) + "</div>");
   if (shop.delivery_areas) rows.push('<div><i class="fa-solid fa-motorcycle" style="width:18px; color:#E8553D;"></i> Delivers to: ' + shopEsc(shop.delivery_areas) + "</div>");
 
@@ -284,7 +285,8 @@ async function loadShopInfo(afterEl) {
   // Share this shop on WhatsApp
   const shopName = shop.shop_name || "this shop";
   const shareText = "🛍️ *" + shopName + "* is on Campally" +
-    (shop.location ? "\n📍 " + shop.location : "") +
+    (locParts.text ? "\n📍 " + locParts.text : "") +
+    (locParts.url ? "\n🗺️ Find us: " + locParts.url : "") +
     (shop.opening_hours ? "\n🕒 " + shop.opening_hours : "") +
     "\n\nSee their products: " + window.location.href;
   const shareBtn = document.createElement("a");

@@ -16,6 +16,16 @@ function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
+// Each kind of service gets its own colour so cards are easy to tell apart
+const SVC_COLORS = [
+  ["#E8553D", "#FDF1EE"], ["#2563EB", "#EFF6FF"], ["#059669", "#ECFDF5"], ["#7C3AED", "#F5F3FF"],
+  ["#D97706", "#FFFBEB"], ["#DB2777", "#FDF2F8"], ["#0891B2", "#ECFEFF"], ["#4D7C0F", "#F7FEE7"]
+];
+function svcColor(name) {
+  let n = 0;
+  String(name || "Other").split("").forEach((ch) => { n += ch.charCodeAt(0); });
+  return SVC_COLORS[n % SVC_COLORS.length];
+}
 function cleanDesc(d) {
   return String(d || "").replace(/\[[^\]]*\]/g, "").trim();
 }
@@ -74,22 +84,27 @@ function render() {
   grid.innerHTML = list.map((i) => {
     const p = i.profiles || {};
     const price = i.price ? "From ₦" + Number(i.price).toLocaleString() : "Ask for price";
+    const desc = cleanDesc(i.description);
+    const cat = i.service_category || "Other";
+    const col = svcColor(cat);
+    const typeInfo = TYPES.find((t) => t.name === cat);
     const img = i.image_url
       ? `<img class="svc-img" src="${esc(i.image_url)}" alt="" loading="lazy">`
-      : '<div class="svc-img"><i class="fa-solid fa-calendar-check"></i></div>';
-    const desc = cleanDesc(i.description);
-    return `<div class="svc-card">
-      ${img}
-      <div class="svc-body">
-        <span class="svc-tag">${esc(i.service_category || "Other")}</span>
-        <div class="svc-title">${esc(i.title)}</div>
-        <div class="svc-by">by ${esc(p.full_name || "Campus student")}${p.hall ? " · " + esc(p.hall) : ""}</div>
-        ${desc ? `<div class="svc-desc">${esc(desc.slice(0, 110))}${desc.length > 110 ? "…" : ""}</div>` : ""}
-        <div class="svc-price">${price}</div>
-        <div class="svc-actions">
-          <button class="svc-book" data-id="${esc(i.id)}"><i class="fa-solid fa-calendar-check"></i> Book</button>
-          <a class="svc-view" href="listing.html?id=${esc(i.id)}">Details</a>
+      : `<div class="svc-img"><i class="fa-solid ${esc(typeInfo ? typeInfo.icon : "fa-calendar-check")}"></i></div>`;
+    return `<div class="svc-card" style="--svc-c:${col[0]}; --svc-bg:${col[1]};">
+      <a class="svc-top" href="listing.html?id=${esc(i.id)}">
+        ${img}
+        <div class="svc-body">
+          <span class="svc-tag">${esc(cat)}</span>
+          <div class="svc-title">${esc(i.title)}</div>
+          <div class="svc-by">by ${esc(p.full_name || "Campus student")}${p.hall ? " · " + esc(p.hall) : ""}</div>
         </div>
+      </a>
+      ${desc ? `<div class="svc-desc">${esc(desc.slice(0, 200))}${desc.length > 200 ? "…" : ""}</div>` : ""}
+      <div class="svc-foot">
+        <div class="svc-price">${price}</div>
+        <a class="svc-view" href="listing.html?id=${esc(i.id)}">Details</a>
+        <button class="svc-book" data-id="${esc(i.id)}"><i class="fa-solid fa-calendar-check"></i> Book</button>
       </div>
     </div>`;
   }).join("");

@@ -184,7 +184,8 @@
     }
 
     var shareText = "\uD83D\uDECD\uFE0F *" + ((shop && shop.shop_name) || p.full_name || "My shop") + "* is on Campally" +
-      (shop && shop.location ? "\n\uD83D\uDCCD " + shop.location : "") +
+      (shop && shop.location ? "\n\uD83D\uDCCD " + (window.CampallyLoc ? CampallyLoc.stripTag(shop.location) : shop.location) : "") +
+      (shop && shop.location && window.CampallyLoc && CampallyLoc.split(shop.location).url ? "\n\uD83D\uDDFA\uFE0F Find us: " + CampallyLoc.split(shop.location).url : "") +
       "\n\nSee our products: " + location.origin + "/seller.html?id=" + me.id;
 
     var card = document.createElement("section");

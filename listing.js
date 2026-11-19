@@ -75,7 +75,7 @@ async function loadListing() {
     
     // Description (strip embedded tags if any)
     let cleanDesc = item.description || "No description provided.";
-    cleanDesc = cleanDesc.replace(/\[SWAP\]/g, "").replace(/\[Course:\s*[^\]]+\]/g, "").replace(/\[Meetup:\s*[^\]]+\]/g, "").trim();
+    cleanDesc = cleanDesc.replace(/\[SWAP\]/g, "").replace(/\[Course:\s*[^\]]+\]/g, "").replace(/\[Meetup:\s*[^\]]+\]/g, "").replace(/\[Map:\s*[^\]]+\]/g, "").trim();
     document.getElementById("detail-description").textContent = cleanDesc || "No additional description provided.";
 
     // Render Badges
@@ -329,9 +329,11 @@ async function loadListing() {
     // Preferred Safe Meetup Spot
     const meetupSpotMatch = (item.description || "").match(/\[Meetup:\s*([^\]]+)\]/i);
     const preferredSpot = item.safe_meetup_spot || (meetupSpotMatch ? meetupSpotMatch[1] : null);
-    if (preferredSpot) {
+    const mapUrl = window.CampallyLoc ? CampallyLoc.split(item.description || "").url : "";
+    if (preferredSpot || mapUrl) {
       const spotEl = document.getElementById("seller-preferred-spot");
-      spotEl.textContent = `📍 Seller's preferred campus spot: ${preferredSpot}`;
+      spotEl.textContent = `📍 Pickup spot: ${preferredSpot || "Pinned on the map"}`;
+      if (mapUrl) spotEl.insertAdjacentHTML("beforeend", CampallyLoc.linkHtml(mapUrl));
       spotEl.style.display = "block";
     }
 

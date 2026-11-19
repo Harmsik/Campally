@@ -16,6 +16,10 @@ let currentUser = null;
 
 // Photos: each entry is { url } (already uploaded) or { file, preview } (new)
 let photos = [];
+const pickupMap = window.CampallyLoc ? CampallyLoc.attach($("e-map-anchor"), { note: "Optional. Stand at your pickup spot and tap the button so buyers can open it in Google Maps. Anyone can see this pin." }) : null;
+$("e-meetup").addEventListener("change", () => {
+  $("e-meetup-custom").style.display = $("e-meetup").value === "__other" ? "block" : "none";
+});
 const picker = document.createElement("input");
 picker.type = "file";
 picker.accept = "image/*";
@@ -136,6 +140,8 @@ function splitDescription(text) {
   out.clean = out.clean.replace(/\[SWAP\]/gi, () => { out.swap = true; return ""; });
   out.clean = out.clean.replace(/\[Course:\s*([^\]]*)\]/gi, (_, v) => { out.course = v.trim(); return ""; });
   out.clean = out.clean.replace(/\[Meetup:\s*([^\]]*)\]/gi, (_, v) => { out.meetup = v.trim(); return ""; });
+  out.map = "";
+  out.clean = out.clean.replace(/\[Map:\s*([^\]]*)\]/gi, (_, v) => { out.map = v.trim(); return ""; });
   out.clean = out.clean.replace(/\[Hall:\s*([^\]]*)\]/gi, (_, v) => { out.hall = v.trim(); return ""; });
   out.clean = out.clean.trim();
   return out;
@@ -204,14 +210,15 @@ async function init() {
   const meetup = item.safe_meetup_spot || parts.meetup;
   if (meetup) {
     const sel = $("e-meetup");
-    if (!Array.from(sel.options).some((o) => o.value === meetup)) {
-      const o = document.createElement("option");
-      o.value = meetup;
-      o.textContent = meetup;
-      sel.appendChild(o);
+    if (Array.from(sel.options).some((o) => o.value === meetup)) {
+      sel.value = meetup;
+    } else {
+      sel.value = "__other";
+      $("e-meetup-custom").value = meetup;
+      $("e-meetup-custom").style.display = "block";
     }
-    sel.value = meetup;
   }
+  if (pickupMap) pickupMap.set(parts.map);
 
   if (isService) {
     $("edit-type-banner").innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> Editing a service';
@@ -266,7 +273,12 @@ form.addEventListener("submit", async (e) => {
 
   const swap = !isService && $("e-swap").checked;
   const course = isService ? "" : $("e-course").value.trim().toUpperCase();
-  const meetup = $("e-meetup").value;
+  let meetup = $("e-meetup").value;
+  if (meetup === "__other") {
+    meetup = $("e-meetup-custom").value.replace(/[\[\]]/g, "").trim();
+    if (!meetup) { toast("Please type your pickup spot, or choose one from the list.", "error"); unlock(); return; }
+  }
+  const mapPin = pickupMap ? pickupMap.get() : "";
   const hall = $("e-hall").value.trim();
   const rawDesc = $("e-desc").value.trim();
   const price = $("e-price").value;
@@ -276,6 +288,7 @@ form.addEventListener("submit", async (e) => {
   if (swap) tags.push("[SWAP]");
   if (course) tags.push("[Course: " + course + "]");
   if (meetup) tags.push("[Meetup: " + meetup + "]");
+  if (mapPin) tags.push("[Map: " + mapPin + "]");
   if (hall) tags.push("[Hall: " + hall + "]");
   const description = (rawDesc + (tags.length ? "\n\n" + tags.join(" ") : "")).trim();
 

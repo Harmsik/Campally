@@ -464,7 +464,7 @@
         "<div>👤 " + esc(v.name || "Unnamed") + "</div>" +
         "<div>📞 " + esc(v.phone) + "</div>" +
         "<div>🏫 " + esc(campus) + "</div>" +
-        "<div>📍 " + esc(v.location) + "</div>" +
+        "<div>📍 " + esc(window.CampallyLoc ? CampallyLoc.stripTag(v.location) : v.location) + (window.CampallyLoc ? CampallyLoc.linkHtml(CampallyLoc.split(v.location).url) : "") + "</div>" +
         '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">' +
           '<button class="small-btn" style="' + btnStyle + '" data-action="vvproof" data-path="' + esc(v.gov_id_path) + '" data-title="' + esc("ID: " + (v.business_name || "")) + '">View ID</button>' +
           '<button class="small-btn" style="' + btnStyle + '" data-action="vvproof" data-path="' + esc(v.selfie_path) + '" data-title="' + esc("Selfie: " + (v.business_name || "")) + '">View selfie</button>' +

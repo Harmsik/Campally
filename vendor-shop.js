@@ -12,6 +12,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var me = null;
+  var locShare = window.CampallyLoc ? CampallyLoc.attach(document.getElementById("vs-location")) : null;
   var verified = false;
   var oldVideoPath = null;       // video already saved on the shop
   var removeVideo = false;       // vendor tapped "Remove it"
@@ -92,13 +93,17 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var sent = res[2].data;
     if (!shop && sent) {
       $("vs-name").value = sent.business_name || "";
-      $("vs-location").value = sent.location || "";
+      var sp1 = window.CampallyLoc ? CampallyLoc.split(sent.location || "") : { text: sent.location || "", url: "" };
+      $("vs-location").value = sp1.text;
+      if (locShare) locShare.set(sp1.url);
     }
     if (shop) {
       $("vs-name").value = shop.shop_name || "";
       $("vs-category").value = shop.category || "";
       $("vs-about").value = shop.description || "";
-      $("vs-location").value = shop.location || "";
+      var sp2 = window.CampallyLoc ? CampallyLoc.split(shop.location || "") : { text: shop.location || "", url: "" };
+      $("vs-location").value = sp2.text;
+      if (locShare) locShare.set(sp2.url);
       $("vs-delivery").value = shop.delivery_areas || "";
       $("vs-video-url").value = shop.video_url || "";
       setDays(shop.open_days);
@@ -162,7 +167,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         shop_name: name,
         category: $("vs-category").value || null,
         description: $("vs-about").value.trim() || null,
-        location: $("vs-location").value.trim() || null,
+        location: (locShare ? locShare.pack($("vs-location").value) : $("vs-location").value.trim()) || null,
         open_days: days.length ? days : null,
         open_time: anyHours ? openT : null,
         close_time: anyHours ? closeT : null,

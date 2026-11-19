@@ -147,6 +147,16 @@ async function loadCategories() {
   });
 }
 
+// Pickup spot: choose a place, or type your own and share a map pin
+const meetupSelect = document.getElementById("meetup-spot");
+const meetupCustom = document.getElementById("meetup-custom");
+const pickupMap = window.CampallyLoc ? CampallyLoc.attach(document.getElementById("meetup-map-anchor"), { note: "Optional. Stand at your pickup spot and tap the button so buyers can open it in Google Maps. Anyone can see this pin." }) : null;
+if (meetupSelect && meetupCustom) {
+  meetupSelect.addEventListener("change", () => {
+    meetupCustom.style.display = meetupSelect.value === "__other" ? "block" : "none";
+  });
+}
+
 checkAuthAndInit();
 
 if (listingForm) {
@@ -199,7 +209,16 @@ if (listingForm) {
     const isSwap = isSwapInput ? isSwapInput.checked : false;
 
     const meetupSpotInput = document.getElementById("meetup-spot");
-    const meetupSpot = meetupSpotInput ? meetupSpotInput.value : null;
+    let meetupSpot = meetupSpotInput ? meetupSpotInput.value : null;
+    if (meetupSpot === "__other") {
+      meetupSpot = (document.getElementById("meetup-custom").value || "").replace(/[\[\]]/g, "").trim();
+      if (!meetupSpot) {
+        if (window.showToast) window.showToast("Please type your pickup spot, or choose one from the list.", "error");
+        else alert("Please type your pickup spot, or choose one from the list.");
+        return;
+      }
+    }
+    const mapPin = pickupMap ? pickupMap.get() : "";
 
     // Upload up to 5 photos (the first one is the cover)
     const photoFiles = window.CampallyPhotos ? window.CampallyPhotos.getFiles() : [];
@@ -238,6 +257,7 @@ if (listingForm) {
     if (isSwap) metaTags.push("[SWAP]");
     if (courseCode) metaTags.push(`[Course: ${courseCode}]`);
     if (meetupSpot) metaTags.push(`[Meetup: ${meetupSpot}]`);
+    if (mapPin) metaTags.push(`[Map: ${mapPin}]`);
     if (hallVal) metaTags.push(`[Hall: ${hallVal}]`);
 
     const enrichedDescription = (rawDescription + (metaTags.length ? "\n\n" + metaTags.join(" ") : "")).trim();

@@ -86,7 +86,10 @@
         <option value="Hostel Porter's Lodge">Hostel Porter's Lodge / Reception</option>
         <option value="Faculty Lecture Corridor">Faculty Lecture Theater Corridor</option>
         <option value="Campus Main Gate">Campus Main Gate Security Post</option>
+        <option value="__other">Other (type my own pickup spot)</option>
       </select>
+      <input type="text" id="meetup-custom" maxlength="80" placeholder="e.g. Beside Mama T's shop, Backgate" style="display:none; margin-top:8px;">
+      <div id="meetup-map-anchor"></div>
 
       <!-- Optional Fast-Sale Promotion Upgrade -->
       <div style="margin-top:16px; background:#FAF9F6; border:1px solid #E5E0D8; border-radius:14px; padding:14px;">
@@ -130,10 +133,11 @@
   <script src="campuses.js"></script>
   <script src="paystack-integration.js"></script>
   <script src="nav.js"></script>
+  <script src="location-share.js?v=20261119"></script>
   <script src="post-type.js?v=20261119"></script>
   <script src="book-fields.js?v=20261101"></script>
   <script src="photo-picker.js?v=20261031"></script>
-  <script src="post-listing.js?v=20261119"></script>
+  <script src="post-listing.js?v=20261120"></script>
   <script src="affiliate-fields.js?v=20261101"></script>
   <script>loadNav("post");</script>
 </body>

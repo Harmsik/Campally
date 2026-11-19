@@ -77,7 +77,11 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       $("vv-form-title").textContent = "Send your details again";
       if (v.business_name) $("vv-business").value = v.business_name;
       if (v.phone) $("vv-phone").value = v.phone;
-      if (v.location) $("vv-location").value = v.location;
+      if (v.location) {
+        var sp = window.CampallyLoc ? CampallyLoc.split(v.location) : { text: v.location, url: "" };
+        $("vv-location").value = sp.text;
+        if (locShare) locShare.set(sp.url);
+      }
       if (v.campus_id) $("vv-campus").value = String(v.campus_id);
     }
     show("vv-form-card");
@@ -122,7 +126,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         p_business: business,
         p_phone: phone,
         p_campus: Number(campus),
-        p_location: location_,
+        p_location: locShare ? locShare.pack(location_) : location_,
         p_id_path: idPath,
         p_selfie_path: selfiePath,
         p_shop_path: shopPath
@@ -140,6 +144,8 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       toast((err && err.message) ? err.message : "That did not work. Please try again.", "error");
     }
   });
+
+  var locShare = window.CampallyLoc ? CampallyLoc.attach($("vv-location")) : null;
 
   fillCampuses();
   load().catch(function (err) {

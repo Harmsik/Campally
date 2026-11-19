@@ -111,7 +111,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         '<div class="vd-info">' +
           '<div class="vd-name">' + esc(v.name) + "</div>" +
           "<div>" + tags + "</div>" +
-          (v.location ? '<div class="vd-line">📍 ' + esc(v.location) + "</div>" : "") +
+          (v.location ? '<div class="vd-line">📍 ' + esc(v.location) + (window.CampallyLoc ? CampallyLoc.linkHtml(v.map_url) : "") + "</div>" : "") +
           (v.opening_hours ? '<div class="vd-line">🕒 ' + esc(v.opening_hours) + "</div>" : "") +
           (v.delivery_areas ? '<div class="vd-line">🛵 Delivers to: ' + esc(v.delivery_areas) + "</div>" : "") +
           (v.description ? '<div class="vd-about">' + esc(v.description) + "</div>" : "") +
@@ -149,7 +149,8 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           avatar_url: v.avatar_url,
           campus_id: v.campus_id,
           category: s.category || "",
-          location: s.location || "",
+          location: window.CampallyLoc ? CampallyLoc.stripTag(s.location || "") : (s.location || ""),
+          map_url: window.CampallyLoc ? CampallyLoc.split(s.location || "").url : "",
           opening_hours: s.opening_hours || "",
           open_days: s.open_days || null,
           open_time: s.open_time || null,
